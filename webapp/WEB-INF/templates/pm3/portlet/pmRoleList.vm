@@ -1,0 +1,131 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.pmRoleList.filterOrderBy.value) {
+            document.pmRoleList.filterDirection.value = 0 - document.pmRoleList.filterDirection.value;
+        }
+        document.pmRoleList.filterOrderBy.value = orderBy;
+        document.pmRoleList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.pmRoleList.filterPage.value = displpage;
+            }
+        }
+        document.pmRoleList.displayedPageHeader.value = document.pmRoleList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        document.pmRoleList.filterName.value = "";
+        document.pmRoleList.filterCostRangeBottom.value = ""
+        document.pmRoleList.filterCostRangeTop.value = ""
+    }
+
+
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="pmRoleList" action="$link" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelName($locale):</label>
+                <input type="text" name="filterName" value="$!filter.nameAsString" size="40"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelCost($locale):</label>
+                <label>$filter.labelCostRangeBottom($locale):</label>
+                <input type="text" name="filterCostRangeBottom" value="$!filter.costRangeBottomAsString" size="18"/>
+                <label>$filter.labelCostRangeTop($locale):</label>
+                <input type="text" name="filterCostRangeTop" value="$!filter.costRangeTopAsString" size="18"/>
+            &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.pmRoleList.filterPage.value = "1";document.pmRoleList.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+#if (!$selectMode)
+                #button($labelBack '#' "document.pmRoleList.action = '$history.back()'; document.pmRoleList.submit(); return false;")
+#end
+                </p>
+        </fieldset>
+#if (!$selectMode)
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNewPMRole '' "document.pmRoleList.action = '$link.clear().setNavigationId('pmRoleProperties') '; document.pmRoleList.submit(); return false;")
+            </p>
+        </fieldset>
+#end
+        <fieldset>
+            <p>
+
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.pmRoleList.filterPage.value = 1; document.pmRoleList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.pmRoleList.filterPage.value = $filter.page - 1; document.pmRoleList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelPMRoleListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.pmRoleList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.pmRoleList.filterPage.value = ($filter.page + 1); document.pmRoleList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.pmRoleList.filterPage.value = $filter.lastPage; document.pmRoleList.submit(); return false;")
+#end
+#else
+                        $labelPMRoleListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th><a href="#" onClick="changeOrderBy('name');return false;">$filter.labelName($locale) #if ($filter.orderBy == "name") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('cost');return false;">$filter.labelCost($locale) #if ($filter.orderBy == "cost") $directionFlag #end</a></th>
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+#foreach ($item in $items)
+                        <tr>
+                            <td>$item.nameAsString</td>
+                            <td>$item.costAsString</td>
+#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+#else
+                            <td>
+                                <a href="$link.clear().setNavigationId('pmRoleProperties').setObjectId($position, $item.id)">$labelEdit</a> |
+                                <a href="$link.clear().setNavigationId('employeePMRoleList').setObjectId($position, $item.id)">$labelEmployees</a>
+                            </td>
+#end
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

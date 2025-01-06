@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>SOFIAX</display-name>
+
+    <filter>
+        <filter-name>requestHelper</filter-name>
+        <filter-class>com.p92.sofia.pfw.filter.RequestHelperFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>locale</filter-name>
+        <filter-class>com.p92.sofia.pfw.filter.LocaleFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>operationInvoker</filter-name>
+        <filter-class>com.p92.sofia.pfw.filter.OperationInvokerFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>requestHelper</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>locale</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>operationInvoker</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>sofiax</servlet-name>
+        <servlet-class>com.p92.sofia.pfw.SofiaServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>import</servlet-name>
+        <servlet-class>com.p92.sofiamodule.pm3.ImportServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>export</servlet-name>
+        <servlet-class>com.p92.sofiamodule.pm3.ExportServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>exportSum</servlet-name>
+        <servlet-class>com.p92.sofiamodule.pm3.ExportSumServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>reportForKarin</servlet-name>
+        <servlet-class>com.p92.sofiamodule.pm3.report.ReportForKarinServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>sofiax</servlet-name>
+        <url-pattern>/pm3/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>import</servlet-name>
+        <url-pattern>/import/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>export</servlet-name>
+        <url-pattern>/export/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>exportSum</servlet-name>
+        <url-pattern>/exportSum/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>reportForKarin</servlet-name>
+        <url-pattern>/reportForKarin/*</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>640</session-timeout>
+    </session-config>
+</web-app>

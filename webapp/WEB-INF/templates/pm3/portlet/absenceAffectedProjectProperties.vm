@@ -1,0 +1,155 @@
+<script type="text/javascript" language="Javascript1.2">
+
+    function openAbsencePicker() {
+    var top = (window.event) ? window.event.screenY : 0;
+    var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('absenceSelect'))?callback=absencePickerCallback",
+                            "labelAbsenceSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function absencePickerCallback(id, label, data) {
+        document.properties.absenceAffectedProjectAbsenceId.value = id;
+        document.properties.displayedValueabsenceAffectedProjectAbsence.value = label;
+        document.properties.submit();
+    }
+
+    function openProjectPicker() {
+    var top = (window.event) ? window.event.screenY : 0;
+    var left = (window.event) ? window.event.screenX : 0;
+#set($absenceAffectedProjects = $absenceAffectedProject.absence.absenceAffectedProjects)
+#if($absenceAffectedProjects.size() > 0)
+#set($projectList = "")
+#foreach($absenceAffectedProject in $absenceAffectedProjects)
+#if($counter == 1)
+#set($projectList = "Project.$absenceAffectedProject.project.shortId")
+#else
+#set($projectList = "$projectList,Project.$absenceAffectedProject.project.shortId")
+#end
+#end
+    var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('projectSelect').setObjectId($position,$projectList))?callback=projectPickerCallback",
+                            "labelProjectSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('projectSelect'))?callback=projectPickerCallback",
+                "labelProjectSelect",
+                "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#end
+        w.focus();
+
+    }
+
+    function projectPickerCallback(id, label, data, businessUnitId, businessUnit) {
+        document.properties.absenceAffectedProjectProjectId.value = id;
+        document.properties.displayedValueabsenceAffectedProjectProject.value = label;
+        document.properties.submit();
+    }
+
+    function openSubstitutePicker() {
+    var top = (window.event) ? window.event.screenY : 0;
+    var left = (window.event) ? window.event.screenX : 0;
+
+#if($absenceAffectedProject.project)
+#set($employeeIdList = "")
+#foreach($employeeId in $absenceAffectedProject.project.getEmployeeIdList(true))
+#if($counter == 1)
+#set($employeeIdList = "$employeeId")
+#else
+#set($employeeIdList = "$employeeIdList,$employeeId")
+#end
+#end
+#set($employeeIdList = "$employeeIdList,Exclude_$absenceAffectedProject.absence.employee.id")
+    var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position, $employeeIdList))?callback=substitutePickerCallback",
+                        "labelSubstituteSelect",
+                        "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=substitutePickerCallback",
+                            "labelSubstituteSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#end
+        w.focus();
+    }
+
+
+    function substitutePickerCallback(id, label, data) {
+        document.properties.absenceAffectedProjectSubstituteId.value = id;
+        document.properties.displayedValueabsenceAffectedProjectSubstitute.value = label;
+    }
+</script>
+<div class="portlet">
+    <form name="properties" action="$history.ignore($link)" method="post">
+        <input type="hidden" name="updateForm" value="update"/>
+            <fieldset class="dialog">
+            <legend>$labelAbsenceAffectedProjectProperties</legend>
+            <p class="nowrap">
+                <label>$absenceAffectedProject.labelAbsence($locale)*:</label>
+                <input type="hidden" name="absenceAffectedProjectAbsenceId" value="$!absenceAffectedProject.getAbsence().getId()"/>
+                <input type="text" name="displayedValueabsenceAffectedProjectAbsence" value="$!omObjectFormatter.format($absenceAffectedProject.absence.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openAbsencePicker(); return false;")
+            </p>
+#if ($errorMessage.hasAttibute("absenceAffectedProjectAbsence"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("absenceAffectedProjectAbsence")</span>
+</p>
+#end
+#if($absenceAffectedProject.absence.id && $absenceAffectedProjects.size() > 0)
+            <p class="nowrap">
+                <label>$absenceAffectedProject.labelProject($locale):</label>
+                <input type="hidden" name="absenceAffectedProjectProjectId" value="$!absenceAffectedProject.getProject().getId()"/>
+                <input type="text" name="displayedValueabsenceAffectedProjectProject" value="$!omObjectFormatter.format($absenceAffectedProject.project.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openProjectPicker(); return false;")
+            </p>
+#if ($errorMessage.hasAttibute("absenceAffectedProjectProject"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("absenceAffectedProjectProject")</span>
+</p>
+#end
+#end
+#if($absenceAffectedProject.project.id && $absenceAffectedProjects.size() > 0)
+            <p class="nowrap">
+                <label>$absenceAffectedProject.labelSubstitute($locale)*:</label>
+                <input type="hidden" name="absenceAffectedProjectSubstituteId" value="$!absenceAffectedProject.getSubstitute().getId()"/>
+                <input type="text" name="displayedValueabsenceAffectedProjectSubstitute" value="$!omObjectFormatter.format($absenceAffectedProject.substitute.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openSubstitutePicker(); return false;")
+            </p>
+#if ($errorMessage.hasAttibute("absenceAffectedProjectSubstitute"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("absenceAffectedProjectSubstitute")</span>
+</p>
+#end
+#end
+            <p class="nowrap">
+                <label>$absenceAffectedProject.labelNoticed($locale)*:</label>
+                <select name="absenceAffectedProjectNoticed" size="1">
+                    <option value="true" #if($absenceAffectedProject.noticedAsString == "true")selected#end>$labelYes</option>
+                    <option value="false" #if($absenceAffectedProject.noticedAsString == "false")selected#end>$labelNo</option>
+                </select>
+            </p>
+
+#if ($errorMessage.hasAttibute("absenceAffectedProjectNoticed"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("absenceAffectedProjectNoticed")</span>
+</p>
+#end
+#if ($errorMessage.hasGeneral())
+            <p class="nowrap">
+                <span class="error">$errorMessage.getGeneral()</span>
+</p>
+#end
+        </fieldset>
+        <fieldset class="operation">
+            <legend>$labelActions</legend>
+                <p>
+                    #set($saveOperation = 'absenceAffectedProjectSave')
+                    #set($saveLink = $link.setOperation($position,$saveOperation))
+                    #set($deleteOperation = 'absenceAffectedProjectDelete')
+                    #set($deleteLink = $link.setOperation($position,$deleteOperation))
+                    #buttonAccept($labelSave '#' "document.properties.action = '$history.ignore($saveLink)'; document.properties.submit(); return false;")
+                    ##buttonDeny($labelDelete '#' "if(confirm('$confirmDeleteAbsenceAffectedProject')) {document.properties.action = '$history.ignore($deleteLink)'; document.properties.submit();} return false;")
+                    #button($labelCancel '#' "document.properties.action = '$history.back()'; document.properties.submit(); return false;")
+                </p>
+        </fieldset>
+    </form>
+</div>

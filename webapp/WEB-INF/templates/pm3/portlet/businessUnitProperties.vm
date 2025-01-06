@@ -1,0 +1,40 @@
+
+<script type="text/javascript" language="Javascript1.2">
+</script>
+<div class="portlet">
+    <form name="properties" action="$link" method="post">
+        <input type="hidden" name="updateForm" value="update"/>
+        <fieldset class="dialog">
+            <legend>$labelBusinessUnitProperties</legend>
+            <p class="nowrap">
+                <label>$businessUnit.labelName($locale)*:</label>
+                <input type="text" name="businessUnitName" value="$!businessUnit.nameAsString" size="40"/>
+            </p>
+#if ($errorMessage.hasAttibute("businessUnitName"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("businessUnitName")</span>
+</p>
+#end
+            <p class="nowrap">
+                <label>$businessUnit.labelDescription($locale):</label>
+                <textarea name="businessUnitDescription" cols="80" rows="6">$!businessUnit.descriptionAsString</textarea>
+            </p>
+#if ($errorMessage.hasAttibute("businessUnitDescription"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("businessUnitDescription")</span>
+</p>
+#end
+        </fieldset>        <fieldset class="operation">
+            <legend>$labelActions</legend>
+                <p>
+                    #set($saveOperation = 'businessUnitSave')
+                    #set($saveLink = $link.setOperation($position,$saveOperation))
+                    #set($deleteOperation = 'businessUnitDelete')
+                    #set($deleteLink = $link.setOperation($position,$deleteOperation))
+                    #buttonAccept($labelSave '#' "document.properties.action = '$history.ignore($saveLink)'; document.properties.submit(); return false;")
+                    #buttonDeny($labelDelete '#' "if(confirm('$confirmDeleteBusinessUnit')) {document.properties.action = '$history.ignore($deleteLink)'; document.properties.submit();} return false;")
+                    #button($labelCancel '#' "document.properties.action = '$history.back()'; document.properties.submit(); return false;")
+                </p>
+        </fieldset>
+    </form>
+</div>

@@ -1,0 +1,464 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+
+	function checkBeforeSubmitOk(startName, endName, durationName) {
+
+		// check the start date
+		var startControl = document.getElementById(startName);
+		if (!checkDateTime(startControl.value)) {
+			return false;
+		}
+
+		// check the end date
+		var endControl = document.getElementById(endName);
+		if (!checkDateTime(endControl.value)) {
+			return false;
+		}
+
+		// check start < end
+		var startDate = constructDate(startControl.value);
+		var endDate = constructDate(endControl.value);
+		if (endDate.getTime() <= startDate.getTime()) {
+			return false;
+		}
+     /*
+		// check duration
+		var durationControl = document.getElementById(durationName);
+		if (!checkDuration(durationControl.value)) {
+			return false;
+		} */
+
+		return true;
+
+	}
+
+	function computeEndDate(control, startName, endName) {
+	
+		// first check this
+		if (!validateDuration(control)) {
+			return false;
+		} 
+
+		// now check the start date
+		var startControl = document.getElementById(startName);
+		if (!checkDateTime(startControl.value)) {
+			return false;
+		}
+
+		// create start date
+		var startDate = constructDate(startControl.value);
+		var durationTime = constructTime(control.value);
+		
+		var endDate = new Date(startDate.getTime() + durationTime.getTime() + 60 * 60 * 1000);
+		var endControl = document.getElementById(endName);
+		endControl.value = formatDate(endDate);
+	
+	}
+
+	function computeDuration(control, otherName, durationName) {
+		
+		// first check this
+		if (!validateTime(control)) {
+			return false;
+		} 
+		
+		// now check the other
+		var otherControl = document.getElementById(otherName);
+		if (!checkDateTime(otherControl.value)) {
+			return false;
+		}
+		
+		// both are dates, now compute their difference
+		var startDate = constructDate(control.value);
+		var endDate = constructDate(otherControl.value);
+
+		// always count end - start
+		if (control.name.lastIndexOf('End') > -1 ) {
+			var temp = startDate;
+			startDate = endDate;
+			endDate = temp;
+		}
+
+		var differenceInSecs = Math.ceil((endDate.getTime() - startDate.getTime()) / 1000);
+		var controlInError = control;
+		var sign = "";
+		if (differenceInSecs < 0) {
+			if (control.name.lastIndexOf('Start') > -1 ) {
+				controlInError = otherControl;
+			}
+			controlInError.style.backgroundColor = '#FFCCCC';
+			sign = "-";
+		} else {
+			if (control.name.lastIndexOf('Start') > -1 ) {
+				controlInError = otherControl;
+			}
+			controlInError.style.backgroundColor = 'white';
+			sign = "";
+		}
+
+		var durationControl = document.getElementById(durationName);
+		var nullHour = Math.abs(differenceInSecs) < 3600 ? "0:" : "";
+		var formattedTime = formatTime2(Math.abs(differenceInSecs));
+		var paddedFormattedTime = formattedTime.length < 5 ? "0" + formattedTime : formattedTime;
+		durationControl.value = sign + nullHour + paddedFormattedTime;
+		
+	}
+
+	function formatDate(date) {
+		return dateString = date.getFullYear() + "." + pad(date.getMonth() + 1) + "." + pad(date.getDate()) + ". " +
+				pad(date.getHours()) + ":" + pad(date.getMinutes()) + ":" + pad(date.getSeconds());
+	}
+
+	function pad(number) {
+		return number < 10 ? "0" + number : number;
+	}
+
+	function constructDate(dateString) {
+
+	    var strDateSeparator = "."; // date separator 2006.11.07. 14:59:10
+	    var strTimeSeparator = ":"; // time separator
+	    var arrayDate = dateString.substring(0, 10).split(strDateSeparator); //split date into year, month, day
+	    var arrayTime = dateString.substring(12).split(strTimeSeparator); //split time into hour, minutes, optional seconds
+		var seconds = arrayTime.length > 2 ? arrayTime[2] : 0;		
+		
+		return new Date(arrayDate[0], arrayDate[1] - 1, arrayDate[2], arrayTime[0], arrayTime[1], seconds);
+
+	}
+
+	function constructTime(timeString) {
+
+	    var strTimeSeparator = ":"; // time separator
+	    var arrayTime = timeString.split(strTimeSeparator); //split time into hour, minutes, optional seconds
+		var seconds = arrayTime.length > 2 ? arrayTime[2] : 0;		
+		
+		var time = new Date(0);
+		time.setHours(arrayTime[0], arrayTime[1], seconds);
+		
+		return time;
+
+	}
+
+	function validateDuration(control) {
+		if (!checkDuration(control.value)) {
+			control.style.backgroundColor = '#FFCCCC';
+			return false;
+		} else {
+			control.style.backgroundColor = 'white';
+			return true;
+		}
+	}
+
+	function validateTime(control) {
+		if (!checkDateTime(control.value)) {
+			control.style.backgroundColor = '#FFCCCC';
+			return false;
+		} else {
+			control.style.backgroundColor = 'white';
+			return true;
+		}
+	}
+
+	function checkDuration(strValue) {
+
+	  	var objRegExp = /^\d{1,2}:\d{2}:\d{2}$/
+        var objRegExp2 = /^\d{1,2}:\d{2}$/
+        var long = true;
+	  	//check to see if in correct format
+	  	if (!objRegExp.test(strValue)) {
+            if (!objRegExp2.test(strValue)) {
+	    	    return false; //doesn't match pattern, bad date
+            } else {
+                long = false;
+            }
+	  	}
+	  	
+		var strTimeSeparator = ":"; // time separator
+		var arrayTime = strValue.split(strTimeSeparator); //split time into (hour,) minutes, seconds
+		return checkTime(arrayTime, long);
+
+
+	}
+
+	function checkDateTime(strValue) {
+
+	  	var objRegExp = /^\d{4}(\.)\d{2}(\.)\d{2}(\.)\s\d{1,2}:\d{2}:\d{2}$/
+	 
+	  	//check to see if in correct format
+	  	if (!objRegExp.test(strValue)) {
+	  
+	    	return false; //doesn't match pattern, bad date
+	    
+	  	} else {
+	  
+		    var strDateSeparator = "."; // date separator
+		    var strTimeSeparator = ":"; // time separator
+		    var arrayDate = strValue.substring(0, 10).split(strDateSeparator); //split date into year, month, day
+            var arrayTime = strValue.substring(12).split(strTimeSeparator); //split time into hour, minutes, optional seconds
+            //create a lookup for months not equal to Feb.
+		    var arrayLookup = { '01' : 31,'03' : 31, '04' : 30,'05' : 31,'06' : 30,'07' : 31,
+		                        '08' : 31,'09' : 30,'10' : 31,'11' : 30,'12' : 31}
+		    var intDay = parseInt(arrayDate[2],10);
+
+		    //check if month value and day value agree
+		    if(arrayLookup[arrayDate[1]] != null) {
+		      if(intDay <= arrayLookup[arrayDate[1]] && intDay != 0)
+		        //found in lookup table, good date
+		        return checkTime(arrayTime);
+		    }
+		    
+		    //check for February (bugfix 20050322)
+		    //bugfix  for parseInt kevin
+		    //bugfix  biss year  O.Jp Voutat
+		    var intMonth = parseInt(arrayDate[1],10);
+		    if (intMonth == 2) { 
+		       var intYear = parseInt(arrayDate[0]);
+		       if (intDay > 0 && intDay < 29) {
+			        return checkTime(arrayTime);
+		       }
+		       else if (intDay == 29) {
+		         if ((intYear % 4 == 0) && (intYear % 100 != 0) || 
+		             (intYear % 400 == 0)) {
+		              // year div by 4 and ((not div by 100) or div by 400) ->ok
+			        return checkTime(arrayTime);
+		         }   
+		       }
+		    }
+		
+		}  
+		
+	  	return false; //any other values, bad date
+	  	
+	}
+
+	function checkTime(arrayTime) {
+
+      //  if (long){
+			var hours = parseInt(arrayTime[0]);
+			var minutes = parseInt(arrayTime[1]);
+			var seconds = parseInt(arrayTime[2]);
+			return (hours < 24 && minutes < 60 && seconds < 60);
+       /* } else {
+            var minutes = parseInt(arrayTime[0]);
+			var seconds = parseInt(arrayTime[1]);
+			return (minutes < 60 && seconds < 60);    
+        }*/
+
+	}
+
+	////////////////////////////////////////
+
+	function showEditor(rowId, edit, controlId) {
+	
+		if (edit) {
+		
+			document.getElementById("rowDisplay" + rowId).style.display = "none";
+			document.getElementById("rowEdit" + rowId).style.display = "";
+			
+		} else {
+			
+			document.getElementById("rowDisplay" + rowId).style.display = "";
+			document.getElementById("rowEdit" + rowId).style.display = "none";
+
+			var startControl = document.getElementById("item" + controlId + "taskResourceTimeStart");
+			var startDisplayControl = document.getElementById("item" + controlId + "taskResourceTimeStartDisplay");
+			startControl.value = startDisplayControl.innerHTML;
+			startControl.style.backgroundColor = 'white';
+
+			var endControl = document.getElementById("item" + controlId + "taskResourceTimeEnd");
+			var endDisplayControl = document.getElementById("item" + controlId + "taskResourceTimeEndDisplay");
+			endControl.value = endDisplayControl.innerHTML;
+			endControl.style.backgroundColor = 'white';
+
+			var durationControl = document.getElementById("item" + controlId + "taskTimeDuration");
+			var durationDisplayControl = document.getElementById("item" + controlId + "taskTimeDurationDisplay");
+			durationControl.value = durationDisplayControl.innerHTML;
+			durationControl.style.backgroundColor = 'white';
+			
+		}
+	}
+
+	function calculateTime(startTime, endTime) {
+		var result = "";
+		if (startTime.length > 0 && endTime.length > 0) {
+			result = formatTime2((endTime - startTime) / 1000);
+		}
+		return result;
+	}
+
+	function formatTime2(seconds) {
+	
+		var hours = intDiv(seconds, 3600);
+		var mins = intDiv((seconds - (hours * 3600)), 60);
+		var secs = intDiv((seconds - (hours * 3600) - (mins * 60)), 1);
+		var timeString = hours > 0 ? hours + ':' : '';
+		timeString += mins < 10 && hours > 0 ? '0' + mins + ':' : mins + ':';
+		timeString += secs < 10 ? '0' + secs : secs;
+		
+		return timeString;
+		
+	}
+
+	function intDiv(a, b) {
+		return a >= b ? (a - (a % b)) / b : 0;
+	}
+
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.taskResourceTimeList.filterOrderBy.value) {
+            document.taskResourceTimeList.filterDirection.value = 0 - document.taskResourceTimeList.filterDirection.value;
+        }
+        document.taskResourceTimeList.filterOrderBy.value = orderBy;
+        document.taskResourceTimeList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.taskResourceTimeList.filterPage.value = displpage;
+            }
+        }
+        document.taskResourceTimeList.displayedPageHeader.value = document.taskResourceTimeList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        document.taskResourceTimeList.filterTaskResourceId.value = "";
+        document.taskResourceTimeList.displayedValuefilterTaskResource.value = "";
+        // document.taskResourceTimeList.filterStart.value = "";
+        // document.taskResourceTimeList.filterEnd.value = "";
+    }
+
+
+    function openTaskResourcePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('personalTimeTrackerSelect'))?callback=taskResourcePickerCallback",
+                            "labelTaskResourceSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function taskResourcePickerCallback(id, label, data) {
+        document.taskResourceTimeList.filterTaskResourceId.value = id;
+        document.taskResourceTimeList.displayedValuefilterTaskResource.value = label;
+    }
+
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="taskResourceTimeList" action="$link" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <input type="hidden" name="taskResourceTimeId" value="" />
+        <input type="hidden" name="itemCounter" value="" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$labelTask:</label>
+                <input type="hidden" name="filterTaskResourceId" value="$!filter.getTaskResource().getId()"/>
+                <input type="text" name="displayedValuefilterTaskResource" value="$!omObjectFormatter.format($filter.taskResource.task.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openTaskResourcePicker(); return false;")
+            &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' "document.taskResourceTimeList.action = '$link.clear().setNavigationId('taskResourceTimeList')'; document.taskResourceTimeList.filterPage.value = '1';document.taskResourceTimeList.submit(); return false;")
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+                #button($labelBack '#' "document.taskResourceTimeList.action = '$link.clear().setNavigationId('personalTimeTracker')'; document.taskResourceTimeList.submit(); return false;")
+                </p>
+        </fieldset>
+###if (!$selectMode)
+#set ($never = 1)        
+#if ($never == 0)        
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNewTaskResourceTime '' "document.taskResourceTimeList.action = '$link.clear().setNavigationId('taskResourceTimeProperties') '; document.taskResourceTimeList.submit(); return false;")
+            </p>
+        </fieldset>
+#end
+        <fieldset>
+            <p>
+
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.taskResourceTimeList.filterPage.value = 1; document.taskResourceTimeList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.taskResourceTimeList.filterPage.value = $filter.page - 1; document.taskResourceTimeList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelTaskResourceTimeListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.taskResourceTimeList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.taskResourceTimeList.filterPage.value = ($filter.page + 1); document.taskResourceTimeList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.taskResourceTimeList.filterPage.value = $filter.lastPage; document.taskResourceTimeList.submit(); return false;")
+#end
+#else
+                        $labelTaskResourceTimeListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th><a href="#" onClick="changeOrderBy('taskResource');return false;">$labelTask #if ($filter.orderBy == "taskResource") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('start');return false;">$filter.labelStart($locale) #if ($filter.orderBy == "start") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('end');return false;">$filter.labelEnd($locale) #if ($filter.orderBy == "end") $directionFlag #end</a></th>
+                            <th>$labelDuration</th>
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+#foreach ($item in $items)
+                        <tr id="rowDisplay$item.id">
+                            <td>$!omObjectFormatter.format($item.taskResource.task.getOMObject(), $locale)</td>
+                            <td><span id="item${counter}taskResourceTimeStartDisplay">$item.startAsString</span></td>
+                            <td><span id="item${counter}taskResourceTimeEndDisplay">$item.endAsString</span></td>
+                            <td align="center"><span id="item${counter}taskTimeDurationDisplay">$!item.formattedDuration</span></td>
+#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+#else
+                            <td>
+    #set($deleteOperation = 'taskResourceTimeDelete')
+    #set($deleteLink = $link.setOperation($position,$deleteOperation))
+                                <a href="javascript:showEditor('$item.id', true);">$labelEdit</a> | 
+                                <a href="javascript:if (confirm('$confirmDeleteTaskResourceTime')) {document.taskResourceTimeList.action = '$history.ignore($deleteLink)'; document.taskResourceTimeList.taskResourceTimeId.value='$item.id'; document.taskResourceTimeList.submit();}">$labelDelete</a>
+                            </td>
+#end
+                        </tr>
+                        <tr id="rowEdit$item.id" style="display: none;">
+                            <td>$!omObjectFormatter.format($item.taskResource.task.getOMObject(), $locale)</td>
+                            <td><input type="text" id="item${counter}taskResourceTimeStart" name="item${counter}taskResourceTimeStart" value="$!item.startAsString" onblur="computeDuration(this, 'item${counter}taskResourceTimeEnd', 'item${counter}taskTimeDuration');"/></td>
+                            <td><input type="text" id="item${counter}taskResourceTimeEnd" name="item${counter}taskResourceTimeEnd" value="$!item.endAsString" onblur="computeDuration(this, 'item${counter}taskResourceTimeStart', 'item${counter}taskTimeDuration');"/></td>
+                            <td align="center"><span id="item${counter}taskTimeDurationDisplay" name="item${counter}taskTimeDuration" onblur="computeEndDate(this, 'item${counter}taskResourceTimeStart', 'item${counter}taskResourceTimeEnd');">$!item.formattedDuration</span></td>
+                            <td>
+    #set($saveOperation = 'taskResourceTimeSave')
+    #set($saveLink = $link.setOperation($position,$saveOperation))
+                                <a href="javascript:if (checkBeforeSubmitOk('item${counter}taskResourceTimeStart', 'item${counter}taskResourceTimeEnd', 'item${counter}taskTimeDuration')) {document.taskResourceTimeList.action = '$history.ignore($saveLink)'; document.taskResourceTimeList.taskResourceTimeId.value='$item.id'; document.taskResourceTimeList.itemCounter.value='item${counter}'; document.taskResourceTimeList.submit();}">$labelSave</a> |
+                                <a href="javascript:showEditor('$item.id', false, '${counter}');">$labelCancel</a>
+                            </td>
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

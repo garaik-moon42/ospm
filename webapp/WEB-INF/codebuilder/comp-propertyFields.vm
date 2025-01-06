@@ -1,0 +1,121 @@
+#set($htmlPrefix = '<p class="nowrap">')
+#set($htmlSuffix = '</p>')
+#set($requiredFlag = '*')
+            <legend>$label${classname}Properties</legend>
+#foreach ($attribute in $attributes)
+########
+#if($attribute.getParameter("editable") == "yes")
+#if($attribute.type == "integer" || $attribute.type == "float")
+#if($attribute.getParameter("inputLook") && $attribute.getParameter("inputLook") != "")
+#if($attribute.getParameter("inputLook") == "readonly")
+#propertyReadOnly($classname $attribute)
+#elseif($attribute.getParameter("inputLook") == "text")
+#normalTextInput(${naming.formatAttribute($classname)} $attribute $attribute.getParameter("inputWidth"))
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "select")
+#if($attribute.getParameter("selectOptionSource") == "dinamical")
+#selectInputDinamic(${naming.formatAttribute($classname)} $attribute "false" $attribute.getParameter("inputHeight"))
+#else
+#selectInputStatic(${naming.formatAttribute($classname)} $attribute $attribute.getParameterValues("selectOptionValues") $attribute.getParameterValues("selectOptionLabels") $addEmpty $attribute.getParameter("inputHeight"))
+#end
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#else
+            <!-- The ${apos}$attribute.getParameter("inputLook")${apos} is unsupported inputLook. -->
+#end
+#end
+########
+#elseif($attribute.type == "boolean")
+#if($attribute.getParameter("inputLook") && $attribute.getParameter("inputLook") != "")
+#if($attribute.getParameter("inputLook") == "readonly")
+#propertyReadOnly(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "text")
+#normalTextInput(${naming.formatAttribute($classname)} $attribute $attribute.getParameter("inputWidth"))
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "booleanselect")
+#selectBooleanInput( ${naming.formatAttribute($classname)} $attribute $addEmpty)
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "select")
+#if($attribute.getParameter("selectOptionSource") == "dinamical")
+            <!-- Warning: Unparsable bolean value (it isn't 'true' or 'false') sets 'null' to the bean. -->
+#selectInputDinamic(${naming.formatAttribute($classname)} $attribute "false" $attribute.getParameter("inputHeight"))
+#else
+#selectInputStatic(${naming.formatAttribute($classname)} $attribute $attribute.getParameterValues("selectOptionValues") $attribute.getParameterValues("selectOptionLabels") $addEmpty $attribute.getParameter("inputHeight"))
+#end
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#else
+            <!-- The ${apos}$attribute.getParameter("inputLook")${apos} is unsupported inputLook. -->
+#end
+#end
+########
+#elseif($attribute.type == "shorttext" || $attribute.type == "text")
+#if($attribute.getParameter("inputLook") && $attribute.getParameter("inputLook") != "")
+#if($attribute.getParameter("inputLook") == "readonly")
+#propertyReadOnly(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "text")
+#normalTextInput(${naming.formatAttribute($classname)} $attribute $attribute.getParameter("inputWidth"))
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "textarea")
+#textareaInput(${naming.formatAttribute($classname)} $attribute $attribute.getParameter("inputWidth") $attribute.getParameter("inputHeight") )
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "select")
+#if($attribute.getParameter("selectOptionSource") == "dinamical")
+#selectInputDinamic(${naming.formatAttribute($classname)} $attribute "false" $attribute.getParameter("inputHeight"))
+#else
+#selectInputStatic(${naming.formatAttribute($classname)} $attribute $attribute.getParameterValues("selectOptionValues") $attribute.getParameterValues("selectOptionLabels") "false" $attribute.getParameter("inputHeight"))
+#end
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#else
+            <!-- The ${apos}$attribute.getParameter("inputLook")${apos} is unsupported inputLook. -->
+#end
+#end
+########
+#elseif($attribute.type == "date" || $attribute.type == "datetime" || $attribute.type == "time")
+#if($attribute.getParameter("inputLook") && $attribute.getParameter("inputLook") != "")
+#if($attribute.getParameter("inputLook") == "readonly")
+#propertyReadOnly(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "text")
+#normalTextInput(${naming.formatAttribute($classname)} $attribute $attribute.getParameter("inputWidth"))
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "select")
+#if($attribute.getParameter("selectOptionSource") == "dinamical")
+#selectInputDinamic(${naming.formatAttribute($classname)} $attribute "false" $attribute.getParameter("inputHeight"))
+#else
+    <!-- todo: Unsupported the static date select! (The good date value parsing is very complicated in multilingual enviroment :) ) -->
+#end
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "pick")
+#pickDate(${naming.formatAttribute($classname)} $attribute $attribute.getParameter("inputWidth"))
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#else
+            <!-- The ${apos}$attribute.getParameter("inputLook")${apos} is unsupported inputLook. -->
+#end
+#end
+########
+#elseif($attribute.type == "reference")
+#if($attribute.getParameter("inputLook") && $attribute.getParameter("inputLook") != "")
+#if($attribute.getParameter("inputLook") == "readonly")
+#propertyReadOnlyReference(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "select")
+#selectReferenceInput(${naming.formatAttribute($classname)} $attribute "false" $attribute.getParameter("inputHeight"))
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#elseif($attribute.getParameter("inputLook") == "pick")
+#pickRefference(${naming.formatAttribute($classname)} $attribute $attribute.getParameter("inputWidth"))
+#normalErrorMessage(${naming.formatAttribute($classname)} $attribute)
+#else
+            <!-- The ${apos}$attribute.getParameter("inputLook")${apos} is unsupported inputLook. -->
+#end
+#end
+#else
+            <!-- The ${apos}$attribute.type${apos} is unsupported type. -->
+#end
+#else
+#if($attribute.getParameter("inputLook") == "readonly")
+#if($attribute.type == "reference")
+#propertyReadOnlyReference(${naming.formatAttribute($classname)} $attribute)
+#else
+#propertyReadOnly(${naming.formatAttribute($classname)} $attribute)
+#end
+#end
+#end
+#end
+        </fieldset>

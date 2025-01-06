@@ -1,0 +1,19 @@
+    <script type="text/javascript" language="JavaScript1.2">
+
+        function selectObject(id, label, data) {
+            window.opener.${callback}(id, label, data);
+            window.close();
+        }
+    </script>
+
+    <div id="container">
+        <div id="header">
+            <b>$navigationNode.getLabel($locale)</b><br />
+        </div>
+        <div id="primaryContent">
+$!insert.portlet(0)
+        </div>
+        <div id="footer">
+            powered by <a href="http://www.arvato-systems.hu/arvato/nid/sofia" target="_blank">SOFIA</a>
+        </div>
+    </div>

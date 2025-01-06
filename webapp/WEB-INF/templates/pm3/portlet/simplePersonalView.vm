@@ -1,0 +1,185 @@
+#if("$!pMUser.getEmployee()"=="")
+$labelInvalidPersonalView
+#else
+#set ( $isAChief = $pMUser.hasRole("administrator") )
+<script type="text/javascript" language="JavaScript1.2">
+    
+    function updateCheckedDate(source, destYes, destNo, objvalue) {
+        if (document.getElementById(source).checked) {
+            document.getElementById(destYes).value = objvalue;
+            document.getElementById(destNo).value = "";
+        } else {
+            document.getElementById(destYes).value = "";
+            document.getElementById(destNo).value = objvalue;
+       }
+    }
+
+    function openDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateBottomPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+    function dateBottomPickerCallback(data) {
+        document.projectTree.filterFrom.value = data;
+    }
+
+    function openDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+    function dateTopPickerCallback(data) {
+        document.projectTree.filterTo.value = data;
+    }
+
+    function clearFilterFields() {
+        document.projectTree.filterFrom.value = ""
+        document.projectTree.filterTo.value = ""
+    }
+
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.projectTree.filterEmployeeId.value = id;
+        document.projectTree.displayedValuefilterEmployee.value = label;
+        document.projectTree.submit();
+    }
+
+</script>
+<div class="portlet">
+ <form name="projectTree" action="$history.ignore($link)" method="post">
+     <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+     <input type="hidden" name="filterDirection" value="$!filter.direction" />
+     <input type="hidden" name="filterPage" value="$filter.page" />
+     <input type="hidden" name="treeOpen" value="" />
+     <input type="hidden" name="treeClose" value="" />
+     <input type="hidden" name="groupAccepted" value="" />
+     <input type="hidden" name="groupApproved" value="" />
+     <input type="hidden" name="accapp" value="" />
+     <input type="hidden" name="selectedTaskId" value="" />
+     <input type="hidden" name="selectedProjectId" value="" />
+<fieldset>
+    <legend>$labelFiltering</legend>
+        <p>
+    <span class="nowrap">
+        <label>$labelEmployee:</label>
+        <input type="hidden" name="filterEmployeeId" value="$!filter.getEmployeeId()"/>
+        <input type="text" name="displayedValuefilterEmployee" value="$!omObjectFormatter.format($filter.employee.getOMObject(), $locale)" size="30" readonly="readonly"/>
+        #if ( $isAChief )
+        #button('...' '#' "openEmployeePicker(); return false;")
+        #end
+    &nbsp;&nbsp;</span>
+    <span class="nowrap">
+        <label>$labelFulfillmentDate:</label>
+        <label>$labelFrom:</label>
+        <input type="text" name="filterFrom" value="$!filter.getFromAsString()" size="10"/>
+        #button('...' '#' "openDateBottomPicker(); return false;")
+        #button(' - ' '#' "document.projectTree.filterFrom.value = ''; return false;")
+        &nbsp;
+        <label>$labelTo:</label>
+        <input type="text" name="filterTo" value="$!filter.getToAsString()" size="10"/>
+        #button('...' '#' "openDateTopPicker(); return false;")
+        #button(' - ' '#' "document.projectTree.filterTo.value = ''; return false;")
+    &nbsp;&nbsp;</span>
+        </p>
+        <p>
+        #button($labelSearch '' 'document.projectTree.filterPage.value = "1";document.projectTree.submit(); return false;')
+        #button($labelSearchReset '' 'clearFilterFields(); return false;')
+        </p>
+</fieldset>
+     <fieldset>
+         <legend>$navigationNode.getLabel($locale)</legend>
+         <p>
+             <table class="list">
+                 <thead>
+                     <tr>
+                         <th>$labelProject</th>
+                         <th>$labelActions</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+#foreach ($node in $tree)
+    #set ($object = $node.object)
+    #set ($omclass = $object.getOMObject().getOMClass().name)
+    #if ($object)
+                     <tr>
+                      #set($colspan="")
+                      #if ($omclass == 'Fulfillment')
+                        #set($colspan="colspan=2")
+                      #end
+                         <td $colspan>
+        #if ($node.level > 2)
+            #foreach ($l in [3..$node.level])
+                             <img src="static/images/pm3/spacer.gif" />
+            #end
+        #end
+        #if ($node.closed() && $omclass != 'Fulfillment')
+                             <a href="$link" onclick="document.projectTree.treeOpen.value = '$node.id'; document.projectTree.submit(); return false;"><img src="static/images/pm3/closedNode.gif" /></a>
+        #elseif (($node.opened() && $node.leaf()) || $omclass == 'Fulfillment')
+                             <img src="static/images/pm3/leafNode.gif" />
+        #elseif ($node.opened())
+                             <a href="$link" onclick="document.projectTree.treeClose.value = '$node.id'; document.projectTree.submit(); return false;"><img src="static/images/pm3/openedNode.gif" /></a>
+        #end
+                             <img src="static/images/pm3/$object.getIcon()" />
+        #if ($omclass == 'Fulfillment')
+                             <b>$!object.user &nbsp; $!object.dateAsString &nbsp;&nbsp; $!object.timeSpentAsString &nbsp; $labelHourFull &nbsp;&nbsp; $stringCutter.cut($!object.description, 40)</b>
+        #else
+                             <b>$!object.name</b>
+        #end
+                         </td>
+#if ($omclass != 'Fulfillment')
+                         <td>
+        #if ($omclass == 'Project')
+            #set($isActive = $object.active)
+            #if(($pMUser.may("actionProjectEditOwnProject") && ($pMUser.isPMOf($object) || $pMUser.isPOOf($object))) || $pMUser.may("actionProjectEditOthersProject"))
+                        <a href="$link.clear().setNavigationId('projectProperties').setObjectId($position, $object.id)">$labelEdit</a> |
+            #end
+                        <a href="$link.clear().setNavigationId('personalTaskList').setObjectId($position, $object.id)">$labelTasks</a>
+            #if((($pMUser.may("actionProjectEditOwnProject") && ($pMUser.isPMOf($object) || $pMUser.isPOOf($object))) || $pMUser.may("actionProjectEditOthersProject")) && ($object.active))
+                        | <a href="$link" onclick="document.projectTree.action = '$link.clear().setNavigationId('taskProperties')'; document.projectTree.selectedProjectId.value = '$object.id'; document.projectTree.submit(); return false;">$labelNewTask</a>
+            #end
+        #elseif ($omclass == 'Task')
+            #set($first=true)
+            #if(($pMUser.may("actionProjectEditOwnTask") && ($pMUser.isPMOf($object) || $pMUser.isPOOf($object)  || $pMUser.may("actionProjectEditOthersTask"))))
+                        #if(!$first) | #end
+                        <a href="$link.clear().setNavigationId('taskProperties').setObjectId($position, $object.id)">$labelEdit</a>
+                        #set($first=false)
+            #else
+                        #if(!$first) | #end
+                        <a href="$link.clear().setNavigationId('taskProperties').setObjectId($position, $object.id)">$labelView</a>
+                        #set($first=false)
+            #end
+            #if(!$object.hasChildren())
+                         #if(!$first) | #end
+                         <a href="$link.clear().setNavigationId('personalFulfillmentList').setObjectId($position, $object.id)">$labelFulfillments</a>
+                             #if ($object.active && $isActive)
+                         | <a href="$link" onclick="document.projectTree.action = '$link.clear().setNavigationId('fulfillmentProperties')'; document.projectTree.selectedTaskId.value = '$object.id'; document.projectTree.submit(); return false;">$labelNewFulfillment</a>
+                             #end
+                         #set($first=false)
+            #end
+        #end
+                         </td>
+#end
+                     </tr>
+    #end
+#end
+                 </tbody>
+           </table>
+         </p>
+     </fieldset>
+ </form>
+</div>
+#end

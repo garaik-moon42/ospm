@@ -1,0 +1,371 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.projectList.filterOrderBy.value) {
+            document.projectList.filterDirection.value = 0 - document.projectList.filterDirection.value;
+        }
+        document.projectList.filterOrderBy.value = orderBy;
+        document.projectList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.projectList.filterPage.value = displpage;
+            }
+        }
+        document.projectList.displayedPageHeader.value = document.projectList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        document.projectList.filterName.value = "";
+        document.projectList.filterBeginsRangeBottom.value = ""
+        document.projectList.filterBeginsRangeTop.value = ""
+        document.projectList.filterDeadlineRangeBottom.value = ""
+        document.projectList.filterDeadlineRangeTop.value = ""
+        document.projectList.filterActive.value = "";
+        document.projectList.filterProjectmanagerId.value = "";
+        document.projectList.displayedValuefilterProjectmanager.value = "";
+        document.projectList.filterProjectofficerId.value = "";
+        document.projectList.displayedValuefilterProjectofficer.value = "";
+        document.projectList.filterArchive.value = "";
+    }
+
+    function openBeginsBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function beginsBottomPickerCallback(data) {
+        document.projectList.filterBeginsRangeBottom.value = data;
+    }
+
+    function openBeginsTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function beginsTopPickerCallback(data) {
+        document.projectList.filterBeginsRangeTop.value = data;
+    }
+   
+    function openDeadlineBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=deadlineBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function deadlineBottomPickerCallback(data) {
+        document.projectList.filterDeadlineRangeBottom.value = data;
+    }
+
+    function openDeadlineTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=deadlineTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function deadlineTopPickerCallback(data) {
+        document.projectList.filterDeadlineRangeTop.value = data;
+    }
+   
+    function openProjectmanagerPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #if($pm_roles.size() > 0)
+        #set($param="")
+        #foreach($role in $pm_roles)
+            #if($counter==1)
+                #set($param= "Role.$role.id")
+            #else
+                #set($param= "${param},Role.${role.id}")
+            #end
+        #end
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position, $param))?callback=projectmanagerPickerCallback",
+                            "labelProjectmanagerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=projectmanagerPickerCallback",
+                            "labelProjectmanagerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #end
+        w.focus();
+    }
+
+    function projectmanagerPickerCallback(id, label, data) {
+        document.projectList.filterProjectmanagerId.value = id;
+        document.projectList.displayedValuefilterProjectmanager.value = label;
+    }
+
+    function openProjectofficerPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #if($po_roles.size() > 0)
+        #set($param="")
+        #foreach($role in $po_roles)
+            #if($counter==1)
+                #set($param= "Role.$role.id")
+            #else
+                #set($param= "${param},Role.${role.id}")
+            #end
+        #end
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position, $param))?callback=projectofficerPickerCallback",
+                            "labelProjectofficerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=projectofficerPickerCallback",
+                            "labelProjectofficerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #end
+        w.focus();
+    }
+
+    function projectofficerPickerCallback(id, label, data) {
+        document.projectList.filterProjectofficerId.value = id;
+        document.projectList.displayedValuefilterProjectofficer.value = label;
+    }
+
+    function openSystemLockPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=systemLockPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function systemLockPickerCallback(data) {
+        document.projectList.filterSystemLock.value = data;
+    }
+
+    function systemLockValidate() {
+        if(document.projectList.filterSystemLock.value == "") {
+            alert("$errorSystemLockIsEmpty");
+            return false;
+        }
+        return confirm("$confirmSystemLock");
+    }
+
+#if($selectMode)
+    function selectObject(id, label, data, businessUnitId, businessUnit) {
+#if($callback)
+        window.opener.${callback}(id, label, data, businessUnitId, businessUnit);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="projectList" action="$link" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelName($locale):</label>
+                <input type="text" name="filterName" value="$!filter.nameAsString" size="30"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelBegins($locale):</label>
+                <label>$filter.labelBeginsRangeBottom($locale):</label>
+                <input type="text" name="filterBeginsRangeBottom" value="$!filter.beginsRangeBottomAsString" size="10"/>
+                #button('...' '#' "openBeginsBottomPicker(); return false;")
+                #button(' - ' '#' "document.projectList.filterBeginsRangeBottom.value = ''; return false;")
+                &nbsp;
+                <label>$filter.labelBeginsRangeTop($locale):</label>
+                <input type="text" name="filterBeginsRangeTop" value="$!filter.beginsRangeTopAsString" size="10"/>
+                #button('...' '#' "openBeginsTopPicker(); return false;")
+                #button(' - ' '#' "document.projectList.filterBeginsRangeTop.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelDeadline($locale):</label>
+                <label>$filter.labelDeadlineRangeBottom($locale):</label>
+                <input type="text" name="filterDeadlineRangeBottom" value="$!filter.deadlineRangeBottomAsString" size="10"/>
+                #button('...' '#' "openDeadlineBottomPicker(); return false;")
+                #button(' - ' '#' "document.projectList.filterDeadlineRangeBottom.value = ''; return false;")
+                &nbsp;
+                <label>$filter.labelDeadlineRangeTop($locale):</label>
+                <input type="text" name="filterDeadlineRangeTop" value="$!filter.deadlineRangeTopAsString" size="10"/>
+                #button('...' '#' "openDeadlineTopPicker(); return false;")
+                #button(' - ' '#' "document.projectList.filterDeadlineRangeTop.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+                </p><p>
+            <span class="nowrap">
+                <label>$filter.labelProjectmanager($locale):</label>
+                <input type="hidden" name="filterProjectmanagerId" value="$!filter.getProjectmanager().getId()"/>
+                <input type="text" name="displayedValuefilterProjectmanager" value="$!omObjectFormatter.format($filter.projectmanager.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #button('...' '#' "openProjectmanagerPicker(); return false;")
+            #if ($pMUser.hasRole("projectLeader") )
+                #button($labelMyself '#' "document.projectList.filterProjectmanagerId.value = '$pMUser.getEmployee().getId()'; document.projectList.displayedValuefilterProjectmanager.value = '$!omObjectFormatter.format($pMUser.getEmployee().getOMObject(), $locale)'; document.projectList.submit(); return false;")
+            #end
+                #button(' - ' '#' "document.projectList.filterProjectmanagerId.value = ''; document.projectList.displayedValuefilterProjectmanager.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelProjectofficer($locale):</label>
+                <input type="hidden" name="filterProjectofficerId" value="$!filter.getProjectofficer().getId()"/>
+                <input type="text" name="displayedValuefilterProjectofficer" value="$!omObjectFormatter.format($filter.projectofficer.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #button('...' '#' "openProjectofficerPicker(); return false;")
+            #if ($pMUser.hasRole("projectOfficer") )
+                #button($labelMyself '#' "document.projectList.filterProjectofficerId.value = '$pMUser.getEmployee().getId()'; document.projectList.displayedValuefilterProjectofficer.value = '$!omObjectFormatter.format($pMUser.getEmployee().getOMObject(), $locale)'; document.projectList.submit(); return false;")
+            #end
+                #button(' - ' '#' "document.projectList.filterProjectofficerId.value = ''; document.projectList.displayedValuefilterProjectofficer.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelActive($locale):</label>
+                <select name="filterActive" size="1">
+                    <option value=""></option>
+                    <option value="true" #if($filter.activeAsString == "true")selected#end>$labelYes</option>
+                    <option value="false" #if($filter.activeAsString == "false")selected#end>$labelNo</option>
+                </select>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelArchive($locale):</label>
+                <select name="filterArchive" size="1">
+                    <option value=""></option>
+                    <option value="true" #if($filter.archiveAsString == "true")selected#end>$labelYes</option>
+                    <option value="false" #if($filter.archiveAsString == "false")selected#end>$labelNo</option>
+                </select>
+            &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.projectList.filterPage.value = "1";document.projectList.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+#if (!$selectMode)
+                #button($labelBack '#' "document.projectList.action = '$history.back()'; document.projectList.submit(); return false;")
+#end
+                </p>
+        </fieldset>
+#if (!$selectMode)
+    #if($ams.may("actionProjectCreateProject"))
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNewProject '' "document.projectList.action = '$link.clear().setNavigationId('projectProperties') '; document.projectList.submit(); return false;")
+            </p>
+        </fieldset>
+    #end
+#end
+#if(!$selectMode && $pMUser.hasRole("administrator"))
+        <fieldset>
+            <legend>$labelSystemLock</legend>
+            <p>
+                <span class="nowrap">
+                    <label>$labelDate:</label>
+                    <input type="text" name="filterSystemLock" value="$filter.systemLockAsString" size="10"/>
+                    #button('...' '#' "openSystemLockPicker(); return false;")
+                &nbsp;&nbsp;</span>
+                #buttonDeny($labelExecute '' "if(systemLockValidate()) {document.projectList.action = '$link.setOperation($position,'systemLock')'; document.projectList.submit();} return false;")
+            </p>
+        </fieldset>
+#end
+        <fieldset>
+            <p>
+
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.projectList.filterPage.value = 1; document.projectList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.projectList.filterPage.value = $filter.page - 1; document.projectList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelProjectListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.projectList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.projectList.filterPage.value = ($filter.page + 1); document.projectList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.projectList.filterPage.value = $filter.lastPage; document.projectList.submit(); return false;")
+#end
+#else
+                        $labelProjectListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th><a href="#" onClick="changeOrderBy('name');return false;">$filter.labelName($locale) #if ($filter.orderBy == "name") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('workingHours');return false;">$filter.labelWorkingHours($locale) #if ($filter.orderBy == "workingHours") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('begins');return false;">$filter.labelBegins($locale) #if ($filter.orderBy == "begins") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('deadline');return false;">$filter.labelDeadline($locale) #if ($filter.orderBy == "deadline") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('active');return false;">$filter.labelActive($locale) #if ($filter.orderBy == "active") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('businessUnit');return false;">$filter.labelBusinessUnit($locale) #if ($filter.orderBy == "businessUnit") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('projectmanager');return false;">$filter.labelProjectmanager($locale) #if ($filter.orderBy == "projectmanager") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('projectofficer');return false;">$filter.labelProjectofficer($locale) #if ($filter.orderBy == "projectofficer") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('archive');return false;">$filter.labelArchive($locale) #if ($filter.orderBy == "archive") $directionFlag #end</a></th>
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+#foreach ($item in $items)
+                            <td>$item.nameAsString</td>
+                            <td>$item.workingHoursAsString</td>
+                            <td>$item.beginsAsString</td>
+                            <td>$item.deadlineAsString</td>
+#if($item.activeAsString.equals("true"))
+                            <td>$labelYes</td>
+#else
+                            <td>$labelNo</td>
+#end
+#if($item.businessUnit.getOMObject())
+                            <td>$!omObjectFormatter.format($item.businessUnit.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+#if($item.projectmanager.getOMObject())
+                            <td>$!omObjectFormatter.format($item.projectmanager.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+#if($item.projectofficer.getOMObject())
+                            <td>$!omObjectFormatter.format($item.projectofficer.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+#if($item.archiveAsString.equals("true"))
+                            <td>$labelYes</td>
+#else
+                            <td>$labelNo</td>
+#end
+#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', '', '$item.getBusinessUnit().getId()','$omObjectFormatter.formatForJavascript($item.getBusinessUnit().getOMObject(), $locale)'); return false;">$labelChoose</a>
+                            </td>
+#else
+                            <td>
+                                #if(($ams.may("actionProjectEditOwnProject") && ($pMUser.employee.id==$item.projectmanager.id || $pMUser.employee.id==$item.projectofficer.id)) || $ams.may("actionProjectEditOthersProject"))
+                                    <a href="$link.clear().setNavigationId('projectProperties').setObjectId($position, $item.id)">$labelEdit</a> |
+                                #end
+                                <a href="$link.clear().setNavigationId('simpleProjectTree').setObjectId($position, $item.id)?refreshTree=true">$labelProjectTree</a>
+                            </td>
+#end
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

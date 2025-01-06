@@ -1,0 +1,27 @@
+<script type="text/javascript" language="Javascript1.2">
+    function validate() {
+      if(form.fileImport.value == "") {
+        alert("$errorImportFileIsEmpty");
+        return false;
+      }
+      return true;
+    }
+</script>
+<div class="portlet">
+    <form name="form" action="$history.ignore($link).baseURI/import" method="post" enctype="multipart/form-data">
+        <fieldset class="dialog">
+            <legend>$labelImportCSVFile</legend>
+            <p class="nowrap">
+                <label>$labelImportFile*:</label>
+                <input type="file" name="fileImport" size="40"/>
+            </p>
+        </fieldset>
+        <fieldset class="operation">
+            <legend>$labelActions</legend>
+                <p>
+                    <input type="submit" value="$labelImport" onclick="return validate();"/>
+                    <input type="button" value="$labelCancel" onclick="window.close();"/>
+                </p>
+        </fieldset>
+    </form>
+</div>

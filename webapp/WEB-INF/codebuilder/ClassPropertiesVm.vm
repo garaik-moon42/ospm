@@ -1,0 +1,76 @@
+#set($dot = ".")
+#set($apos ="'")
+#set($hashmark ="#")
+#set($openingBracket ="(")
+#set($closingBracket =")")
+
+<script type="text/javascript" language="Javascript1.2">
+#foreach($attribute in $attributes)
+#if($attribute.getParameter("editable") == "yes" && $attribute.getParameter("inputLook") == "pick")
+#if($attribute.type == "reference")
+## Select portlet|navigationNode name of attribute
+#set($name = "${naming.formatAttribute($attribute.getParameter('omClass'))}Select")
+
+    function open${naming.getAttributeMethod($attribute.name)}Picker() {
+    var top = (window.event) ? window.event.screenY : 0;
+    var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink($name)$closingBracket?callback=${attribute.name}PickerCallback",
+                            "label${naming.getAttributeMethod($attribute.name)}Select",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function ${attribute.name}PickerCallback(id, label, data) {
+        document.properties.${naming.formatAttribute($classname)}${naming.getAttributeMethod($attribute.name)}Id.value = id;
+        document.properties.displayedValue${naming.formatAttribute($classname)}${naming.getAttributeMethod($attribute.name)}.value = label;
+    }
+#elseif($attribute.type == "date" || $attribute.type == "datetime")
+    function open${naming.getAttributeMethod($attribute.name)}Picker() {
+    var top = (window.event) ? window.event.screenY : 0;
+    var left = (window.event) ? window.event.screenX : 0;
+#if($attribute.type == "date")
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink("calendar")$closingBracket?disableTime=true&disableSecs=true&callback=${attribute.name}PickerCallback",
+#elseif($attribute.type == "datetime")
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink("calendar")$closingBracket?disableTime=false&disableSecs=true&callback=${attribute.name}PickerCallback",
+#end
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function ${attribute.name}PickerCallback(data) {
+        document.properties.${naming.formatAttribute($classname)}${naming.getAttributeMethod($attribute.name)}.value = data;
+    }
+#elseif($attribute.type == "time")
+    function open${naming.getAttributeMethod($attribute.name)}Picker() {
+        alert("Unsupported picker. Make first time picker portlet into calendar module!");
+    }
+#else
+
+    // The $attribute.type type not support 'pick' input look. [attribute: $attribute.name]
+
+#end
+#end
+#end
+</script>
+<div class="portlet">
+    <form name="properties" action="$link" method="post">
+        <input type="hidden" name="updateForm" value="update"/>
+        <fieldset class="dialog">
+#parse("comp-propertyFields.vm")
+        <fieldset class="operation">
+            <legend>$labelActions</legend>
+                <p>
+                    ${hashmark}set($saveOperation = ${apos}${naming.formatAttribute($classname)}Save${apos})
+                    ${hashmark}set($saveLink = $link.setOperation($position,$saveOperation))
+                    ${hashmark}set($deleteOperation = ${apos}${naming.formatAttribute($classname)}Delete${apos})
+                    ${hashmark}set($deleteLink = $link.setOperation($position,$deleteOperation))
+                    #buttonAccept($labelSave '#' "document.properties.action = '$history.ignore($saveLink)'; document.properties.submit(); return false;")
+                    #buttonDeny($labelDelete '#' "if(confirm(${apos}$confirmDelete${classname}$apos)) {document.properties.action = '$history.ignore($deleteLink)'; document.properties.submit();} return false;")
+                    #button($labelCancel '#' "document.properties.action = '$history.back()'; document.properties.submit(); return false;")
+                </p>
+        </fieldset>
+    </form>
+</div>

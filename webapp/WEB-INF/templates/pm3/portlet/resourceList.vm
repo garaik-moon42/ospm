@@ -1,0 +1,168 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.resourceList.filterOrderBy.value) {
+            document.resourceList.filterDirection.value = 0 - document.resourceList.filterDirection.value;
+        }
+        document.resourceList.filterOrderBy.value = orderBy;
+        document.resourceList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.resourceList.filterPage.value = displpage;
+            }
+        }
+        document.resourceList.displayedPageHeader.value = document.resourceList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        document.resourceList.filterName.value = "";
+        document.resourceList.filterCostRangeBottom.value = ""
+        document.resourceList.filterCostRangeTop.value = ""
+    }
+
+
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="resourceList" action="$history.ignore($link)" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelName($locale):</label>
+                <input type="text" name="filterName" value="$!filter.nameAsString" size="40"/>
+                &nbsp;&nbsp;
+                <label>$labelType</label>
+                <select name="filterType" size="1">
+                    <option value="">$labelAll</option>
+                    <option value="$filter.TYPE_EMPLOYEE" #if($filter.typeAsString == "$filter.TYPE_EMPLOYEE")selected#end>$labelEmployees</option>
+                    <option value="$filter.TYPE_PMROLE" #if($filter.typeAsString == "$filter.TYPE_PMROLE")selected#end>$labelPMRoles</option>
+                    <option value="$filter.TYPE_TOOL" #if($filter.typeAsString == "$filter.TYPE_TOOL")selected#end>$labelTools</option>
+                </select>
+                &nbsp;&nbsp;
+            </span>
+            ##<span class="nowrap">
+              ##  <label>$filter.labelCost($locale):</label>
+                ##<label>$filter.labelCostRangeBottom($locale):</label>
+                ##<input type="text" name="filterCostRangeBottom" value="$!filter.costRangeBottomAsString" size="18"/>
+                ##<label>$filter.labelCostRangeTop($locale):</label>
+                ##<input type="text" name="filterCostRangeTop" value="$!filter.costRangeTopAsString" size="18"/>
+                ##
+            ##&nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.resourceList.filterPage.value = "1";document.resourceList.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+#if (!$selectMode)
+                #button($labelBack '#' "document.resourceList.action = '$history.back()'; document.resourceList.submit(); return false;")
+#end
+                </p>
+        </fieldset>
+#if (!$selectMode)
+        #if($ams.may("actionProjectEditResourceDetails"))
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+               ## #button($labelNewTool '' "document.resourceList.action = '$link.clear().setNavigationId('toolProperties') '; document.resourceList.submit(); return false;")
+                #button($labelNewEmployee '' "document.resourceList.action = '$link.clear().setNavigationId('employeeProperties') '; document.resourceList.submit(); return false;")
+               ## #button($labelNewPMRole '' "document.resourceList.action = '$link.clear().setNavigationId('pmRoleProperties') '; document.resourceList.submit(); return false;")
+            </p>
+        </fieldset>
+        #end
+#end
+        <fieldset>
+            <p>
+
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.resourceList.filterPage.value = 1; document.resourceList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.resourceList.filterPage.value = $filter.page - 1; document.resourceList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelResourceHits &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.resourceList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.resourceList.filterPage.value = ($filter.page + 1); document.resourceList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.resourceList.filterPage.value = $filter.lastPage; document.resourceList.submit(); return false;")
+#end
+#else
+                        $labelresourceListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th><a href="#" onClick="changeOrderBy('name');return false;">$filter.labelName($locale) #if ($filter.orderBy == "name") $directionFlag #end</a></th>
+                            ##<th><a href="#" onClick="changeOrderBy('cost');return false;">$filter.labelCost($locale) #if ($filter.orderBy == "cost") $directionFlag #end</a></th>
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        #foreach ($item in $items)
+                        <tr>
+                            <td>
+
+                                <img src="static/images/pm3/$item.getIcon()" title="$item.getTypeName()" width=$filter.ICON_WIDTH height=$filter.ICON_HEIGHT border=0>
+
+                            </td>
+                            <td>$item.nameAsString</td>
+                           ## <td>$item.costAsString</td>
+#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+#else
+                            <td>
+#set($first=true)
+#if($ams.may("actionProjectEditResourceDetails"))
+                        ##        #if(!$first) | #end
+###if($item.getOMObject().getOMClass().name == 'Tool')
+  ##                              <a href="$link.clear().setNavigationId('toolProperties').setObjectId($position, $item.id)">$labelEdit</a>
+    ##                            #set($first=false)
+#if($item.getOMObject().getOMClass().name == 'Employee')
+                                <a href="$link.clear().setNavigationId('employeeProperties').setObjectId($position, $item.id)">$labelEdit</a>
+                         ##       #set($first=false)
+##elseif($item.getOMObject().getOMClass().name == 'PMRole')
+                              ##  <a href="$link.clear().setNavigationId('pmRoleProperties').setObjectId($position, $item.id)">$labelEdit</a>
+                               ## #set($first=false)
+#end
+#end
+##if ($item.getOMObject().getOMClass().name == 'Employee')
+ ##                               #if(!$first) | #end
+   ##                             <a href="$link.clear().setNavigationId('employeePMRoleList').setObjectId($position, $item.id)">$labelPMRoles</a>
+     ##                           #set($first=false)
+###end
+                            </td>
+#end
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

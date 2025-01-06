@@ -1,0 +1,245 @@
+
+
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.pMUserList.filterOrderBy.value) {
+            document.pMUserList.filterDirection.value = 0 - document.pMUserList.filterDirection.value;
+        }
+        document.pMUserList.filterOrderBy.value = orderBy;
+        document.pMUserList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.pMUserList.filterPage.value = displpage;
+            }
+        }
+        document.pMUserList.displayedPageHeader.value = document.pMUserList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        document.pMUserList.filterUserId.value = "";
+        document.pMUserList.filterFirstName.value = "";
+        document.pMUserList.filterLastName.value = "";
+        document.pMUserList.filterPhone.value = "";
+        document.pMUserList.filterEmailAddress.value = "";
+    }
+
+
+    function openCreationDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=creationDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function creationDateBottomPickerCallback(data) {
+        document.pMUserList.filterCreationDateRangeBottom.value = data;
+    }
+
+    function openCreationDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=creationDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function creationDateTopPickerCallback(data) {
+        document.pMUserList.filterCreationDateRangeTop.value = data;
+    }
+   
+    function openModificationDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=modificationDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function modificationDateBottomPickerCallback(data) {
+        document.pMUserList.filterModificationDateRangeBottom.value = data;
+    }
+
+    function openModificationDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=modificationDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function modificationDateTopPickerCallback(data) {
+        document.pMUserList.filterModificationDateRangeTop.value = data;
+    }
+   
+    function openDeletionDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=deletionDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function deletionDateBottomPickerCallback(data) {
+        document.pMUserList.filterDeletionDateRangeBottom.value = data;
+    }
+
+    function openDeletionDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=deletionDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function deletionDateTopPickerCallback(data) {
+        document.pMUserList.filterDeletionDateRangeTop.value = data;
+    }
+   
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="pMUserList" action="$link" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelUserId($locale):</label>
+                <input type="text" name="filterUserId" value="$!filter.userIdAsString" size="40"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelFirstName($locale):</label>
+                <input type="text" name="filterFirstName" value="$!filter.firstNameAsString" size="40"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelLastName($locale):</label>
+                <input type="text" name="filterLastName" value="$!filter.lastNameAsString" size="40"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelPhone($locale):</label>
+                <input type="text" name="filterPhone" value="$!filter.phoneAsString" size="16"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelEmailAddress($locale):</label>
+                <input type="text" name="filterEmailAddress" value="$!filter.emailAddressAsString" size="40"/>
+            &nbsp;&nbsp;</span>
+                    <span class="nowrap">
+                        <label>$filter.labelStatus($locale):</label>
+                        <select name="filterStatus" size="1">
+                            <option value=""></option>
+                            <option value="A" #if($filter.statusAsString.equals("A")) selected #end>$labelUserActive</option>
+                            <option value="I" #if($filter.statusAsString.equals("I")) selected #end>$labelUserInactive</option>
+                        </select>
+                    &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.pMUserList.filterPage.value = "1";document.pMUserList.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+#if (!$selectMode)
+                #button($labelBack '#' "document.pMUserList.action = '$history.back()'; document.pMUserList.submit(); return false;")
+#end
+                </p>
+        </fieldset>
+#if (!$selectMode)
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNewPMUser '' "document.pMUserList.action = '$link.clear().setNavigationId('pMUserProperties') '; document.pMUserList.submit(); return false;")
+            </p>
+        </fieldset>
+#end
+        <fieldset>
+            <p>
+
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.pMUserList.filterPage.value = 1; document.pMUserList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.pMUserList.filterPage.value = $filter.page - 1; document.pMUserList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelPMUserListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.pMUserList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.pMUserList.filterPage.value = ($filter.page + 1); document.pMUserList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.pMUserList.filterPage.value = $filter.lastPage; document.pMUserList.submit(); return false;")
+#end
+#else
+                        $labelPMUserListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th>$filter.labelUserId($locale)</th>
+                            <th>$filter.labelFirstName($locale)</th>
+                            <th>$filter.labelLastName($locale)</th>
+                            <th>$filter.labelPhone($locale)</th>
+                            <th>$filter.labelEmailAddress($locale)</th>
+                            <th><a href="#" onClick="changeOrderBy('status');return false;">$filter.labelStatus($locale) #if ($filter.orderBy == "status") $directionFlag #end</a></th>
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+#foreach ($item in $items)
+                        <tr>
+                            <td>$item.userIdAsString</td>
+                            <td>$item.firstNameAsString</td>
+                            <td>$item.lastNameAsString</td>
+                            <td>$item.phoneAsString</td>
+                            <td>$item.emailAddressAsString</td>
+                            <td>$item.statusAsString</td>
+#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+#else
+                            <td>
+                                <a href="$link.clear().setNavigationId('pMUserProperties').setObjectId($position, $item.id)">$labelEdit</a>
+#if($ams.may("actionAdminChangeAnybodysPassword"))
+                                &nbsp; | &nbsp; <a href="$link.clear().setNavigationId('changeAnybodysPassword').setObjectId($position, $item.id)">$labelChangePassword</a>
+#end
+                            </td>
+#end
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

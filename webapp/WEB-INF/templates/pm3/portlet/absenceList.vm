@@ -1,0 +1,495 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.absenceList.filterOrderBy.value) {
+            document.absenceList.filterDirection.value = 0 - document.absenceList.filterDirection.value;
+        }
+        document.absenceList.filterOrderBy.value = orderBy;
+        document.absenceList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.absenceList.filterPage.value = displpage;
+            }
+        }
+        document.absenceList.displayedPageHeader.value = document.absenceList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        document.absenceList.filterEmployeeId.value = "";
+        document.absenceList.displayedValuefilterEmployee.value = "";
+        document.absenceList.filterBeginsRangeBottom.value = ""
+        document.absenceList.filterBeginsRangeTop.value = ""
+        document.absenceList.filterEndsRangeBottom.value = ""
+        document.absenceList.filterEndsRangeTop.value = ""
+//        document.absenceList.filterCreatedById.value = "";
+//        document.absenceList.displayedValuefilterCreatedBy.value = "";
+//        document.absenceList.filterCreationDateRangeBottom.value = ""
+//        document.absenceList.filterCreationDateRangeTop.value = ""
+//        document.absenceList.filterModifiedById.value = "";
+//        document.absenceList.displayedValuefilterModifiedBy.value = "";
+//        document.absenceList.filterModificationDateRangeBottom.value = ""
+//        document.absenceList.filterModificationDateRangeTop.value = ""
+        document.absenceList.filterApprovedById.value = "";
+        document.absenceList.displayedValuefilterApprovedBy.value = "";
+        document.absenceList.filterApproveDateRangeBottom.value = "";
+        document.absenceList.filterApproveDateRangeTop.value = "";
+        document.absenceList.filterProjectmanagerId.value = "";
+        document.absenceList.displayedValuefilterProjectmanager.value = "";
+    }
+
+
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.absenceList.filterEmployeeId.value = id;
+        document.absenceList.displayedValuefilterEmployee.value = label;
+    }
+
+    function openBeginsBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function beginsBottomPickerCallback(data) {
+        document.absenceList.filterBeginsRangeBottom.value = data;
+    }
+
+    function openBeginsTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function beginsTopPickerCallback(data) {
+        document.absenceList.filterBeginsRangeTop.value = data;
+    }
+   
+    function openEndsBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=endsBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function endsBottomPickerCallback(data) {
+        document.absenceList.filterEndsRangeBottom.value = data;
+    }
+
+    function openEndsTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=endsTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function endsTopPickerCallback(data) {
+        document.absenceList.filterEndsRangeTop.value = data;
+    }
+   
+    function openCreatedByPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('pMUserSelect'))?callback=createdByPickerCallback",
+                            "labelCreatedBySelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function createdByPickerCallback(id, label, data) {
+        document.absenceList.filterCreatedById.value = id;
+        document.absenceList.displayedValuefilterCreatedBy.value = label;
+    }
+
+    function openCreationDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=creationDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function creationDateBottomPickerCallback(data) {
+        document.absenceList.filterCreationDateRangeBottom.value = data;
+    }
+
+    function openCreationDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=creationDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function creationDateTopPickerCallback(data) {
+        document.absenceList.filterCreationDateRangeTop.value = data;
+    }
+   
+    function openModifiedByPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('pMUserSelect'))?callback=modifiedByPickerCallback",
+                            "labelModifiedBySelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function modifiedByPickerCallback(id, label, data) {
+        document.absenceList.filterModifiedById.value = id;
+        document.absenceList.displayedValuefilterModifiedBy.value = label;
+    }
+
+    function openModificationDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=modificationDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function modificationDateBottomPickerCallback(data) {
+        document.absenceList.filterModificationDateRangeBottom.value = data;
+    }
+
+    function openModificationDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=modificationDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function modificationDateTopPickerCallback(data) {
+        document.absenceList.filterModificationDateRangeTop.value = data;
+    }
+   
+    function openApprovedByPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('pMUserSelect'))?callback=approvedByPickerCallback",
+                            "labelApprovedBySelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function approvedByPickerCallback(id, label, data) {
+        document.absenceList.filterApprovedById.value = id;
+        document.absenceList.displayedValuefilterApprovedBy.value = label;
+    }
+
+    function openApproveDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=approveDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function approveDateBottomPickerCallback(data) {
+        document.absenceList.filterApproveDateRangeBottom.value = data;
+    }
+
+    function openApproveDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=approveDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function approveDateTopPickerCallback(data) {
+        document.absenceList.filterApproveDateRangeTop.value = data;
+    }
+
+    function openProjectmanagerPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #set($roles = "Role.projectLeader")
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect')).setObjectIds($position, $roles)?callback=projectmanagerPickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+    function projectmanagerPickerCallback(id, label, data) {
+        document.absenceList.filterProjectmanagerId.value = id;
+        document.absenceList.displayedValuefilterProjectmanager.value = label;
+    }
+
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="absenceList" action="$history.ignore($link)" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelEmployee($locale):</label>
+                <input type="hidden" name="filterEmployeeId" value="$!filter.getEmployee().getId()"/>
+                <input type="text" name="displayedValuefilterEmployee" value="$!omObjectFormatter.format($filter.employee.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openEmployeePicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelBegins($locale):</label>
+                <label>$filter.labelBeginsRangeBottom($locale):</label>
+                <input type="text" name="filterBeginsRangeBottom" value="$!filter.beginsRangeBottomAsString" size="18"/>
+                #button('...' '#' "openBeginsBottomPicker(); return false;")
+                <label>$filter.labelBeginsRangeTop($locale):</label>
+                <input type="text" name="filterBeginsRangeTop" value="$!filter.beginsRangeTopAsString" size="18"/>
+                #button('...' '#' "openBeginsTopPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelEnds($locale):</label>
+                <label>$filter.labelEndsRangeBottom($locale):</label>
+                <input type="text" name="filterEndsRangeBottom" value="$!filter.endsRangeBottomAsString" size="18"/>
+                #button('...' '#' "openEndsBottomPicker(); return false;")
+                <label>$filter.labelEndsRangeTop($locale):</label>
+                <input type="text" name="filterEndsRangeTop" value="$!filter.endsRangeTopAsString" size="18"/>
+                #button('...' '#' "openEndsTopPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <!--<span class="nowrap">-->
+                <!--<label>$filter.labelCreatedBy($locale):</label>-->
+                <!--<input type="hidden" name="filterCreatedById" value="$!filter.getCreatedBy().getId()"/>-->
+                <!--<input type="text" name="displayedValuefilterCreatedBy" value="$!omObjectFormatter.format($filter.createdBy.getOMObject(), $locale)" size="40"/>-->
+                <!--#button($labelChoose '#' "openCreatedByPicker(); return false;")-->
+            <!--&nbsp;&nbsp;</span>-->
+            <!--<span class="nowrap">-->
+                <!--<label>$filter.labelCreationDate($locale):</label>-->
+                <!--<label>$filter.labelCreationDateRangeBottom($locale):</label>-->
+                <!--<input type="text" name="filterCreationDateRangeBottom" value="$!filter.creationDateRangeBottomAsString" size="18"/>-->
+                <!--#button('...' '#' "openCreationDateBottomPicker(); return false;")-->
+                <!--<label>$filter.labelCreationDateRangeTop($locale):</label>-->
+                <!--<input type="text" name="filterCreationDateRangeTop" value="$!filter.creationDateRangeTopAsString" size="18"/>-->
+                <!--#button('...' '#' "openCreationDateTopPicker(); return false;")-->
+            <!--&nbsp;&nbsp;</span>-->
+            <!--<span class="nowrap">-->
+                <!--<label>$filter.labelModifiedBy($locale):</label>-->
+                <!--<input type="hidden" name="filterModifiedById" value="$!filter.getModifiedBy().getId()"/>-->
+                <!--<input type="text" name="displayedValuefilterModifiedBy" value="$!omObjectFormatter.format($filter.modifiedBy.getOMObject(), $locale)" size="40"/>-->
+                <!--#button($labelChoose '#' "openModifiedByPicker(); return false;")-->
+            <!--&nbsp;&nbsp;</span>-->
+            <!--<span class="nowrap">-->
+                <!--<label>$filter.labelModificationDate($locale):</label>-->
+                <!--<label>$filter.labelModificationDateRangeBottom($locale):</label>-->
+                <!--<input type="text" name="filterModificationDateRangeBottom" value="$!filter.modificationDateRangeBottomAsString" size="18"/>-->
+                <!--#button('...' '#' "openModificationDateBottomPicker(); return false;")-->
+                <!--<label>$filter.labelModificationDateRangeTop($locale):</label>-->
+                <!--<input type="text" name="filterModificationDateRangeTop" value="$!filter.modificationDateRangeTopAsString" size="18"/>-->
+                <!--#button('...' '#' "openModificationDateTopPicker(); return false;")-->
+            <!--&nbsp;&nbsp;</span>-->
+            <span class="nowrap">
+                <label>$filter.labelApprovedBy($locale):</label>
+                <input type="hidden" name="filterApprovedById" value="$!filter.getApprovedBy().getId()"/>
+                <input type="text" name="displayedValuefilterApprovedBy" value="$!omObjectFormatter.format($filter.approvedBy.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openApprovedByPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelApproveDate($locale):</label>
+                <label>$filter.labelApproveDateRangeBottom($locale):</label>
+                <input type="text" name="filterApproveDateRangeBottom" value="$!filter.approveDateRangeBottomAsString" size="18"/>
+                #button('...' '#' "openApproveDateBottomPicker(); return false;")
+                <label>$filter.labelApproveDateRangeTop($locale):</label>
+                <input type="text" name="filterApproveDateRangeTop" value="$!filter.approveDateRangeTopAsString" size="18"/>
+                #button('...' '#' "openApproveDateTopPicker(); return false;")
+            &nbsp;&nbsp;</span>
+                <span class="nowrap">
+                    <label>$labelProjectmanager:</label>
+                    <input type="hidden" name="filterProjectmanagerId" value="$!filter.projectmanagerId"/>
+                    <input type="text" name="displayedValuefilterProjectmanager" value="$!omObjectFormatter.format($filter.projectmanager.getOMObject(), $locale)" size="40"/>
+                    #button($labelChoose '#' "openProjectmanagerPicker(); return false;")
+                &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.absenceList.filterPage.value = "1";document.absenceList.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+                #button($labelBack '#' "document.absenceList.action = '$history.back()'; document.absenceList.submit(); return false;")
+                </p>
+        </fieldset>
+#if (!$selectMode)
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNewAbsence '' "document.absenceList.action = '$link.clear().setNavigationId('absenceProperties') '; document.absenceList.submit(); return false;")
+                #button($labelApproveAbsence '' "document.absenceList.action = '$link.setOperation('absenceApprove') '; document.absenceList.submit(); return false;")
+                #button($labelUnapproveAbsence '' "document.absenceList.action = '$link.setOperation('absenceUnApprove') '; document.absenceList.submit(); return false;")
+                #button($labelNoticeAbsence '' "document.absenceList.action = '$link.setOperation('absenceNotice') '; document.absenceList.submit(); return false;")
+                #button($labelUnnoticeAbsence '' "document.absenceList.action = '$link.setOperation('absenceUnNotice') '; document.absenceList.submit(); return false;")
+            </p>
+        </fieldset>
+#end
+        <fieldset>
+            <p>
+
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.absenceList.filterPage.value = 1; document.absenceList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.absenceList.filterPage.value = $filter.page - 1; document.absenceList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelAbsenceListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.absenceList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.absenceList.filterPage.value = ($filter.page + 1); document.absenceList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.absenceList.filterPage.value = $filter.lastPage; document.absenceList.submit(); return false;")
+#end
+#else
+                        $labelAbsenceListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th><a href="#" onClick="changeOrderBy('employee');return false;">$filter.labelEmployee($locale) #if ($filter.orderBy == "employee") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('begins');return false;">$filter.labelBegins($locale) #if ($filter.orderBy == "begins") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('ends');return false;">$filter.labelEnds($locale) #if ($filter.orderBy == "ends") $directionFlag #end</a></th>
+                            <!--<th><a href="#" onClick="changeOrderBy('createdBy');return false;">$filter.labelCreatedBy($locale) #if ($filter.orderBy == "createdBy") $directionFlag #end</a></th>-->
+                            <!--<th><a href="#" onClick="changeOrderBy('creationDate');return false;">$filter.labelCreationDate($locale) #if ($filter.orderBy == "creationDate") $directionFlag #end</a></th>-->
+                            <!--<th><a href="#" onClick="changeOrderBy('modifiedBy');return false;">$filter.labelModifiedBy($locale) #if ($filter.orderBy == "modifiedBy") $directionFlag #end</a></th>-->
+                            <!--<th><a href="#" onClick="changeOrderBy('modificationDate');return false;">$filter.labelModificationDate($locale) #if ($filter.orderBy == "modificationDate") $directionFlag #end</a></th>-->
+                            <th>$labelAffectedProjects</th>
+                            <th><a href="#" onClick="changeOrderBy('approvedBy');return false;">$filter.labelApprovedBy($locale) #if ($filter.orderBy == "approvedBy") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('approveDate');return false;">$filter.labelApproveDate($locale) #if ($filter.orderBy == "approveDate") $directionFlag #end</a></th>
+                            <th>$labelActions</th>
+#if(!$selectMode)
+                            <th></th>
+#end
+                        </tr>
+                    </thead>
+                    <tbody>
+#foreach ($item in $items)
+                        <tr>
+#if($item.employee.getOMObject())
+                            <td>$!omObjectFormatter.format($item.employee.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+                            <td>$item.beginsAsString</td>
+                            <td>$item.endsAsString</td>
+<!--#if($item.createdBy.getOMObject())-->
+                            <!--<td>$!omObjectFormatter.format($item.createdBy.getOMObject(), $locale)</td>-->
+<!--#else-->
+                            <!--<td>&nbsp;</td>-->
+<!--#end-->
+                            <!--<td>$item.creationDateAsString</td>-->
+<!--#if($item.modifiedBy.getOMObject())-->
+                            <!--<td>$!omObjectFormatter.format($item.modifiedBy.getOMObject(), $locale)</td>-->
+<!--#else-->
+                            <!--<td>&nbsp;</td>-->
+<!--#end-->
+                            <!--<td>$item.modificationDateAsString</td>-->
+                            <td>
+                                #if($item.absenceAffectedProjects.size() > 0)
+                                <table>
+                                   <th></th>
+                                   <th>$labelProject</th>
+                                   <th>$labelProjectmanager</th>
+                                   <th>$labelSubstitute</th>
+                                   <th>$labelNoticed</th>
+                                   #foreach($absenceAffectedProject in $item.absenceAffectedProjects)
+                                   <tr>
+                                       <td>$counter</td>
+                                       <td>$!absenceAffectedProject.project.name</td>
+                                       <td>$absenceAffectedProject.project.projectmanager.name</td>
+                                       <td>
+                                           #if($absenceAffectedProject.substitute)
+                                           $absenceAffectedProject.substitute.name
+                                           #else
+                                           <a href= "$link.clear().setNavigationId('absenceAffectedProjectProperties').setObjectId($position, $absenceAffectedProject.id)"> $labelAdd</a>
+                                           #end
+                                       </td>
+                                       <td>
+                                           <input type="checkbox" name="absenceAffectedProjectId" value="$absenceAffectedProject.id" #if($absenceAffectedProject.noticed) checked #end/>
+                                       </td>
+                                   </tr>
+                                   #end
+                               </table>
+                                #end
+                            </td>
+#if($item.approvedBy.getOMObject())
+                            <td>$!omObjectFormatter.format($item.approvedBy.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+                            <td>$item.approveDateAsString</td>
+#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+#else
+                            <td>
+                                #if(!$item.isApproved())
+                                <a href="$link.clear().setNavigationId('absenceProperties').setObjectId($position, $item.id)">$labelEdit</a>
+                                #end
+                            </td>
+                            <td>
+                                <input type="checkbox" name="absenceId" value="$item.id"/>
+                            </td>
+#end
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

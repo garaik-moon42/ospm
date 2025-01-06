@@ -1,0 +1,104 @@
+#set ($dot = ".")
+#set ($apos = "'")
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE labels SYSTEM "labels.dtd">
+<labels>
+    <label id="nmxPortlet${classname}ListLabel">
+        <value language="hu">$class.getLabel("hu") objektumok adminisztrációja</value>
+        <value language="en">Administration of $naming.formatAttribute($class.getLabel('en')) objects</value>
+    </label>
+    <label id="nmxPortlet${classname}ListDescription">
+        <value language="hu">$class.getLabel('hu') objektumok adminisztrálását lehetővé tévő portlet.</value>
+        <value language="en">Administration of $naming.formatAttribute($class.getLabel('en')) objects.</value>
+    </label>
+    <label id="nmxPortlet${classname}PropertiesLabel">
+        <value language="hu">$class.getLabel('hu') tulajdonságai</value>
+        <value language="en">$class.getLabel('en') properties</value>
+    </label>
+    <label id="nmxPortlet${classname}PropertiesDescription">
+        <value language="hu">$class.getLabel('hu') objektum tulajdonságait megjelenítő portlet.</value>
+        <value language="en">Portlet displaying properties of $naming.formatAttribute($class.getLabel('en')) object.</value>
+    </label>
+    <label id="nmxPortlet${classname}SelectLabel">
+        <value language="hu">$class.getLabel('hu') kiválasztása</value>
+        <value language="en">Selection of $naming.formatAttribute($class.getLabel('en'))</value>
+    </label>
+    <label id="nmxPortlet${classname}SelectDescription">
+        <value language="hu">$class.getLabel('hu') objektum kiválasztását lehetővé tévő portlet.</value>
+        <value language="en">Portlet provides selection of $naming.formatAttribute($class.getLabel('en')) object.</value>
+    </label>
+    <label id="label${classname}Properties">
+        <value language="hu">$class.getLabel('hu') tulajdonságai</value>
+        <value language="en">$class.getLabel('en') properties</value>
+    </label>
+    <label id="errorUnableSave${classname}">
+        <value language="hu">$class.getLabel('hu') mentése sikertelen.</value>
+        <value language="en">Saving of $naming.formatAttribute($class.getLabel('en')) is unsuccessful.</value>
+    </label>
+    <label id="errorUnableDelete${classname}">
+        <value language="hu">$class.getLabel('hu') törlése sikertelen.</value>
+        <value language="en">Deletion of $naming.formatAttribute($class.getLabel('en')) is unsuccessful.</value>
+    </label>
+    <label id="errorUnableExport${classname}ToCSV">
+        <value language="hu">$class.getLabel('hu') lista exportálása sikertelen</value>
+        <value language="en">Exporting of $naming.formatAttribute($class.getLabel('en')) list is unsuccessful.</value>
+    </label>
+    <label id="confirmDelete${classname}">
+        <value language="hu">Biztos, hogy törölni akarja a(z) ${classname} objektumot?</value>
+        <value language="en">Are you sure to delete this $naming.formatAttribute($class.getLabel('en'))?</value>
+    </label>
+    <label id="label${classname}ListEmpty">
+        <value language="hu">Nincs megjeleníthető elem.</value>
+        <value language="en">No items to display.</value>
+    </label>
+    <label id="label${classname}ListCount">
+        <value language="hu">darab $naming.formatAttribute($class.getLabel('hu'))</value>
+        <value language="en">pieces of $naming.formatAttribute($class.getLabel('en'))</value>
+    </label>
+    <label id="labelNew${classname}">
+        <value language="hu">Új $naming.formatAttribute($class.getLabel('hu')) létrehozása</value>
+        <value language="en">Create new $naming.formatAttribute($class.getLabel('en'))</value>
+    </label>
+    <label id="labelExport${classname}">
+        <value language="hu">Az aktuális $naming.formatAttribute($class.getLabel('hu')) lista exportálása</value>
+        <value language="en">Export current $naming.formatAttribute($class.getLabel('en')) list</value>
+    </label>
+
+    <!-- Begin validation error labels. -->
+
+#foreach ($attribute in $attributes)
+    <label id="error${classname}${naming.getAttributeMethod($attribute.name)}Validation">
+        <value language="hu">$apos${attribute.getLabel("hu")}$apos attribútum értéke nem megfelelő.</value>
+        <value language="en">Value of $apos${attribute.getLabel("en")}$apos attribute is invalid.</value>
+    </label>
+    <label id="error${classname}${naming.getAttributeMethod($attribute.name)}IsRequired">
+        <value language="hu">$apos${attribute.getLabel("hu")}$apos megadása kötelező.</value>
+        <value language="en">$apos${attribute.getLabel("en")}$apos is mandatory attribute.</value>
+    </label>
+#end
+
+    <!-- End validation error labels. -->
+
+    <!-- Begin parameters generated labels -->
+#foreach ($attribute in $attributes)
+#foreach ($optionLabel in $attribute.getParameterValues("selectOptionLabels"))
+    <label id="$optionLabel">
+        <value language="hu">A(z) ${apos}${optionLabel}${apos} option felirat</value>
+        <value language="en">The ${apos}${optionLabel}${apos} label of option</value>
+    </label>
+#end
+#if ($attribute.getParameter("filterable") == "yes")
+#if ($attribute.getParameter("filterLook") == "textrange" || $attribute.getParameter("filterLook") == "pickrange")
+    <label id="label${naming.getAttributeMethod($attribute.name)}RangeBottom">
+        <value language="hu">-tól</value>
+        <value language="en">from</value>
+    </label>
+    <label id="label${naming.getAttributeMethod($attribute.name)}RangeTop">
+        <value language="hu">-ig</value>
+        <value language="en">to</value>
+    </label>
+#end
+#end
+#end
+    <!-- Begin parameters generated labels -->
+</labels>

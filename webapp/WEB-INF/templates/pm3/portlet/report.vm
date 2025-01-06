@@ -1,0 +1,100 @@
+<script type="text/javascript" language="JavaScript1.2">
+
+    function openDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+    
+    function dateBottomPickerCallback(data) {
+        document.reportSettings.filterDateRangeBottom.value = data;
+    }
+
+    function openDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function dateTopPickerCallback(data) {
+        document.reportSettings.filterDateRangeTop.value = data;
+    }
+
+    function clearFilterFields() {
+        document.reportSettings.filterEmployeeId.value = "";
+        document.reportSettings.displayedValuefilterEmployee.value = "";
+        document.reportSettings.filterDateRangeBottom.value = "";
+        document.reportSettings.filterDateRangeTop.value = "";
+    }
+
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+#if(!$pMUser.hasRole('administrator'))
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position,$pMUser.employee.id))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#end
+        w.focus();
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.reportSettings.filterEmployeeId.value = id;
+        document.reportSettings.displayedValuefilterEmployee.value = label;
+    }
+
+</script>
+<div class="portlet">
+    <form name="reportSettings" action="/reportForKarin" method="post">
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+            <span class="nowrap">
+                <label>$labelEmployee:</label>
+                <input type="hidden" name="filterEmployeeId" value="$!filter.getEmployee().getId()"/>
+                <input type="text" name="displayedValuefilterEmployee" value="$!omObjectFormatter.format($filter.employee.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #if ( $pMUser.hasRole('projectOfficer') || $pMUser.hasRole('projectLeader') || $pMUser.hasRole('administrator'))
+                    #button('...' '#' "openEmployeePicker(); return false;")
+                #end
+                #button($labelMyself '#' "document.reportSettings.filterEmployeeId.value = '$pMUser.getEmployee().getId()'; document.reportSettings.displayedValuefilterEmployee.value = '$!omObjectFormatter.format($pMUser.getEmployee().getOMObject(), $locale)'; return false;")                                
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$labelDate:</label>
+                <label>$filter.labelDateRangeBottom($locale):</label>
+                <input type="text" name="filterDateRangeBottom" value="$!filter.dateRangeBottomAsString" size="10"/>
+                #button('...' '#' "openDateBottomPicker(); return false;")
+                #button(' - ' '#' "document.reportSettings.filterDateRangeBottom.value = ''; return false;")
+                &nbsp;
+                <label>$filter.labelDateRangeTop($locale):</label>
+                <input type="text" name="filterDateRangeTop" value="$!filter.dateRangeTopAsString" size="10"/>
+                #button('...' '#' "openDateTopPicker(); return false;")
+                #button(' - ' '#' "document.reportSettings.filterDateRangeTop.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+            </p>
+            <p>
+                #button($labelClearFields '' 'clearFilterFields(); return false;')
+                #button($labelBack '#' "document.reportSettings.action = '$history.back()'; document.reportSettings.submit(); return false;")
+                <p/>
+                <p>
+                #button($labelReportForKarin '' "document.reportSettings.submit(); return false;")
+                </p>
+            #if ($errorMessage.hasAttibute("filfillmentMove"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("filfillmentMove")</span>
+            </p>
+            #end
+        </fieldset>
+    </form>
+</div>

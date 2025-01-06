@@ -1,0 +1,640 @@
+#set ( $isAChief = $pMUser.hasRole("administrator") || $pMUser.hasRole("projectLeader") || $pMUser.hasRole("projectOfficer") )
+<script type="text/javascript" language="JavaScript1.2">
+
+    function updateCheckedDate(source, destYes, destNo, objvalue) {
+        //alert('updateCheckedDate()');
+        if (document.getElementById(source).checked) {
+            document.getElementById(destYes).value = objvalue;
+            document.getElementById(destNo).value = "";
+        } else {
+            document.getElementById(destYes).value = "";
+            document.getElementById(destNo).value = objvalue;
+       }
+    }
+
+    function checkAll(name, checked) {
+        var checkboxes = document.getElementsByName(name);
+        for (var i=0; i<checkboxes.length;i++) {
+            if (!checkboxes[i].disabled) {
+                if (checked != checkboxes[i].checked) {
+                    checkboxes[i].click();
+                }
+            }
+        }
+    }
+
+    function checkAllToggle(name) {
+        var checkboxes = document.getElementsByName(name);
+        for (var i=0; i<checkboxes.length;i++) {
+            if (!checkboxes[i].disabled) {
+                checkboxes[i].click();
+            }
+        }
+    }
+
+    function openDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+    function dateBottomPickerCallback(data) {
+        document.fulfillmentList.filterDateRangeBottom.value = data;
+    }
+
+    function openDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function dateTopPickerCallback(data) {
+        document.fulfillmentList.filterDateRangeTop.value = data;
+    }
+
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.fulfillmentList.filterOrderBy.value) {
+            document.fulfillmentList.filterDirection.value = 0 - document.fulfillmentList.filterDirection.value;
+        }
+        document.fulfillmentList.filterOrderBy.value = orderBy;
+        document.fulfillmentList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.fulfillmentList.filterPage.value = displpage;
+            }
+        }
+        document.fulfillmentList.displayedPageHeader.value = document.fulfillmentList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        #if ($isAChief)
+            document.fulfillmentList.filterEmployeeId.value = "";
+            document.fulfillmentList.displayedValuefilterEmployee.value = "";
+        #end
+        document.fulfillmentList.filterProjectId.value = "";
+        document.fulfillmentList.displayedValuefilterProject.value = "";
+        document.fulfillmentList.filterTaskId.value = "";
+        document.fulfillmentList.displayedValuefilterTask.value = "";
+        document.fulfillmentList.filterBusinessUnitId.value = "";
+        document.fulfillmentList.displayedValuefilterBusinessUnit.value = "";
+        document.fulfillmentList.filterAccepted.value = "";
+        document.fulfillmentList.filterApproved.value = "";        
+        document.fulfillmentList.filterDateRangeBottom.value = "";
+        document.fulfillmentList.filterDateRangeTop.value = "";
+        document.fulfillmentList.filterPurchaseOrderNumber.value = "";
+        document.fulfillmentList.filterWorkPackageNumber.value = "";
+        document.fulfillmentList.filterAbroad.value = "";
+        document.fulfillmentList.filterChargeable.value = "";
+    }
+
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+#if(!$pMUser.hasRole('administrator'))
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position,$pMUser.employee.id))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#end
+        w.focus();
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.fulfillmentList.filterEmployeeId.value = id;
+        document.fulfillmentList.displayedValuefilterEmployee.value = label;
+        document.fulfillmentList.submit(); return false;
+    }
+
+    function openTaskPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+#if($personalMode)
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('personalTaskSelect'))?callback=taskPickerCallback",
+                            "labelTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=840, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('taskSelect'))?callback=taskPickerCallback",
+                            "labelTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=840, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#end
+        w.focus();
+    }
+
+    function taskPickerCallback(id, label, data, projectId, project, businessUnitId, businessUnit) {
+        document.fulfillmentList.filterTaskId.value = id;
+        document.fulfillmentList.displayedValuefilterTask.value = label;
+        document.fulfillmentList.filterBusinessUnitId.value = businessUnitId;
+        document.fulfillmentList.displayedValuefilterBusinessUnit.value = businessUnit;
+        document.fulfillmentList.filterProjectId.value = projectId;
+        document.fulfillmentList.displayedValuefilterProject.value = project;
+        document.fulfillmentList.submit(); return false;
+    }
+
+    function openSuperTaskPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('taskSuperSelect'))?callback=superTaskPickerCallback",
+                            "labelSuperTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=800, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function superTaskPickerCallback(id, label, data, projectId, project, businessUnitId, businessUnit) {
+        document.fulfillmentList.filterTaskId.value = id;
+        document.fulfillmentList.displayedValuefilterTask.value = label;
+        document.fulfillmentList.filterProjectId.value = projectId;
+        document.fulfillmentList.displayedValuefilterProject.value = project;
+        document.fulfillmentList.filterBusinessUnitId.value = businessUnitId;
+        document.fulfillmentList.displayedValuefilterBusinessUnit.value = businessUnit;
+        document.fulfillmentList.submit(); return false;
+    }
+
+    function openTaskPickerForMove() {
+        
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+#if($personalMode)
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('personalTaskSelect'))?callback=taskPickerForMoveCallback",
+                            "labelTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=840, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('taskSelect'))?callback=taskPickerForMoveCallback",
+                            "labelTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=840, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#end
+        w.focus();
+    }
+
+    function taskPickerForMoveCallback(id, label, data) {
+        document.fulfillmentList.moveTargetTaskId.value = id;
+        if (confirm("A rendszer automatikusan felveszi a projektbe azokat a kijelölt alkalmazottakat, akik jelenleg nem tartoznak bele. Biztosan átmozgatja a kijelölt teljesítéseket a(z) '" + label + "' feladathoz?")){
+            document.fulfillmentList.submit();
+        }
+    }
+
+    function openBusinessUnitPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #if($personalMode)
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('businessUnitSelect').setObjectId($position,$pMUser.employee.id))?callback=businessUnitPickerCallback",
+                            "labelTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=800, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #else
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('businessUnitSelect'))?callback=businessUnitPickerCallback",
+                            "labelTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=800, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #end
+        w.focus();
+    }
+
+    function businessUnitPickerCallback(id, label, data) {
+        document.fulfillmentList.filterBusinessUnitId.value = id;
+        document.fulfillmentList.displayedValuefilterBusinessUnit.value = label;
+        document.fulfillmentList.filterProjectId.value = "";
+        document.fulfillmentList.displayedValuefilterProject.value = "";
+        document.fulfillmentList.filterTaskId.value = "";
+        document.fulfillmentList.displayedValuefilterTask.value = "";
+        document.fulfillmentList.submit(); return false;
+    }
+
+    function openProjectPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #if($personalMode)
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('projectSelect').setObjectId($position,$pMUser.employee.id))?callback=projectPickerCallback",
+                            "labelTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=800, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #else
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('projectSelect'))?callback=projectPickerCallback",
+                            "labelTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=800, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #end
+        w.focus();
+    }
+
+    function projectPickerCallback(id, label, data, businessUnitId, businessUnit) {
+        document.fulfillmentList.filterProjectId.value = id;
+        document.fulfillmentList.displayedValuefilterProject.value = label;
+        document.fulfillmentList.filterBusinessUnitId.value = businessUnitId;
+        document.fulfillmentList.displayedValuefilterBusinessUnit.value = businessUnit;
+        document.fulfillmentList.filterTaskId.value = "";
+        document.fulfillmentList.displayedValuefilterTask.value = "";
+        document.fulfillmentList.submit(); return false;        
+    }
+
+    function getDateFromString(strdate) {
+        year = strdate.substring(0, 4);
+        month = strdate.substring(5, 7);
+        day = strdate.substring(8, 10);
+        date = new Date();
+        date.setFullYear(year, month - 1, day);
+        date.setHours(0, 0, 0, 0);
+        return date;
+    }
+
+    function exportValidate() {
+        strdb = document.fulfillmentList.filterDateRangeBottom.value;
+        strdt = document.fulfillmentList.filterDateRangeTop.value;
+        if(strdb == "") datebottom = new Date(2004, 0, 1);
+         else datebottom = getDateFromString(strdb);
+        if(strdt == "") datetop = new Date();
+         else datetop = getDateFromString(strdt);
+        time = (datetop - datebottom) / (1000 * 60 * 60 * 24) + 1;
+        if(time > 366) {
+            alert("$errorExportIntervalValidation");
+            return false;
+        }
+        return true;
+    }
+
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+#if($personalMode)
+    <form name="fulfillmentList" action="$history.ignore($link.clear().setNavigationId('personalFulfillmentList'))" method="post">
+#else
+    <form name="fulfillmentList" action="$history.ignore($link.clear().setNavigationId('fulfillmentList'))" method="post">
+#end
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <input type="hidden" name="checkFulfillmentsForAccept" value="" />
+        <input type="hidden" name="checkFulfillmentsForApprove" value="" />
+        <input type="hidden" name="checkFulfillmentsForOperation" value="" />
+        <input type="hidden" name="moveTargetTaskId" value="" />
+        <input type="hidden" name="deleteFulfillmentId" value="" />
+        <input type="hidden" name="doAccountFor" value="" />
+        <input type="hidden" name="filterDatePrevNext" value="" />
+        <input type="hidden" name="checkFulfillmentsForChargeable" value="" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$labelBusinessUnit:</label>
+                <input type="hidden" name="filterBusinessUnitId" value="$!filter.getBusinessUnit().getId()"/>
+                <input type="text" name="displayedValuefilterBusinessUnit" value="$!omObjectFormatter.format($filter.businessUnit.getOMObject(), $locale)" size="20" readonly="readonly"/>
+                #button('...' '#' "openBusinessUnitPicker(); return false;")
+                #button(' - ' '#' "document.fulfillmentList.filterBusinessUnitId.value = ''; document.fulfillmentList.displayedValuefilterBusinessUnit.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$labelProject:</label>
+                <input type="hidden" name="filterProjectId" value="$!filter.getProject().getId()"/>
+                <input type="text" name="displayedValuefilterProject" value="$!omObjectFormatter.format($filter.project.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #button('...' '#' "openProjectPicker(); return false;")
+                #button(' - ' '#' "document.fulfillmentList.filterProjectId.value = ''; document.fulfillmentList.displayedValuefilterProject.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelTask($locale):</label>
+                <input type="hidden" name="filterTaskId" value="$!filter.getTask().getId()"/>
+                <input type="text" name="displayedValuefilterTask" value="$!omObjectFormatter.format($filter.task.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #button('...' '#' "openTaskPicker(); return false;")
+                #button($labelMain '#' "openSuperTaskPicker(); return false;")
+                #button(' - ' '#' "document.fulfillmentList.filterTaskId.value = ''; document.fulfillmentList.displayedValuefilterTask.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelEmployee($locale):</label>
+                <input type="hidden" name="filterEmployeeId" value="$!filter.getEmployee().getId()"/>
+                <input type="text" name="displayedValuefilterEmployee" value="$!omObjectFormatter.format($filter.employee.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #if ( $isAChief )
+                    #button('...' '#' "openEmployeePicker(); return false;")
+                    #button($labelMyself '#' "document.fulfillmentList.filterEmployeeId.value = '$pMUser.getEmployee().getId()'; document.fulfillmentList.displayedValuefilterEmployee.value = '$!omObjectFormatter.format($pMUser.getEmployee().getOMObject(), $locale)'; document.fulfillmentList.submit(); return false;")
+                    #button(' - ' '#' "document.fulfillmentList.filterEmployeeId.value = ''; document.fulfillmentList.displayedValuefilterEmployee.value = ''; return false;")
+                #end
+            &nbsp;&nbsp;</span>
+                </p><p>
+            <span class="nowrap">
+                <label>$filter.labelDate($locale):</label>
+                <label>$filter.labelDateRangeBottom($locale):</label>
+                <input type="text" name="filterDateRangeBottom" value="$!filter.dateRangeBottomAsString" size="10"/>
+                #button('...' '#' "openDateBottomPicker(); return false;")
+                #button(' - ' '#' "document.fulfillmentList.filterDateRangeBottom.value = ''; return false;")
+                &nbsp;
+                <label>$filter.labelDateRangeTop($locale):</label>
+                <input type="text" name="filterDateRangeTop" value="$!filter.dateRangeTopAsString" size="10"/>
+                #button('...' '#' "openDateTopPicker(); return false;")
+                #button(' - ' '#' "document.fulfillmentList.filterDateRangeTop.value = ''; return false;")
+                &nbsp;
+                #button($labelPrevMonth '' "document.fulfillmentList.filterDatePrevNext.value = '-1'; document.fulfillmentList.submit(); return false;")
+                #button($labelActualMonth '' "document.fulfillmentList.filterDatePrevNext.value = '0'; document.fulfillmentList.submit(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$labelPON:</label>
+                <input type="text" name="filterPurchaseOrderNumber" value="$!filter.purchaseOrderNumberAsString" size="20"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$labelWPN:</label>
+                <input type="text" name="filterWorkPackageNumber" value="$!filter.workPackageNumberAsString" size="20"/>
+            &nbsp;&nbsp;</span>
+        </p><p>
+            <span class="nowrap">
+                <label>$filter.labelAbroad($locale):</label>
+                <select name="filterAbroad" size="1">
+                    <option value=""></option>
+                    <option value="true" #if($filter.abroadAsString == "true")selected#end>$labelYes</option>
+                    <option value="false" #if($filter.abroadAsString == "false")selected#end>$labelNo</option>
+                </select>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelAccepted($locale):</label>
+                <select name="filterAccepted" size="1">
+                    <option value=""></option>
+                    <option value="true" #if($filter.acceptedAsString == "true")selected#end>$labelYes</option>
+                    <option value="false" #if($filter.acceptedAsString == "false")selected#end>$labelNo</option>
+                </select>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelApproved($locale):</label>
+                <select name="filterApproved" size="1">
+                    <option value=""></option>
+                    <option value="true" #if($filter.approvedAsString == "true")selected#end>$labelYes</option>
+                    <option value="false" #if($filter.approvedAsString == "false")selected#end>$labelNo</option>
+                </select>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelChargeable($locale):</label>
+                <select name="filterChargeable" size="1">
+                    <option value=""></option>
+                    <option value="true" #if($filter.chargeableAsString == "true")selected#end>$labelYes</option>
+                    <option value="false" #if($filter.chargeableAsString == "false")selected#end>$labelNo</option>
+                </select>
+            &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.fulfillmentList.filterPage.value = "1";document.fulfillmentList.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+#if (!$selectMode)
+                #button($labelBack '#' "document.fulfillmentList.action = '$history.back()'; document.fulfillmentList.submit(); return false;")
+#end
+                </p>
+        </fieldset>
+#set($employeeIsPM = (true && ($filter.project && $pMUser.employee.id == $filter.project.projectmanager.id)))
+#set($employeeIsPO = (true && ($filter.project && $pMUser.employee.id == $filter.project.projectofficer.id)))
+#set($employeeIsVicePM = (true && $filter.task.isSuperVicePM($pMUser.employee.id)))
+#set($isMine = (true && $filter.task.hasEmployee($pMUser.employee.id)))
+#set($saveFulfillment = (("$!filter.task"=="" || $filter.task.getActive()) && (($ams.may("actionProjectSaveOwnFulfillment") && ($isMine || $employeeIsPM || $employeeIsPO || $employeeIsVicePM)) || ($ams.may("actionProjectSaveOthersFulfillment") && ($employeeIsPM || $employeeIsVicePM)))))
+#set($acceptFulfillment = ($ams.may("actionProjectAcceptOwnProjectFulfillment")  || $ams.may("actionProjectAcceptOthersProjectFulfillment")))
+#set($approveFulfillment = ($ams.may("actionProjectApproveOwnProjectFulfillment")  || $ams.may("actionProjectApproveOthersProjectFulfillment")))
+    #if (!$selectMode)
+        #if((!$filter.task || !$filter.task.hasChildren()) && ($saveFulfillment || $acceptFulfillment))
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+            #if($saveFulfillment || $pMUser.hasRole("administrator") || $pMUser.hasRole("projectLeader") || $pMUser.hasRole("projectOfficer"))
+                #if($personalMode)
+                    #button($labelNewFulfillment '' "document.fulfillmentList.action = '$link.clear().setNavigationId('personalFulfillmentProperties')'; document.fulfillmentList.submit(); return false;")
+                #else
+                    #button($labelNewFulfillment '' "document.fulfillmentList.action = '$link.clear().setNavigationId('fulfillmentProperties')'; document.fulfillmentList.submit(); return false;")
+                #end
+            #end
+            #if($acceptFulfillment)
+                #button($labelButtonAcceptFulfillment '#' "document.fulfillmentList.checkFulfillmentsForAccept.value = 'check'; document.fulfillmentList.submit(); return false;")
+                #button($labelButtonMoveFulfillment '#' "openTaskPickerForMove(); return false;")
+            #end
+            #if($approveFulfillment)
+                #button($labelButtonApproveFulfillment '#' "document.fulfillmentList.checkFulfillmentsForApprove.value = 'check'; document.fulfillmentList.submit(); return false;")
+            #end
+            #if($pMUser.hasRole("administrator") || $pMUser.hasRole("projectLeader") || $pMUser.hasRole("projectOfficer"))
+                #button($labelChargeableFulfillment '#' "document.fulfillmentList.checkFulfillmentsForChargeable.value = 'check'; document.fulfillmentList.submit(); return false;")
+            #end
+            #button($labelExportFulfillment '#' "if(exportValidate()) {window.location = '/export';} return false;")
+            #button($labelExportSumFulfillment '#' "if(exportValidate()) {window.location = '/exportSum';} return false;")
+            </p>
+            #if ($errorMessage.hasAttibute("filfillmentMove"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("filfillmentMove")</span>
+            </p>
+            #end
+        </fieldset>
+        #end
+        <fieldset>
+            <legend>$labelAccountFor</legend>
+            <p>$labelFulfillmentTotalTimeSpent: <b>$filter.totalTimeSpentAsString</b> $labelHourFull</p>
+            <p>$labelFulfillmentTotalNotAccountForTimeSpent: <b>$filter.totalNotAccountForTimeSpentAsString</b> $labelHourFull</p>
+             #if($pMUser.hasRole("administrator"))
+                <p>
+                    #button($labelAccountFor '' "document.fulfillmentList.doAccountFor.value = 'true'; document.fulfillmentList.submit(); return false;")
+                </p>
+           #end
+        </fieldset>
+    #end
+        <fieldset>
+            <p>
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+    #if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.fulfillmentList.filterPage.value = 1; document.fulfillmentList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.fulfillmentList.filterPage.value = $filter.page - 1; document.fulfillmentList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelFulfillmentListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.fulfillmentList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.fulfillmentList.filterPage.value = ($filter.page + 1); document.fulfillmentList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.fulfillmentList.filterPage.value = $filter.lastPage; document.fulfillmentList.submit(); return false;")
+    #end
+#else
+                        $labelFulfillmentListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+    #set ($directionFlag = "[+]")
+#else
+    #set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            #if ( $isAChief )
+                                <th><a href="#" onClick="changeOrderBy('employee');return false;">$filter.labelEmployee($locale) #if ($filter.orderBy == "employee") $directionFlag #end</a></th>
+                            #end
+                            <th><a href="#" onClick="changeOrderBy('date');return false;">$filter.labelDate($locale) #if ($filter.orderBy == "date") $directionFlag #end</a></th>
+                            <th>$labelTimeSpent</th>
+                            <th>$labelBusinessUnit</th>
+                            <th>$labelProject</th>
+                            <th>$filter.labelTask($locale)</th>
+                            <th>$labelDescription</th>
+                            <th>$labelPON</th>
+                            <th>$labelWPN</th>
+                            <th>$labelGenerateDate, <br /> $labelModificationDate</th>
+                            <th>
+                                <a href="#" onClick="changeOrderBy('accepted');return false;">
+                                    <span title="$filter.labelAccepted($locale)#if ($filter.orderBy == "accepted") $directionFlag#end"><img src="static/images/pm3/accept.gif"></span>
+                                </a>
+                                <p/>
+                                <img src="static/images/pm3/selectall.gif" onClick="checkAll('chkaccept',true);"/>
+                                <img src="static/images/pm3/selectnone.gif" onClick="checkAll('chkaccept',false);"/>
+                                <img src="static/images/pm3/toggleselection.gif" onClick="checkAllToggle('chkaccept');"/>
+                            </th>
+                            <th>
+                                <a href="#" onClick="changeOrderBy('approved');return false;" >
+                                    <span title="$filter.labelApproved($locale)#if ($filter.orderBy == "approved") $directionFlag#end"><img src="static/images/pm3/approve.gif"></span>
+                                </a>
+                                <p/>
+                                <img src="static/images/pm3/selectall.gif" onClick="checkAll('chkapprove',true);"/>
+                                <img src="static/images/pm3/selectnone.gif" onClick="checkAll('chkapprove',false);"/>
+                                <img src="static/images/pm3/toggleselection.gif" onClick="checkAllToggle('chkapprove');"/>
+                            </th>
+                            #if ( $isAChief )
+                            <th><img src="static/images/pm3/abroad.gif" title="$filter.labelAbroad($locale)"></th>
+                            <th><img src="static/images/pm3/invoice.gif" title="$filter.labelChargeable($locale)"></th>
+                            <th>$labelSelect
+                                <p/>
+                                <img src="static/images/pm3/selectall.gif" onClick="checkAll('chkselect',true);"/>
+                                <img src="static/images/pm3/selectnone.gif" onClick="checkAll('chkselect',false);"/>
+                                <img src="static/images/pm3/toggleselection.gif" onClick="checkAllToggle('chkselect');"/>
+                            </th>
+                            #end
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    #foreach ($item in $items)
+        #set($isEditable = $item.isEditable().equals(0))
+                        <tr style='text-align:center'>
+                            #if ( $isAChief )
+                            <td>$!item.employee.getDisplayName()</td>
+                            #end
+                            <td>$item.dateAsString</td>
+                            <td>$item.timeSpentAsString</td>
+                            <td>$!item.task.project.businessUnit.name</td>
+                            <td>$!item.task.project.name</td>
+                            <td>$!item.task.name</td>
+                            <td>$!item.description</td>
+                            <td>$!item.task.purchaseOrderNumber</td>
+                            <td>$!item.task.workPackageNumber</td>
+                            <td style='font-size:9px'>$item.generateDateAsString <br /> $item.modificationDateAsString</td>
+                         <td  align = "center" valign="middle">
+                            #set ($acceptedEditable = $isEditable && $item.approvedAsString.equals("false") && (($ams.may("actionProjectAcceptOwnProjectFulfillment") && ($pMUser.employee.id==$item.task.project.projectmanager.id || $pMUser.employee.id==$item.task.project.projectofficer.id || $item.task.isSuperVicePM($pMUser.employee.id))) || $ams.may("actionProjectAcceptOthersProjectFulfillment")))
+                            #set($accepted = "")
+                            #set($notaccepted = $item.id)
+                            #set($disabled = "")
+                            #if(!$acceptedEditable)
+                                #set($disabled = "disabled")
+                            #end
+                            #set($checked = "")
+                            #if($item.getAccepted())
+                                #set($checked = "checked")
+                                #set($isNotAccepted = false)
+                                #set($accepted = $item.id)
+                                #set($notaccepted = "")
+                            #else
+                                #set($isNotAccepted = true) 
+                            #end
+                            <input type="checkbox" id="chk_$item.getId()" name="chkaccept" value="true" $checked $disabled onclick="updateCheckedDate('chk_$item.getId()','acc_$item.getId()','notacc_$item.getId()','$item.getId()');"/>
+                            <input type="hidden" id="acc_$item.getId()" name="accepted" value="$accepted" />
+                            <input type="hidden" id="notacc_$item.getId()" name="notaccepted" value="$notaccepted" />
+                          </td>
+        #set ($approvedEditable = (($ams.may("actionProjectApproveOwnProjectFulfillment") && ($pMUser.employee.id==$item.task.project.projectofficer.id || $item.task.isSuperVicePM($pMUser.employee.id))) || $ams.may("actionProjectApproveOthersProjectFulfillment")))
+                            <td  align = "center" valign="middle">
+                                #set($approved = "")
+                                #set($notapproved = $item.id)
+                                #set($disabled = "")
+                                #if(!$approvedEditable)
+                                    #set($disabled = "disabled")
+                                #end
+                                #set($checked = "")
+                                #if($item.getApproved())
+                                    #set($checked = "checked")
+                                    #set($approved = $item.id)
+                                    #set($notapproved = "")
+                                #end
+                                <input type="checkbox" id="chkapp_$item.getId()" name="chkapprove" value="true" $checked $disabled onclick="updateCheckedDate('chkapp_$item.getId()','app_$item.getId()','notapp_$item.getId()','$item.getId()');"/>
+                                <input type="hidden" id="app_$item.getId()" name="approved" value="$approved" />
+                                <input type="hidden" id="notapp_$item.getId()" name="notapproved" value="$notapproved" />
+                            </td>
+                            #if ( $isAChief )
+                            <td align="center" valign="middle">
+                            #if($item.abroadAsString.equals("true"))
+                                <input type="checkbox" checked disabled/>
+                            #else
+                                <input type="checkbox" disabled/>
+                            #end
+                            </td>
+                            <td align="center" valign="middle">
+                            #if($pMUser.hasRole("administrator") || $pMUser.employee.id==$item.task.project.projectmanager.id || $pMUser.employee.id==$item.task.project.projectofficer.id || $item.task.isSuperVicePM($pMUser.employee.id))
+                                #set($disabled = "")
+                            #else
+                                #set($disabled = "disabled")
+                            #end
+                            #if($item.chargeableAsString.equals("true"))
+                                #set($checked = "checked")
+                                #set($chargeable = $item.id)
+                                #set($notchargeable = "")
+                            #else
+                                #set($checked = "")
+                                #set($chargeable = "")
+                                #set($notchargeable = "$item.id")
+                            #end
+                            <input type="checkbox" id="chkchg_$item.getId()" $checked $disabled onclick="updateCheckedDate('chkchg_$item.getId()','chg_$item.getId()','notchg_$item.getId()','$item.getId()');"/>
+                            <input type="hidden" id="chg_$item.getId()" name="chargeable" value="$chargeable"/>
+                            <input type="hidden" id="notchg_$item.getId()" name="notchargeable" value="$notchargeable"/>
+                            </td>
+                            <td  align = "center" valign="middle">
+                                #if($isNotAccepted && ($pMUser.hasRole("administrator") || $pMUser.employee.id==$item.task.project.projectmanager.id || $pMUser.employee.id==$item.task.project.projectofficer.id))
+                                    #set($disabled = "")
+                                #else
+                                    #set($disabled = "disabled")
+                                #end
+                                #set($selected = "")
+                                #set($notselected = $item.id)
+                                #set($checked = "")
+                                #if($item.getSelected())
+                                    #set($checked = "checked")
+                                    #set($selected = $item.id)
+                                    #set($notselected = "")
+                                #end
+                                <input type="checkbox" id="chkselect_$item.getId()" name="chkselect" value="true" $checked $disabled onclick="updateCheckedDate('chkselect_$item.getId()','selected_$item.getId()','notselected_$item.getId()','$item.getId()');"/>
+                                <input type="hidden" id="selected_$item.getId()" name="selected" value="$selected" />
+                                <input type="hidden" id="notselected_$item.getId()" name="notselected" value="$notselected" />
+                            </td>
+                            #end
+        #if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+        #else
+                            <td>
+            #set($myFulfillment = ($ams.may("actionProjectSaveOthersFulfillment") && ($pMUser.employee.id==$item.task.project.projectmanager.id || $pMUser.employee.id==$item.task.project.projectofficer.id || $item.task.isSuperVicePM($pMUser.employee.id))))
+            #if($isEditable && (($ams.may("actionProjectSaveOwnFulfillment") && $pMUser.employee.id == $item.employee.id) || $myFulfillment || ($ams.may("actionProjectSaveOthersFulfillment") && $item.getProject().getEmployeeIdList().contains($pMUser.getEmployee().getId())) || $pMUser.hasRole('administrator')))
+                #if($item.acceptedAsString.equals("false") && $item.approvedAsString.equals("false"))
+                        <a href="$link.clear().setNavigationId('fulfillmentProperties').setObjectId($position, $item.id)">$labelEdit</a>
+                        #if(($ams.may("actionProjectSaveOwnFulfillment") && $pMUser.employee.id == $item.employee.id) || ($ams.may("actionProjectSaveOthersFulfillment") && $item.createdBy && $pMUser.id == $item.createdBy.id) || $pMUser.hasRole('administrator'))
+                            #set($deleteLink = $link.setOperation($position, 'fulfillmentDelete'))
+                            | <a href="javascript:if(confirm('$confirmDeleteFulfillment')) {document.fulfillmentList.action = '$history.ignore($deleteLink)'; document.fulfillmentList.deleteFulfillmentId.value='$item.id'; document.fulfillmentList.submit();}">$labelDelete</a>
+                        #end
+                #end
+            #end
+                            </td>
+        #end
+                        </tr>
+    #end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

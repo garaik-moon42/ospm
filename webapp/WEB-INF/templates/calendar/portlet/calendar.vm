@@ -1,0 +1,227 @@
+<script type="text/javascript" language="JavaScript1.2">
+    var selectedDayField = null;
+    var disableTime = $filter.disableTime;
+    function selectDay(day, field) {
+        if (selectedDayField == null) {
+            selectedDayField = document.getElementById(document.calendar.selectedDay.value);
+        }
+        document.calendar.selectedDay.value = day;
+        selectedDayField.className = "calendar";
+        selectedDayField = field;
+        if (selectedDayField == null) {
+            selectedDayField = document.getElementById(document.calendar.selectedDay.value);
+        }
+        selectedDayField.className = "selectedCalendar";
+    }
+
+    function selectDate() {
+        var year = document.calendar.filterYear.value;
+        var month = parseInt(document.calendar.filterMonth.value) + 1;
+        var day = document.calendar.selectedDay.value;
+        var hour = 0;
+        var min = 0;
+        var sec = 0;
+        if (!document.calendar.hour.disabled.value) {
+            hour = document.calendar.hour.value;
+            if (hour == '') {
+                hour = '0';
+            }
+            min = document.calendar.min.value;
+            if (min == '') {
+                min = '0';
+            }
+            sec = document.calendar.sec.value;
+            if (sec == '') {
+                sec = '0';
+            }
+        }
+        var resPattern = '$filter.datePattern';
+        var result = "";
+        var i_format=0;
+        while (i_format < resPattern.length) {
+            // Get next token from resPattern string
+            var c = resPattern.charAt(i_format);
+            var token = "";
+            while ((resPattern.charAt(i_format)==c) && (i_format < resPattern.length)) {
+                token += resPattern.charAt(i_format++);
+            }
+            // Extract contents of value based on format token
+            if (token=="yyyy" || token=="yy") {
+                if (token == "yyyy") {
+                    result += year;
+                }
+                if (token == "yy") {
+                    result = year.substring(2);
+                }
+            } else if (token == "MM") {
+                var ms = "" + month;
+                if (ms.length  ==  1) {
+                    ms = "0" + ms;
+                }
+                result += ms;
+            } else if (token == "dd") {
+                var ds = "" + day;
+                if (ds.length  ==  1) {
+                    ds = "0" + ds;
+                }
+                result += ds;
+            } else if (token == "hh" || token == "HH") {
+                var hs = "" + hour;
+                if (hs.length  ==  1) {
+                    hs = "0" + hs;
+                }
+                result += hs;
+            } else if (token == "mm") {
+                var ms = "" + min;
+                if (ms.length  ==  1) {
+                    ms = "0" + ms;
+                }
+                result += ms;
+            } else if (token == "ss") {
+                var secs = "" + sec;
+                if (secs.length  ==  1) {
+                    secs = "0" + secs;
+                }
+                result += secs;
+            } else {
+                result += token;
+            }
+        }
+        window.opener.$callback(result);
+        close();
+    }
+
+    function checkHour() {
+        var keyCode = window.event.keyCode;
+        if (keyCode > 47) {
+            var hour = parseInt(document.calendar.hour.value, 10);
+            if (isNaN(hour)) {
+                hour = 0;
+            }
+            if (hour > 24) {
+                hour = 24;
+            }
+            if (hour < 0) {
+                hour = 0;
+            }
+            document.calendar.hour.value = hour;
+        }
+    }
+
+    function checkMinSec(field) {
+        var keyCode = window.event.keyCode;
+        if (keyCode > 47) {
+            var value = parseInt(field.value, 10);
+            if (isNaN(value)) {
+                value = 0;
+            }
+            if (value > 59) {
+                value = 59;
+            }
+            if (value < 0) {
+                hour = 0;
+            }
+            field.value = value
+        }
+    }
+
+    function checkEnter(event) {
+        if (event.keyCode == 13) {
+            document.calendar.submit();
+        }
+    }
+</script>
+<div id="content">
+    <div class="properties">
+        <form name="calendar" method="post" action="$link">
+           <input type="hidden" name="callback" value="$callback" />
+           <input type="hidden" name="selectedDay" value="$filter.day"/>
+           <input type="hidden" name="disableTime" value="$filter.disableTime"/>
+           <input type="hidden" name="disableSecs" value="$filter.disableSecs"/>
+           <div class="filter" style="text-align: center;">
+               <table class="dialog">
+                   <tbody>
+                       <tr align="center">
+                           <td class="value" style="text-align: center; width: 24px;"><input type="submit" name="previousMonth" class="button" value="&laquo;" /></td>
+                           <td class="value" style="text-align: center; width: 24px;">
+                               <select name="filterYear" onChange="document.calendar.submit();">
+#foreach ($year in $years)
+                                   <option value="$year" #if ($year == $filter.year) selected="yes" #end>$year</option>
+#end
+                               </select>
+                           </td>
+                           <td class="value" style="text-align: center; width: 24px;">
+                               <select name="filterMonth" onChange="document.calendar.submit();">
+#foreach ($month in $months)
+#set ($value = $counter - 1)
+                                   <option value="$value" #if ($value == $filter.month) selected="yes" #end>$month.getLabel($locale)</option>
+#end
+                               </select>
+                           </td>
+                           <td class="value" style="text-align: center; width: 24px;"><input type="submit" name="nextMonth" class="button" value="&raquo;" /></td>
+                       </tr>
+                   </tbody>
+               </table>
+           </div>
+           <div class="list">
+               <table class="list">
+                   <thead>
+                       <tr>
+#foreach ($day in $days)
+                           <td width="24" align="center">$day.getLabel($locale).substring(0,1)</td>
+#end
+                       </tr>
+                   </thead>
+                   <tbody>
+#foreach ($week in $weeks)
+                       <tr>
+#foreach ($day in $week)
+#if ($day.toString().equals($filter.dayAsString))
+                           <td width="24" align="center" id="${day}" class="selectedCalendar">
+#else
+                           <td width="24" align="center" id="${day}" class="calendar">
+#end
+#if ($day != "")
+                               <a href="#" onClick="selectDay($day, this.parentElement); return false;">&nbsp;${day}&nbsp;</a>
+#end
+                           </td>
+#end
+                       </tr>
+#end
+                   </tbody>
+               </table>
+#if ($filter.disableTime)
+               <input type="hidden" name="hour" value="0">
+               <input type="hidden" name="min" value="0">
+               <input type="hidden" name="sec" value="0">
+#else
+               <table class="dialog" align="center">
+                   <tbody>
+                       <tr>
+                           <td class="property" style="text-align: center; width: 24px;">$labelHour:</td>
+                           <td class="value" style="text-align: center; width: 24px;">
+                               <input style="width:24px;" type="text" name="hour" value="$!filter.hour" onkeyup="checkHour();" #if ($filter.disableTime.equals("true")) onfocus="blur();" style="color: gray;" #end>&nbsp;
+                           </td>
+                           <td class="property" style="text-align: center; width: 24px;">$labelMin:</td>
+                           <td class="value" style="text-align: center; width: 24px;">
+                               <input style="width:24px;" type="text" name="min" value="$!filter.min" onkeyup="checkMinSec(this);" #if ($filter.disableTime.equals("true")) onfocus="blur();" style="color: gray;" #end>&nbsp;
+                           </td>
+                           <td class="property" style="text-align: center; width: 24px;">$labelSec:</td>
+                           <td class="value" style="text-align: center; width: 24px;">
+#if ($filter.disableSecs.equals("true"))
+                               <input style="width:24px;" type="text" name="sec" value="0" onkeyup="checkMinSec(this);" onfocus="blur();" style="color: gray;">
+#else
+                               <input style="width:24px;" type="text" name="sec" value="$!filter.sec" onkeyup="checkMinSec(this);" #if ($filter.disableTime.equals("true")) onfocus="blur();" style="color: gray;" #end>
+#end
+                           </td>
+                       </tr>
+                  </tbody>
+               </table>
+#end
+           </div>
+        </form>
+    </div>
+    <div class="operation" align="center">
+        <input type="button" class="button" value="$labelOK" onclick="selectDate();"/>
+    </div>
+</div>

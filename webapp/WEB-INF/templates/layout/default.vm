@@ -1,0 +1,39 @@
+    <div id="container">
+        <div id="header">
+            <table style="width:100%"><tr><td>
+            $applicationTitle - <b>$navigationNode.getLabel($locale)</b><br />
+            $currentUser: <b>$user.lastName $user.firstName</b><br />
+                </td><td style="text-align:right;">
+                PM<br/>
+            $pm3.versionInfo
+            </td></tr></table>
+        </div>
+<!--        <div id="parkolas-logo"></div>-->
+        <div id="navigation">
+#set ($mainMenuItems = $breadcrumb.get(0).children)
+#set ($first=true)
+#foreach ($mainMenuItem in $mainMenuItems)
+            #if ($mainMenuItem.getId()!="NavigationNode.logout" || $user.getId()!="anon")
+                #if (!$first) | #end
+                <a href="$link.clear().setNavigationId($mainMenuItem.id)" #if ($breadcrumb.contains($mainMenuItem)) class="selected" #end>$mainMenuItem.getLabel($locale)</a>
+                #set ($first=false)
+            #end
+#end
+        </div>
+#if ($breadcrumb.size() > 1)
+#set ($subMenuItems = $breadcrumb.get(1).children)
+        <div id="navigation2">
+#foreach ($subMenuItem in $subMenuItems)
+            <a href="$link.clear().setNavigationId($subMenuItem.id)" #if ($breadcrumb.contains($subMenuItem)) class="selected" #end>$subMenuItem.getLabel($locale)</a>
+            #if ($counter < $subMenuItems.size()) | #end
+#end
+        </div>
+#end
+        <div id="primaryContent">
+$!insert.portlet(0)
+        </div>
+        <div id="footer">
+            powered by <a href="http://www.p92.hu/p92/nid/sofia" target="_blank">SOFIA</a>
+        </div>
+    </div>
+

@@ -1,0 +1,333 @@
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.taskList.filterOrderBy.value) {
+            document.taskList.filterDirection.value = 0 - document.taskList.filterDirection.value;
+        }
+        document.taskList.filterOrderBy.value = orderBy;
+        document.taskList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.taskList.filterPage.value = displpage;
+            }
+        }
+        document.taskList.displayedPageHeader.value = document.taskList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        document.taskList.filterName.value = "";
+#if ($filter.isAllowProjectToChange())
+        document.taskList.filterProjectId.value = "";
+        document.taskList.displayedValuefilterProject.value = "";
+#end
+        document.taskList.filterSuperTaskId.value = "";
+        document.taskList.displayedValuefilterSuperTask.value = "";
+       // document.taskList.filterVicePMId.value = "";
+       // document.taskList.displayedValuefilterVicePM.value = "";
+        document.taskList.filterPurchaseOrderNumber.value = "";
+        document.taskList.filterWorkPackageNumber.value = "";
+#if (($pMUser.hasRole('administrator') || $pMUser.hasRole('projectLeader') || $pMUser.hasRole('projectOfficer')) && !$selectMode)        
+        document.taskList.filterEmployeeId.value = "";
+        document.taskList.displayedValuefilterEmployee.value = "";
+#end
+        document.taskList.filterDateRangeBottom.value = "";
+        document.taskList.filterDateRangeTop.value = "";
+    }
+
+
+    function openProjectPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #set($pickerLink = "$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('projectSelect'))?callback=projectPickerCallback")
+        #if($personalMode)
+            #set($param=$pMUser.employee.id)        
+            #set($pickerLink = "$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('projectSelect').setObjectId($position,$param))?callback=projectPickerCallback")
+        #end
+        var w = window.open("$pickerLink",
+                            "labelProjectSelect",
+                            "left=" + left + ", top=" + top + ", width=800, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function projectPickerCallback(id, label, data, businessUnitId, businessUnit) {
+        document.taskList.filterProjectId.value = id;
+        document.taskList.displayedValuefilterProject.value = label;
+        document.taskList.filterSuperTaskId.value = "";
+        document.taskList.displayedValuefilterSuperTask.value = "";
+        document.taskList.submit();
+    }
+
+    function openSuperTaskPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('taskSuperSelect'))?callback=superTaskPickerCallback",
+                            "labelSuperTaskSelect",
+                            "left=" + left + ", top=" + top + ", width=800, height=600, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function superTaskPickerCallback(id, label, data, projectId, project, businessUnitId, businessUnit) {
+        document.taskList.filterSuperTaskId.value = id;
+        document.taskList.displayedValuefilterSuperTask.value = label;
+        document.taskList.filterProjectId.value = projectId;
+        document.taskList.displayedValuefilterProject.value = project;
+        document.taskList.submit(); return false;
+    }
+
+    function openVicePMPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #set($param="Role.projectSubLeader")
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position, $param))?callback=vicePMPickerCallback",
+                            "labelVicePMSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function vicePMPickerCallback(id, label, data) {
+        document.taskList.filterVicePMId.value = id;
+        document.taskList.displayedValuefilterVicePM.value = label;
+    }
+
+#if($selectMode)
+    function selectObject(id, label, data, projectId, project, businessUnitId, businessUnit) {
+#if($callback)
+        window.opener.${callback}(id, label, data, projectId, project, businessUnitId, businessUnit);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+
+    function openDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+    function dateBottomPickerCallback(data) {
+        document.taskList.filterDateRangeBottom.value = data;
+    }
+
+    function openDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function dateTopPickerCallback(data) {
+        document.taskList.filterDateRangeTop.value = data;
+    }
+
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+#if($personalMode && !($pMUser.hasRole('administrator')))
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position,$pMUser.employee.id))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#end
+        w.focus();
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.taskList.filterEmployeeId.value = id;
+        document.taskList.displayedValuefilterEmployee.value = label;
+        document.taskList.submit(); return false; 
+    }
+</script>
+<div class="portlet">
+    <form name="taskList" action="$history.ignore($link)" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelName($locale):</label>
+                <input type="text" name="filterName" value="$!filter.nameAsString" size="30"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelActive($locale):</label>
+                <select name="filterActive" size="1">
+                    <option value=""></option>
+                    <option value="true" #if($filter.activeAsString == "true")selected#end>$labelYes</option>
+                    <option value="false" #if($filter.activeAsString == "false")selected#end>$labelNo</option>
+                </select>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelProject($locale):</label>
+                <input type="hidden" name="filterProjectId" value="$!filter.getProject().getId()"/>
+#if ($filter.isAllowProjectToChange())
+                <input type="text" name="displayedValuefilterProject" value="$!omObjectFormatter.format($filter.project.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #button('...' '#' "openProjectPicker(); return false;")
+                #button(' - ' '#' "document.taskList.filterProjectId.value = ''; document.taskList.displayedValuefilterProject.value = ''; return false;")
+#else
+                <input type="hidden" name="displayedValuefilterProject" value="$!omObjectFormatter.format($filter.project.getOMObject(), $locale)" size="30"/>
+                $!omObjectFormatter.format($filter.project.getOMObject(), $locale)
+#end
+            &nbsp;&nbsp;</span>
+         #if ($pMUser.hasRole('administrator') || $pMUser.hasRole('projectLeader') || $pMUser.hasRole('projectOfficer'))
+                <span class="nowrap">
+                <label>$labelEmployee:</label>
+                <input type="hidden" name="filterEmployeeId" value="$!filter.getEmployee().getId()"/>
+                <input type="text" name="displayedValuefilterEmployee" value="$!omObjectFormatter.format($filter.employee.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #button('...' '#' "openEmployeePicker(); return false;")
+                #button($labelMyself '#' "document.taskList.filterEmployeeId.value = '$pMUser.getEmployee().getId()'; document.taskList.displayedValuefilterEmployee.value = '$!omObjectFormatter.format($pMUser.getEmployee().getOMObject(), $locale)'; document.taskList.submit(); return false;")
+                #button(' - ' '#' "document.taskList.filterEmployeeId.value = ''; document.taskList.displayedValuefilterEmployee.value = ''; return false; ")
+                &nbsp;&nbsp;</span>
+         #end
+#if (!($superPicker))
+            <span class="nowrap">
+                <label>$filter.labelSuperTask($locale):</label>
+                <input type="hidden" name="filterSuperTaskId" value="$!filter.getSuperTask().getId()"/>
+                <input type="text" name="displayedValuefilterSuperTask" value="$!omObjectFormatter.format($filter.superTask.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #button('...' '#' "openSuperTaskPicker(); return false;")
+                #button(' - ' '#' "document.taskList.filterSuperTaskId.value = ''; document.taskList.displayedValuefilterSuperTask.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+#else
+            <input type="hidden" name="filterSuperTaskId" value=""/>
+            <input type="hidden" name="displayedValuefilterSuperTask" value="$!omObjectFormatter.format($filter.superTask.getOMObject(), $locale)" size="30"/>
+#end
+##            <span class="nowrap">
+##                <label>$filter.labelVicePM($locale):</label>
+##                <input type="hidden" name="filterVicePMId" value="$!filter.getVicePM().getId()"/>
+##                <input type="text" name="displayedValuefilterVicePM" value="$!omObjectFormatter.format($filter.vicePM.getOMObject(), $locale)" size="30" readonly="readonly"/>
+##                #button('...' '#' "openVicePMPicker(); return false;")
+##                #button(' - ' '#' "document.taskList.filterVicePMId.value = ''; document.taskList.displayedValuefilterVicePM.value = ''; return false;")
+##            &nbsp;&nbsp;</span>
+               <span class="nowrap">
+                <label>$labelDate:</label>
+                <label>$labelDateRangeBottom:</label>
+                <input type="text" name="filterDateRangeBottom" value="$!filter.dateRangeBottomAsString" size="10"/>
+                #button('...' '#' "openDateBottomPicker(); return false;")
+                #button(' - ' '#' "document.taskList.filterDateRangeBottom.value = ''; return false;")
+                &nbsp;
+                <label>$labelDateRangeTop:</label>
+                <input type="text" name="filterDateRangeTop" value="$!filter.dateRangeTopAsString" size="10"/>
+                #button('...' '#' "openDateTopPicker(); return false;")
+                #button(' - ' '#' "document.taskList.filterDateRangeTop.value = ''; return false;")
+            &nbsp;&nbsp;</span>
+                <span class="nowrap">
+                <label>$labelPON:</label>
+                <input type="text" name="filterPurchaseOrderNumber" value="$!filter.purchaseOrderNumberAsString" size="20"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$labelWPN:</label>
+                <input type="text" name="filterWorkPackageNumber" value="$!filter.workPackageNumberAsString" size="20"/>
+            &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.taskList.filterPage.value = "1";document.taskList.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+#if(!($selectMode))
+                #button($labelBack '#' "document.taskList.action = '$history.back()'; document.taskList.submit(); return false;")
+#end
+
+                </p>
+        </fieldset>
+#if (!$selectMode)
+        #if(((!$filter.superTask || $filter.superTask.getFulfillments(true).size()==0 && $filter.superTask.getResources().size()==0) && (($ams.may("actionProjectEditOwnProject") && ($pMUser.employee.id==$filter.project.projectmanager.id || $pMUser.employee.id==$filter.project.projectofficer.id || $filter.superTask.isSuperVicePM($pMUser.employee.id))) || $ams.may("actionProjectEditOthersProject"))) && $filter.project.active)
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNewTask '' "document.taskList.action = '$link.clear().setNavigationId('taskProperties') '; document.taskList.submit(); return false;")
+            </p>
+        </fieldset>
+        #end
+#end
+        <fieldset>
+            <p>
+
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.taskList.filterPage.value = 1; document.taskList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.taskList.filterPage.value = $filter.page - 1; document.taskList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelTaskListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.taskList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.taskList.filterPage.value = ($filter.page + 1); document.taskList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.taskList.filterPage.value = $filter.lastPage; document.taskList.submit(); return false;")
+#end
+#else
+                        $labelTaskListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th><a href="#" onClick="changeOrderBy('name');return false;">$filter.labelName($locale) #if ($filter.orderBy == "name") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('begins');return false;">$filter.labelBegins($locale) #if ($filter.orderBy == "begins") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('plannedWork');return false;">$filter.labelPlannedWork($locale) #if ($filter.orderBy == "plannedWork") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('active');return false;">$filter.labelActive($locale) #if ($filter.orderBy == "active") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('project');return false;">$filter.labelProject($locale) #if ($filter.orderBy == "project") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('purchaseOrderNumber');return false;">$labelPON #if ($filter.orderBy == "purchaseOrderNumber") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('workPackageNumber');return false;">$labelWPN #if ($filter.orderBy == "workPackageNumber") $directionFlag #end</a></th>
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+#foreach ($item in $items)
+                        <tr>
+                            <td>$item.nameAsString</td>
+                            <td>$item.beginsAsString</td>
+                            <td>$item.plannedWorkAsString</td>
+                        #if($item.activeAsString.equals("true"))
+                            <td>$labelYes</td>
+                        #else
+                            <td>$labelNo</td>
+                        #end
+#if($item.project.getOMObject())
+                            <td>$!omObjectFormatter.format($item.project.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end                      
+                            <td>$item.purchaseOrderNumberAsString</td>
+                            <td>$item.workPackageNumberAsString</td>
+#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', '', '$item.getProject().getId()', '$omObjectFormatter.formatForJavascript($item.getProject().getOMObject(), $locale)', '$item.getProject().getBusinessUnit().getId()','$omObjectFormatter.formatForJavascript($item.getProject().getBusinessUnit().getOMObject(), $locale)') ; return false;">$labelChoose</a>
+                            </td>
+#else
+                            <td>
+    #if(($ams.may("actionProjectEditOwnTask") && ($pMUser.employee.id==$filter.project.projectmanager.id || $pMUser.employee.id==$filter.project.projectofficer.id || $filter.superTask.isSuperVicePM($pMUser.employee.id))) || $ams.may("actionProjectEditOthersTask"))
+                                <a href="$link.clear().setNavigationId('taskProperties').setObjectId($position, $item.id)">$labelEdit</a>
+    #else
+                                <a href="$link.clear().setNavigationId('taskProperties').setObjectId($position, $item.id)">$labelView</a>
+    #end
+                            </td>
+#end
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

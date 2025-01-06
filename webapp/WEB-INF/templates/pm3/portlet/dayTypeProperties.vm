@@ -1,0 +1,49 @@
+
+<script type="text/javascript" language="Javascript1.2">
+</script>
+<div class="portlet">
+    <form name="properties" action="$link" method="post">
+        <input type="hidden" name="updateForm" value="update"/>
+        <fieldset class="dialog">
+            <legend>$labelDayTypeProperties</legend>
+            <p class="nowrap">
+                <label>$dayType.labelName($locale)*:</label>
+                <input type="text" name="dayTypeName" value="$!dayType.nameAsString" size="16"/>
+            </p>
+#if ($errorMessage.hasAttibute("dayTypeName"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("dayTypeName")</span>
+</p>
+#end
+            <p class="nowrap">
+                <label>$dayType.labelDescription($locale):</label>
+                <textarea name="dayTypeDescription" cols="80" rows="8">$!dayType.descriptionAsString</textarea>
+            </p>
+#if ($errorMessage.hasAttibute("dayTypeDescription"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("dayTypeDescription")</span>
+</p>
+#end
+            <p class="nowrap">
+                <label>$dayType.labelColor($locale):</label>
+                <input type="text" name="dayTypeColor" value="$!dayType.colorAsString" size="16"/>
+            </p>
+#if ($errorMessage.hasAttibute("dayTypeColor"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("dayTypeColor")</span>
+</p>
+#end
+        </fieldset>        <fieldset class="operation">
+            <legend>$labelActions</legend>
+                <p>
+                    #set($saveOperation = 'dayTypeSave')
+                    #set($saveLink = $link.setOperation($position,$saveOperation))
+                    #set($deleteOperation = 'dayTypeDelete')
+                    #set($deleteLink = $link.setOperation($position,$deleteOperation))
+                    #buttonAccept($labelSave '#' "document.properties.action = '$history.ignore($saveLink)'; document.properties.submit(); return false;")
+                    #buttonDeny($labelDelete '#' "if(confirm('$confirmDeleteDayType')) {document.properties.action = '$history.ignore($deleteLink)'; document.properties.submit();} return false;")
+                    #button($labelCancel '#' "document.properties.action = '$history.back()'; document.properties.submit(); return false;")
+                </p>
+        </fieldset>
+    </form>
+</div>

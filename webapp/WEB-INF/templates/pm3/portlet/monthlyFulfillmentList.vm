@@ -1,0 +1,99 @@
+<script type="text/javascript" language="JavaScript1.2">
+    
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+#if(!$pMUser.hasRole('administrator'))
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position,$pMUser.employee.id))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#end
+        w.focus();
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.monthlyFulfillmentList.filterEmployeeId.value = id;
+        document.monthlyFulfillmentList.displayedValuefilterEmployee.value = label;
+        document.monthlyFulfillmentList.submit(); return false;
+    }
+
+</script>
+<div class="portlet">
+    <form name="monthlyFulfillmentList" action="$history.ignore($link.clear().setNavigationId('monthlyFulfillmentList'))" method="post">
+    <input type="hidden" name="filterDateRangeBottom" value="$!filter.dateRangeBottomAsString" />
+    <input type="hidden" name="filterDateRangeTop" value="$!filter.dateRangeTopAsString" />
+    <input type="hidden" name="filterPeriodPrevNext" value="" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+                    <span class="nowrap">
+                    <label>$filter.labelEmployee($locale):</label>
+                    <input type="hidden" name="filterEmployeeId" value="$!filter.getEmployee().getId()"/>
+                    <input type="text" name="displayedValuefilterEmployee" value="$!omObjectFormatter.format($filter.employee.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                    #if ( $pMUser.hasRole('projectOfficer') || $pMUser.hasRole('projectLeader') || $pMUser.hasRole('administrator') )
+                        #button('...' '#' "openEmployeePicker(); return false;")
+                        #button($labelMyself '#' "document.monthlyFulfillmentList.filterEmployeeId.value = '$pMUser.getEmployee().getId()'; document.monthlyFulfillmentList.displayedValuefilterEmployee.value = '$!omObjectFormatter.format($pMUser.getEmployee().getOMObject(), $locale)'; document.monthlyFulfillmentList.submit(); return false;")
+                    #end
+                &nbsp;&nbsp;</span>
+                <span class="nowrap">
+                    <label>$labelPeriod:</label>
+                    <select name="filterPeriod" size="1" onchange="document.monthlyFulfillmentList.submit(); return false;">
+                        #foreach($period in $filter.periods)
+                            <option value="$period" #if($period == $filter.actualPeriod)selected#end>$period</option>
+                        #end
+                    </select>
+                &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelPrevMonth '' "document.monthlyFulfillmentList.filterPeriodPrevNext.value = '-1'; document.monthlyFulfillmentList.submit(); return false;")
+                #button($labelNextMonth '' "document.monthlyFulfillmentList.filterPeriodPrevNext.value = '1'; document.monthlyFulfillmentList.submit(); return false;")
+                #button($labelBack '#' "document.monthlyFulfillmentList.action = '$history.back()'; document.monthlyFulfillmentList.submit(); return false;")
+                </p>
+        </fieldset>
+        <fieldset>
+            #if($errorMessage.hasGeneral())
+            <p class="nowrap">
+                <span class="error">$errorMessage.getGeneral()</span>
+            </p>
+            #end
+            <p>
+                <table class="list">
+                    <caption>
+                    #if ($filter.numberOfHits == 0)
+                        $labelFulfillmentListEmpty
+                    #end
+                    </caption>
+                    #if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th>$filter.labelDate($locale)&nbsp;&nbsp;</th>
+                            <th>$filter.labelTimeSpent($locale)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    #foreach($item in $filter.periodItems)
+                        <tr bgcolor="#$item.day.type.color">
+                            <td>$item.day.dateAsString&nbsp;&nbsp;&nbsp;$item.day.dayOfWeek</td>
+                            #if ($item.timeSpent)
+                                <td align="right">$item.timeSpentAsString $labelHourFull</td>
+                            #else
+                                <td></td>
+                            #end
+                        </tr>
+                    #end
+                        <tr><td colspan="2">&nbsp;</td></tr>
+                        <tr>
+                        <td>$labelFulfillmentTotalTimeSpent:</td>
+                        <td align="right"><b>$filter.totalTimeSpentAsString</b> $labelHourFull</td>
+                        </tr>
+                    </tbody>
+                    #end
+                </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

@@ -1,0 +1,92 @@
+#set($htmlPrefix = '<span class="nowrap">')
+#set($htmlSuffix = '&nbsp;&nbsp;</span>')
+#set($requiredFlag = '')
+#foreach ($attribute in $attributes)
+########
+#if($attribute.getParameter("filterable") == "yes")
+#if($attribute.type == "integer" || $attribute.type == "float")
+#if($attribute.getParameter("filterLook") && $attribute.getParameter("filterLook") != "")
+#if($attribute.getParameter("filterLook") == "text")
+#normalTextInput("filter" $attribute $attribute.getParameter("filterWidth"))
+#elseif($attribute.getParameter("filterLook") == "textrange")
+#rangeTextInput("filter" $attribute $attribute.getParameter("filterWidth"))
+#elseif($attribute.getParameter("filterLook") == "select")
+#if($attribute.getParameter("selectOptionSource") == "dinamical")
+#selectInputDinamic("filter" $attribute "true" $attribute.getParameter("filterHeight"))
+#else
+#selectInputStatic("filter" $attribute $attribute.getParameterValues("selectOptionValues") $attribute.getParameterValues("selectOptionLabels") "true" $attribute.getParameter("filterHeight"))
+#end
+#else
+            <!-- The ${apos}$attribute.getParameter("filterLook")${apos} is unsupported filterLook. (comp-filterFields.vm [1])-->
+#end
+#end
+########
+#elseif($attribute.type == "boolean")
+#if($attribute.getParameter("filterLook") && $attribute.getParameter("filterLook") != "")
+#if($attribute.getParameter("filterLook") == "text")
+#normalTextInput("filter" $attribute $attribute.getParameter("filterWidth"))
+#elseif($attribute.getParameter("filterLook") == "booleanselect")
+#selectBooleanInput( "filter" $attribute "true")
+#elseif($attribute.getParameter("filterLook") == "select")
+#if($attribute.getParameter("selectOptionSource") == "dinamical")
+            <!-- Warning: Unparsable bolean value (it isn't 'true' or 'false') sets 'null' to the bean. (comp-filterFields.vm [2])-->
+#selectInputDinamic("filter" $attribute "true" $attribute.getParameter("filterHeight"))
+#else
+#selectInputStatic("filter" $attribute $attribute.getParameterValues("selectOptionValues") $attribute.getParameterValues("selectOptionLabels") "true" $attribute.getParameter("filterHeight"))
+#end
+#else
+            <!-- The ${apos}$attribute.getParameter("filterLook")${apos} is unsupported filterLook. (comp-filterFields.vm [3])-->
+#end
+#end
+########
+#elseif($attribute.type == "shorttext" || $attribute.type == "text")
+#if($attribute.getParameter("filterLook") && $attribute.getParameter("filterLook") != "")
+#if($attribute.getParameter("filterLook") == "text")
+#normalTextInput("filter" $attribute $attribute.getParameter("filterWidth"))
+#elseif($attribute.getParameter("filterLook") == "textarea")
+#textareaInput("filter" $attribute $attribute.getParameter("filterWidth") $attribute.getParameter("filterHeight") )
+#elseif($attribute.getParameter("filterLook") == "select")
+#if($attribute.getParameter("selectOptionSource") == "dinamical")
+#selectInputDinamic("filter" $attribute "true" $attribute.getParameter("filterHeight"))
+#else
+#selectInputStatic("filter" $attribute $attribute.getParameterValues("selectOptionValues") $attribute.getParameterValues("selectOptionLabels") "true" $attribute.getParameter("filterHeight"))
+#end
+#else
+            <!-- The ${apos}$attribute.getParameter("filterLook")${apos} is unsupported filterLook. (comp-filterFields.vm [4])-->
+#end
+#end
+########
+#elseif($attribute.type == "date" || $attribute.type == "datetime" || $attribute.type == "time")
+#if($attribute.getParameter("filterLook") && $attribute.getParameter("filterLook") != "")
+#if($attribute.getParameter("filterLook") == "text")
+#normalTextInput("filter" $attribute $attribute.getParameter("filterWidth"))
+#elseif($attribute.getParameter("filterLook") == "select")
+#if($attribute.getParameter("selectOptionSource") == "dinamical")
+#selectInputDinamic("filter" $attribute "true" $attribute.getParameter("filterHeight"))
+#else
+            <!-- todo: Unsupported the static date select! (The good date value parsing is very complicated in multilingual enviroment :) ) (comp-filterFields.vm [5])-->
+#end
+#elseif($attribute.getParameter("filterLook") == "pick")
+#pickDate("filter" $attribute $attribute.getParameter("filterWidth"))
+#elseif($attribute.getParameter("filterLook") == "pickrange")
+#rangePickDate("filter" $attribute $attribute.getParameter("filterWidth"))
+#else
+            <!-- The ${apos}$attribute.getParameter("filterLook")${apos} is unsupported filterLook. (comp-filterFields.vm [6])-->
+#end
+#end
+########
+#elseif($attribute.type == "reference")
+#if($attribute.getParameter("filterLook") && $attribute.getParameter("filterLook") != "")
+#if($attribute.getParameter("filterLook") == "select")
+#selectReferenceInput("filter" $attribute "true" $attribute.getParameter("filterHeight"))
+#elseif($attribute.getParameter("filterLook") == "pick")
+#pickRefference("filter" $attribute $attribute.getParameter("filterWidth"))
+#else
+            <!-- The ${apos}$attribute.getParameter("filterLook")${apos} is unsupported filterLook. (comp-filterFields.vm [7])-->
+#end
+#end
+#else
+            <!-- The ${apos}$attribute.type${apos} is unsupported type. (comp-filterFields.vm [8])-->
+#end
+#end
+#end

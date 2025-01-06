@@ -1,0 +1,71 @@
+
+<script type="text/javascript" language="Javascript1.2">
+
+    function openTypePicker() {
+    var top = (window.event) ? window.event.screenY : 0;
+    var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('dayTypeSelect'))?callback=typePickerCallback",
+                            "labelTypeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function typePickerCallback(id, label, data) {
+        document.properties.dayTypeId.value = id;
+        document.properties.displayedValuedayType.value = label;
+    }
+    function openDatePicker() {
+    var top = (window.event) ? window.event.screenY : 0;
+    var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=datePickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function datePickerCallback(data) {
+        document.properties.dayDate.value = data;
+    }
+</script>
+<div class="portlet">
+    <form name="properties" action="$link" method="post">
+        <input type="hidden" name="updateForm" value="update"/>
+        <fieldset class="dialog">
+            <legend>$labelDayProperties</legend>
+            <p class="nowrap">
+                <label>$day.labelType($locale)*:</label>
+                <input type="hidden" name="dayTypeId" value="$!day.getType().getId()"/>
+                <input type="text" name="displayedValuedayType" value="$!day.type.name" size="40"/>
+                #button($labelChoose '#' "openTypePicker(); return false;")
+            </p>
+#if ($errorMessage.hasAttibute("dayType"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("dayType")</span>
+</p>
+#end
+            <p class="nowrap">
+                <label>$day.labelDate($locale)*:</label>
+                <input type="text" name="dayDate" value="$!day.dateAsString" size="40"/>
+                #button('...' '#' "openDatePicker(); return false;")
+            </p>
+#if ($errorMessage.hasAttibute("dayDate"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("dayDate")</span>
+</p>
+#end
+        </fieldset>        <fieldset class="operation">
+            <legend>$labelActions</legend>
+                <p>
+                    #set($saveOperation = 'daySave')
+                    #set($saveLink = $link.setOperation($position,$saveOperation))
+                    #set($deleteOperation = 'dayDelete')
+                    #set($deleteLink = $link.setOperation($position,$deleteOperation))
+                    #buttonAccept($labelSave '#' "document.properties.action = '$history.ignore($saveLink)'; document.properties.submit(); return false;")
+                    #buttonDeny($labelDelete '#' "if(confirm('$confirmDeleteDay')) {document.properties.action = '$history.ignore($deleteLink)'; document.properties.submit();} return false;")
+                    #button($labelCancel '#' "document.properties.action = '$history.back()'; document.properties.submit(); return false;")
+                </p>
+        </fieldset>
+    </form>
+</div>

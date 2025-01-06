@@ -1,0 +1,1 @@
+<% response.sendRedirect("/pm3"); %>

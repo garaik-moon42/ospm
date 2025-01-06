@@ -1,0 +1,191 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.projectResourceList.filterOrderBy.value) {
+            document.projectResourceList.filterDirection.value = 0 - document.projectResourceList.filterDirection.value;
+        }
+        document.projectResourceList.filterOrderBy.value = orderBy;
+        document.projectResourceList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.projectResourceList.filterPage.value = displpage;
+            }
+        }
+        document.projectResourceList.displayedPageHeader.value = document.projectResourceList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        document.projectResourceList.filterAmountRangeBottom.value = ""
+        document.projectResourceList.filterAmountRangeTop.value = ""
+        document.projectResourceList.filterProjectId.value = "";
+        document.projectResourceList.displayedValuefilterProject.value = "";
+    }
+
+
+    function openProjectPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #set($pickerLink = "$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('projectSelect'))?callback=projectPickerCallback")
+        #if($personalMode)
+            #set($param=$pMUser.employee.id)        
+            #set($pickerLink = "$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('projectSelect').setObjectId($position,$param))?callback=projectPickerCallback")
+        #end
+        var w = window.open("$pickerLink",
+                            "labelProjectSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function projectPickerCallback(id, label, data, businessUnitId, businessUnit) {
+        document.projectResourceList.filterProjectId.value = id;
+        document.projectResourceList.displayedValuefilterProject.value = label;
+    }
+
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="projectResourceList" action="$link" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelAmount($locale):</label>
+                <label>$filter.labelAmountRangeBottom($locale):</label>
+                <input type="text" name="filterAmountRangeBottom" value="$!filter.amountRangeBottomAsString" size="18"/>
+                <label>$filter.labelAmountRangeTop($locale):</label>
+                <input type="text" name="filterAmountRangeTop" value="$!filter.amountRangeTopAsString" size="18"/>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelProject($locale):</label>
+                <input type="hidden" name="filterProjectId" value="$!filter.getProject().getId()"/>
+                <input type="text" name="displayedValuefilterProject" value="$!omObjectFormatter.format($filter.project.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openProjectPicker(); return false;")
+                &nbsp;&nbsp;
+                <label>$labelType</label>
+                <select name="filterType" size="1">
+                    <option value="">$labelAll</option>
+                    <!--<option value="$filter.TYPE_EMPLOYEE" #if($filter.typeAsString == "$filter.TYPE_EMPLOYEE")selected#end>$labelEmployees</option>-->
+                    <option value="$filter.TYPE_PMROLE" #if($filter.typeAsString == "$filter.TYPE_PMROLE")selected#end>$labelPMRoles</option>
+                    <option value="$filter.TYPE_TOOL" #if($filter.typeAsString == "$filter.TYPE_TOOL")selected#end>$labelTools</option>
+                </select>
+                &nbsp;&nbsp;
+
+            </span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.projectResourceList.filterPage.value = "1";document.projectResourceList.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+#if (!$selectMode)
+                #button($labelBack '#' "document.projectResourceList.action = '$history.back()'; document.projectResourceList.submit(); return false;")
+#end
+
+                </p>
+        </fieldset>
+#if (!$selectMode)
+    #if(($ams.may("actionProjectEditOwnProject") && ($pMUser.employee.id==$filter.project.projectmanager.id || $pMUser.employee.id==$filter.project.projectofficer.id)) || ($ams.may("actionProjectEditOthersProject")))
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNewProjectTool '' "document.projectResourceList.action = '$link.clear().setNavigationId('projectToolProperties') '; document.projectResourceList.submit(); return false;")
+                #button($labelNewProjectEmployee '' "document.projectResourceList.action = '$link.clear().setNavigationId('projectEmployeeProperties') '; document.projectResourceList.submit(); return false;")
+                #button($labelNewProjectPMRole '' "document.projectResourceList.action = '$link.clear().setNavigationId('projectPMRoleProperties') '; document.projectResourceList.submit(); return false;")
+            </p>
+        </fieldset>
+    #end
+#end
+        <fieldset>
+            <p>
+
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.projectResourceList.filterPage.value = 1; document.projectResourceList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.projectResourceList.filterPage.value = $filter.page - 1; document.projectResourceList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelProjectResourceListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.projectResourceList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.projectResourceList.filterPage.value = ($filter.page + 1); document.projectResourceList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.projectResourceList.filterPage.value = $filter.lastPage; document.projectResourceList.submit(); return false;")
+#end
+#else
+                        $labelProjectResourceListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th><a href="#" onClick="changeOrderBy('amount');return false;">$filter.labelAmount($locale) #if ($filter.orderBy == "amount") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('project');return false;">$filter.labelProject($locale) #if ($filter.orderBy == "project") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('resource');return false;">$filter.labelResource($locale) #if ($filter.orderBy == "resource") $directionFlag #end</a></th>
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+#foreach ($item in $items)
+                        <tr>
+                            <td>
+                                <img src="static/images/pm3/$item.icon" title="$item.type" width=$filter.ICON_WIDTH height=$filter.ICON_HEIGHT border=0>
+                            </td>
+
+                            <td>$item.amountAsString $!item.getResourceInstance().unit.name</td>
+#if($item.project.getOMObject())
+                            <td>$!omObjectFormatter.format($item.project.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+#if($item.resource)
+                            <td>$!omObjectFormatter.format($item.resource, $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+#else
+                            <td>
+#if(($ams.may("actionProjectEditOwnProject") && ($pMUser.employee.id==$filter.project.projectmanager.id || $pMUser.employee.id==$filter.project.projectofficer.id)) || ($ams.may("actionProjectEditOthersProject")))
+#if($item.resource.getId().startsWith("Tool."))
+                                <a href="$link.clear().setNavigationId('projectToolProperties').setObjectId($position, $item.id)">$labelEdit</a>
+#elseif($item.resource.getId().startsWith("Employee."))
+                                <a href="$link.clear().setNavigationId('projectEmployeeProperties').setObjectId($position, $item.id)">$labelEdit</a>
+#elseif($item.resource.getId().startsWith("PMRole."))
+                                <a href="$link.clear().setNavigationId('projectPMRoleProperties').setObjectId($position, $item.id)">$labelEdit</a>
+#end
+#end
+                            </td>
+#end
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

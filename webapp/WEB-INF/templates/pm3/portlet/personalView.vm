@@ -1,0 +1,347 @@
+<script type="text/javascript" language="JavaScript1.2">
+
+    function openBeginsBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsBottomPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+    function beginsBottomPickerCallback(data) {
+        document.projectTree.filterBeginsRangeBottom.value = data;
+    }
+
+    function clearFilterFields() {
+        document.projectTree.filterName.value = "";
+        document.projectTree.filterBeginsRangeBottom.value = ""
+        document.projectTree.filterBeginsRangeTop.value = ""
+        document.projectTree.filterDeadlineRangeBottom.value = ""
+        document.projectTree.filterDeadlineRangeTop.value = ""
+        document.projectTree.filterActive.value = "";
+        document.projectTree.filterProjectmanagerId.value = "";
+        document.projectTree.displayedValuefilterProjectmanager.value = "";
+        document.projectTree.filterProjectofficerId.value = "";
+        document.projectTree.displayedValuefilterProjectofficer.value = "";
+        document.projectTree.filterEmployeeId.value = "";
+        document.projectTree.displayedValuefilterEmployee.value = "";
+    }
+
+
+    function openBeginsTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function beginsTopPickerCallback(data) {
+        document.projectTree.filterBeginsRangeTop.value = data;
+    }
+
+    function openDeadlineBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=deadlineBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function deadlineBottomPickerCallback(data) {
+        document.projectTree.filterDeadlineRangeBottom.value = data;
+    }
+
+    function openDeadlineTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=deadlineTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function deadlineTopPickerCallback(data) {
+        document.projectTree.filterDeadlineRangeTop.value = data;
+    }
+
+    function openProjectmanagerPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #if($pm_roles.size() > 0)
+        #set($param="")
+        #foreach($role in $pm_roles)
+            #if($counter==1)
+                #set($param= "Role.$role.id")
+            #else
+                #set($param= "${param},Role.${role.id}")
+            #end
+        #end
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position, $param))?callback=projectmanagerPickerCallback",
+                            "labelProjectmanagerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=projectmanagerPickerCallback",
+                            "labelProjectmanagerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #end
+        w.focus();
+    }
+
+    function projectmanagerPickerCallback(id, label, data) {
+        document.projectTree.filterProjectmanagerId.value = id;
+        document.projectTree.displayedValuefilterProjectmanager.value = label;
+    }
+
+    function openProjectofficerPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #if($po_roles.size() > 0)
+        #set($param="")
+        #foreach($role in $po_roles)
+            #if($counter==1)
+                #set($param= "Role.$role.id")
+            #else
+                #set($param= "${param},Role.${role.id}")
+            #end
+        #end
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position, $param))?callback=projectofficerPickerCallback",
+                            "labelProjectofficerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=projectofficerPickerCallback",
+                            "labelProjectofficerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #end
+        w.focus();
+    }
+
+    function projectofficerPickerCallback(id, label, data) {
+        document.projectTree.filterProjectofficerId.value = id;
+        document.projectTree.displayedValuefilterProjectofficer.value = label;
+    }
+
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.projectTree.filterEmployeeId.value = id;
+        document.projectTree.displayedValuefilterEmployee.value = label;
+    }
+
+</script>
+<div class="portlet">
+ <form name="projectTree" action="$history.ignore($link)" method="post">
+     <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+     <input type="hidden" name="filterDirection" value="$!filter.direction" />
+     <input type="hidden" name="filterPage" value="$filter.page" />
+     <input type="hidden" name="treeOpen" value="" />
+     <input type="hidden" name="treeClose" value="" />
+     <input type="hidden" name="acceptedFulfillment" value="" />
+     <input type="hidden" name="approvedFulfillment" value="" />     
+#if($ams.may("actionProjectSearchProjects"))
+<fieldset>
+    <legend>$labelFiltering</legend>
+        <p>
+    <span class="nowrap">
+        <label>$filter.labelName($locale):</label>
+        <input type="text" name="filterName" value="$!filter.nameAsString" size="40"/>
+    &nbsp;&nbsp;</span>
+    <span class="nowrap">
+        <label>$filter.labelBegins($locale):</label>
+        <label>$filter.labelBeginsRangeBottom($locale):</label>
+        <input type="text" name="filterBeginsRangeBottom" value="$!filter.beginsRangeBottomAsString" size="18"/>
+        #button('...' '#' "openBeginsBottomPicker(); return false;")
+        <label>$filter.labelBeginsRangeTop($locale):</label>
+        <input type="text" name="filterBeginsRangeTop" value="$!filter.beginsRangeTopAsString" size="18"/>
+        #button('...' '#' "openBeginsTopPicker(); return false;")
+    &nbsp;&nbsp;</span>
+    <span class="nowrap">
+        <label>$filter.labelDeadline($locale):</label>
+        <label>$filter.labelDeadlineRangeBottom($locale):</label>
+        <input type="text" name="filterDeadlineRangeBottom" value="$!filter.deadlineRangeBottomAsString" size="18"/>
+        #button('...' '#' "openDeadlineBottomPicker(); return false;")
+        <label>$filter.labelDeadlineRangeTop($locale):</label>
+        <input type="text" name="filterDeadlineRangeTop" value="$!filter.deadlineRangeTopAsString" size="18"/>
+        #button('...' '#' "openDeadlineTopPicker(); return false;")
+    &nbsp;&nbsp;</span>
+    <span class="nowrap">
+        <label>$filter.labelActive($locale):</label>
+        <select name="filterActive" size="1">
+            <option value=""></option>
+            <option value="true" #if($filter.activeAsString == "true")selected#end>$labelYes</option>
+            <option value="false" #if($filter.activeAsString == "false")selected#end>$labelNo</option>
+        </select>
+    &nbsp;&nbsp;</span>
+     <span class="nowrap">
+         <label>$filter.labelProjectmanager($locale):</label>
+         <input type="hidden" name="filterProjectmanagerId" value="$!filter.getProjectmanager().getId()"/>
+         <input type="text" name="displayedValuefilterProjectmanager" value="$!omObjectFormatter.format($filter.projectmanager.getOMObject(), $locale)" size="40"/>
+         #button($labelChoose '#' "openProjectmanagerPicker(); return false;")
+     &nbsp;&nbsp;</span>
+     <span class="nowrap">
+         <label>$filter.labelProjectofficer($locale):</label>
+         <input type="hidden" name="filterProjectofficerId" value="$!filter.getProjectofficer().getId()"/>
+         <input type="text" name="displayedValuefilterProjectofficer" value="$!omObjectFormatter.format($filter.projectofficer.getOMObject(), $locale)" size="40"/>
+         #button($labelChoose '#' "openProjectofficerPicker(); return false;")
+     &nbsp;&nbsp;</span>     
+     <span class="nowrap">
+         <label>$labelEmployee:</label>
+         <input type="hidden" name="filterEmployeeId" value="$!filter.getEmployee().getId()"/>
+         <input type="text" name="displayedValuefilterEmployee" value="$!omObjectFormatter.format($filter.employee.getOMObject(), $locale)" size="40"/>
+         #button($labelChoose '#' "openEmployeePicker(); return false;")
+     &nbsp;&nbsp;</span>
+        </p>
+        <p>
+        #button($labelSearch '' 'document.projectTree.filterPage.value = "1";document.projectTree.submit(); return false;')
+        #button($labelSearchReset '' 'clearFilterFields(); return false;')
+        </p>
+</fieldset>
+#end
+#if (!$selectMode)
+    #if($ams.may("actionProjectCreateProject") || $ams.may("actionProjectAcceptOwnProjectFulfillment") || $ams.may("actionProjectAcceptOthersProjectFulfillment"))
+     <fieldset>
+         <legend>$labelOperations</legend>
+         <p>
+#if($ams.may("actionProjectCreateProject"))
+             #button($labelNewProject '' "document.projectTree.action = '$link.clear().setNavigationId('projectProperties') '; document.projectTree.submit(); return false;")
+#end
+#if($ams.may("actionProjectAcceptOwnProjectFulfillment") || $ams.may("actionProjectAcceptOthersProjectFulfillment"))
+             #button($labelButtonAcceptFulfillment '#' "document.projectTree.action = '$link?projectTree=acceptFulfillment'; document.projectTree.submit(); return false;")
+#end
+#if($ams.may("actionProjectApproveOwnProjectFulfillment")  || $ams.may("actionProjectApproveOthersProjectFulfillment"))
+             #button($labelButtonApproveFulfillment '#' "document.projectTree.action = '$link?projectTree=approveFulfillment'; document.projectTree.submit(); return false;")
+#end
+         </p>
+     </fieldset>
+    #end
+#end
+     <fieldset>
+         <legend>$navigationNode.getLabel($locale)</legend>
+         <p>
+             <table class="list">
+                 <thead>
+                     <tr>
+                         <th>$labelProject</th>
+                         <th>$labelActions</th>
+                         <th>$labelAcceptFulfillment</th>
+                         <th>$labelApproveFulfillment</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+#foreach ($node in $tree)
+    #set ($object = $node.object)
+    #if ($object)
+                     <tr>
+                         <td>
+        #if ($node.level > 2)
+            #foreach ($l in [3..$node.level])
+                             <img src="static/images/pm3/spacer.gif" />
+            #end
+        #end
+        #if ($node.closed() && $object.getOMObject().getOMClass().name != 'Fulfillment')
+                             <a href="$link" onclick="document.projectTree.treeOpen.value = '$node.id'; document.projectTree.submit(); return false;"><img src="static/images/pm3/closedNode.gif" /></a>
+        #elseif (($node.opened() && $node.leaf()) || $object.getOMObject().getOMClass().name == 'Fulfillment')
+                             <img src="static/images/pm3/leafNode.gif" />
+        #elseif ($node.opened())
+                             <a href="$link" onclick="document.projectTree.treeClose.value = '$node.id'; document.projectTree.submit(); return false;"><img src="static/images/pm3/openedNode.gif" /></a>
+        #end
+                             <img src="static/images/pm3/$object.getIcon()" />
+        #if ($object.getOMObject().getOMClass().name == 'Fulfillment')
+                            <b>$!object.user &nbsp;&nbsp;&nbsp; $!object.timeSpent &nbsp; $labelHourFull &nbsp;&nbsp;&nbsp; $stringCutter.cut($!object.description, 20)</b>
+        #else
+                             <b>$!object.name</b>
+         #end
+                         </td>
+                         <td>
+        #if ($object.getOMObject().getOMClass().name == 'Project')
+            #if(($ams.may("actionProjectEditOwnProject") && ($pMUser.employee.id==$object.projectmanager.id || $pMUser.employee.id==$object.projectofficer.id)) || $ams.may("actionProjectEditOthersProject"))
+                            <a href="$link.clear().setNavigationId('projectProperties').setObjectId($position, $object.id)">$labelEdit</a> |
+            #end
+                            <a href="$link.clear().setNavigationId('personalTaskList').setObjectId($position, $object.id)">$labelTasks</a> |
+                            <a href="$link.clear().setNavigationId('personalProjectResourceList').setObjectId($position, $object.id)">$labelResources</a>
+        #elseif ($object.getOMObject().getOMClass().name == 'Task')
+            #set($first=true)
+            #if(($ams.may("actionProjectEditOwnTask") && ($pMUser.employee.id==$object.project.projectmanager.id || $pMUser.employee.id==$object.project.projectofficer.id || $object.isSuperVicePM($pMUser.employee.id))) || ($ams.may("actionProjectEditOthersTask")))
+                        #if(!$first) | #end
+                        <a href="$link.clear().setNavigationId('taskProperties').setObjectId($position, $object.id)">$labelEdit</a>
+                        #set($first=false)
+            #end
+            #if($object.getFulfillments(true).size()==0 && $object.getResources().size()==0)
+                         #if(!$first) | #end
+                         <a href="$link.clear().setNavigationId('personalTaskList').setObjectId($position, $object.id)">$labelTasks</a>
+                         #set($first=false)
+            #end
+            #if(!$object.hasChildren())
+                         #if(!$first) | #end
+                         <a href="$link.clear().setNavigationId('personalFulfillmentList').setObjectId($position, $object.id)">$labelFulfillments</a> |
+                         <a href="$link.clear().setNavigationId('taskResourceList').setObjectId($position, $object.id)">$labelResources</a>
+                         #set($first=false)
+            #end
+        #end
+
+                         </td>
+                         <td align = "center" valign="middle">
+        #set($isPM=($pMUser.employee.id==$object.projectmanager.id || $pMUser.employee.id==$object.project.projectmanager.id || $pMUser.employee.id==$object.task.project.projectmanager.id))
+        #set($isPO=($pMUser.employee.id==$object.projectofficer.id || $pMUser.employee.id==$object.project.projectofficer.id || $pMUser.employee.id==$object.task.project.projectofficer.id))
+        #set($isVPM=($object.isSuperVicePM($pMUser.employee.id) || $object.task.isSuperVicePM($pMUser.employee.id)))
+        #if (!($object.getOMObject().getOMClass().name == 'Task'))
+                           #if(($ams.may("actionProjectAcceptOwnProjectFulfillment") && ($isPM || $isPO || $isVPM)) || $ams.may("actionProjectAcceptOthersProjectFulfillment"))
+                             #set($isEditable = $object.getOMObject().getOMClass().name == 'Fulfillment' && $object.isEditable().equals(0))                            
+                             #if($object.getOMObject().getOMClass().name != 'Fulfillment' || ($object.getOMObject().getOMClass().name == 'Fulfillment' && $isEditable && $object.approvedAsString.equals("false")))
+                                 #if ($acceptedFulfillment.contains($object.getId()))
+                                             <input type="checkbox" name="$object.getId()" value="true" checked="true" onclick="document.projectTree.acceptedFulfillment.value = '$object.getId()'; document.projectTree.submit(); return false;"/>
+                                 #else
+                                             <input type="checkbox" name="$object.getId()" value="false" onclick="document.projectTree.acceptedFulfillment.value = '$object.getId()'; document.projectTree.submit(); return false;"/>
+                                 #end
+                             #else
+                                 #if (($object.getOMObject().getOMClass().name != 'Fulfillment' && $acceptedFulfillment.contains($object.getId())) || ($object.getOMObject().getOMClass().name == 'Fulfillment' && $object.getAccepted()))
+                                             <input type="checkbox" checked="true" disabled/>
+                                 #else
+                                             <input type="checkbox" checked="false" disabled/>
+                                 #end
+                             #end
+                           #else
+                             #if (($object.getOMObject().getOMClass().name != 'Fulfillment' && $acceptedFulfillment.contains($object.getId())) || ($object.getOMObject().getOMClass().name == 'Fulfillment' && $object.getAccepted()))
+                                         <input type="checkbox" checked="true" disabled/>
+                             #else
+                                         <input type="checkbox" checked="false" disabled/>
+                             #end
+                           #end
+        #end
+                         </td>
+                         <td align = "center" valign="middle">
+        #if (!($object.getOMObject().getOMClass().name == 'Task'))
+                           #if(($ams.may("actionProjectApproveOwnProjectFulfillment") && ($isPM || $isPO || $isVPM)) || $ams.may("actionProjectApproveOthersProjectFulfillment"))
+                             #if ($approvedFulfillment.contains($object.getId()))
+                                         <input type="checkbox" name="object.getId()" value="true" checked="true" onclick="document.projectTree.approvedFulfillment.value = '$object.getId()'; document.projectTree.submit(); return false;"/>
+                             #else
+                                         <input type="checkbox" name="$object.getId()" value="false" onclick="document.projectTree.approvedFulfillment.value = '$object.getId()'; document.projectTree.submit(); return false;"/>
+                             #end
+                           #else
+                             #if ($approvedFulfillment.contains($object.getId()))
+                                         <input type="checkbox" checked="true" disabled/>
+                             #else
+                                         <input type="checkbox" checked="false" disabled/>
+                             #end
+                           #end
+        #end
+                         </td>
+                     </tr>
+    #end
+#end
+                 </tbody>
+           </table>
+         </p>
+     </fieldset>
+ </form>
+</div>

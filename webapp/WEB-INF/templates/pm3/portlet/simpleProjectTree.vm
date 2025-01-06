@@ -1,0 +1,130 @@
+<script type="text/javascript" language="JavaScript1.2">
+
+    function clearFilterFields() {
+        document.projectTree.filterEmployeeId.value = "";
+        document.projectTree.displayedValuefilterEmployee.value = "";
+    }
+
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.projectTree.filterEmployeeId.value = id;
+        document.projectTree.displayedValuefilterEmployee.value = label;
+    }
+
+    function openImportWorkingDaysPopup() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('importWorkingDays'))",
+                            "labelImportWorkingDays",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+    }
+
+</script>
+<div class="portlet">
+ <form name="projectTree" action="$history.ignore($link)" method="post">
+     <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+     <input type="hidden" name="filterDirection" value="$!filter.direction" />
+     <input type="hidden" name="filterPage" value="$filter.page" />
+     <input type="hidden" name="treeOpen" value="" />
+     <input type="hidden" name="treeClose" value="" />
+     <input type="hidden" name="acceptedFulfillment" value="" />
+     <input type="hidden" name="approvedFulfillment" value="" />
+     <input type="hidden" name="selectedTaskId" value="" />
+     <input type="hidden" name="selectedProjectId" value="" />
+     <fieldset>
+         <legend>$labelOperations</legend>
+             <p>
+              #if (!$selectMode)
+                 #button($labelImportWorkingDays '#' "openImportWorkingDaysPopup(); return false; ")
+                 #button($labelBack '#' "document.projectTree.action = '$history.back()'; document.projectTree.submit(); return false; ")
+              #end
+             </p>
+     </fieldset>
+     <fieldset>
+         <legend>$navigationNode.getLabel($locale)</legend>
+         <p>
+             <table class="list">
+                 <thead>
+                     <tr>
+                         <th>$labelProject</th>
+                         <th>$labelActions</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+#foreach ($node in $tree)
+    #set ($object = $node.object)
+    #set ($omclass = $object.getOMObject().getOMClass().name)
+    #if ($object)
+                     <tr>
+        #set($colspan="")
+        #if ($omclass == 'Fulfillment')
+          #set($colspan="colspan=2")
+        #end
+                         <td $colspan>
+        #if ($node.level > 2)
+            #foreach ($l in [3..$node.level])
+                             <img src="static/images/pm3/spacer.gif" />
+            #end
+        #end
+        #if ($node.closed() && $omclass != 'Fulfillment')
+                             <a href="$link" onclick="document.projectTree.treeOpen.value = '$node.id'; document.projectTree.submit(); return false;"><img src="static/images/pm3/closedNode.gif" /></a>
+        #elseif (($node.opened() && $node.leaf()) || $omclass == 'Fulfillment')
+                             <img src="static/images/pm3/leafNode.gif" />
+        #elseif ($node.opened())
+                             <a href="$link" onclick="document.projectTree.treeClose.value = '$node.id'; document.projectTree.submit(); return false;"><img src="static/images/pm3/openedNode.gif" /></a>
+        #end
+                             <img src="static/images/pm3/$object.getIcon()" />
+        #if ($omclass == 'Fulfillment')
+                             <b>$!object.user &nbsp; $!object.dateAsString &nbsp;&nbsp; $!object.timeSpentAsString &nbsp; $labelHourFull &nbsp;&nbsp; $object.employee.name &nbsp;&nbsp; $stringCutter.cut($!object.description, 40)</b>
+        #else
+                             <b>$!object.name</b>
+         #end
+                         </td>
+#if ($omclass != 'Fulfillment')
+                         <td>
+        #if ($omclass == 'Project')
+            #set($isActive = $object.active)
+            #if(($pMUser.may("actionProjectEditOwnProject") && ($pMUser.employee.id==$object.projectmanager.id || $pMUser.employee.id==$object.projectofficer.id)) || $pMUser.may("actionProjectEditOthersProject"))
+                        <a href="$link.clear().setNavigationId('projectProperties').setObjectId($position, $object.id)">$labelEdit</a> |
+##                        <a href="$link.clear().setNavigationId('projectResourceList').setObjectId($position, $object.id)">$labelResources</a> |
+            #end
+                        <a href="$link.clear().setNavigationId('taskList').setObjectId($position, $object.id)">$labelTasks</a>
+            #if((($pMUser.may("actionProjectEditOwnProject") && ($pMUser.isPMOf($object) || $pMUser.isPOOf($object))) || $pMUser.may("actionProjectEditOthersProject")) && $object.active)
+                        | <a href="$link" onclick="document.projectTree.action = '$link.clear().setNavigationId('taskProperties')'; document.projectTree.selectedProjectId.value = '$object.id'; document.projectTree.submit(); return false;">$labelNewTask</a>
+            #end
+        #elseif ($omclass == 'Task')
+            #set($first=true)
+            #if(($pMUser.may("actionProjectEditOwnTask") && ($pMUser.employee.id==$object.project.projectmanager.id || $pMUser.employee.id==$object.project.projectofficer.id || $object.isSuperVicePM($pMUser.employee.id))) || ($pMUser.may("actionProjectEditOthersTask")))
+                        #if(!$first) | #end
+                        <a href="$link.clear().setNavigationId('taskProperties').setObjectId($position, $object.id)">$labelEdit</a>
+                        #set($first=false)
+            #end
+            #if(!$object.hasChildren())
+                         #if(!$first) | #end
+                         <a href="$link.clear().setNavigationId('fulfillmentList').setObjectId($position, $object.id)">$labelFulfillments</a>
+                             #if ($object.active && $isActive)
+                         | <a href="$link" onclick="document.projectTree.action = '$link.clear().setNavigationId('fulfillmentProperties')'; document.projectTree.selectedTaskId.value = '$object.id'; document.projectTree.submit(); return false;">$labelNewFulfillment</a>
+                             #end
+                         #set($first=false)
+            #end
+        #end
+                         </td>
+#end
+                     </tr>
+    #end
+#end
+                 </tbody>
+           </table>
+         </p>
+     </fieldset>
+ </form>
+</div>

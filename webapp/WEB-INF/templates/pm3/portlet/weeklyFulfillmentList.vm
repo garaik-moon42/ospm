@@ -1,0 +1,155 @@
+<script type="text/javascript" language="JavaScript1.2">
+
+    function openDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateBottomPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+#if(!$pMUser.hasRole('administrator'))
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position,$pMUser.employee.id))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+#end
+        w.focus();
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.weeklyFulfillmentList.filterEmployeeId.value = id;
+        document.weeklyFulfillmentList.displayedValuefilterEmployee.value = label;
+        document.weeklyFulfillmentList.submit(); return false;
+    }
+
+    function getFirstDayOfWeek(basedate) {
+        year = basedate.substring(0, 4);
+        month = basedate.substring(5, 7);
+        day = basedate.substring(8, 10);
+        date = new Date();
+        date.setFullYear(year, month - 1, day);
+        date.setHours(0, 0, 0, 0);
+        while(date.getDay() != 1) {
+            date.setDate(date.getDate() - 1);
+        }
+        return date;
+    }
+
+    function getLocaleDate(date) {
+        year = date.getFullYear().toString();
+        month = (date.getMonth() + 1).toString();
+        if(month.length == 1) month = "0" + month;
+        day = date.getDate().toString();
+        if(day.length == 1) day = "0" + day;
+        return year + "." + month + "." + day + ".";
+    }
+
+    function dateBottomPickerCallback(data) {
+        dateBottom = getFirstDayOfWeek(data);
+        dateTop = new Date(dateBottom);
+        dateTop.setDate(dateTop.getDate() + 6);
+        document.weeklyFulfillmentList.filterDateRangeBottom.value = getLocaleDate(dateBottom);
+        document.weeklyFulfillmentList.filterDateRangeTop.value = getLocaleDate(dateTop);
+        document.weeklyFulfillmentList.submit();
+        return false;
+    }
+
+</script>
+<style>
+.font1 {
+    color: #0000ff;
+    font-weight: bold;
+}
+.font2 {
+    color: #0000ff;
+}
+table.wlist td {
+    padding: 4px 4px;
+    text-align: center;
+}
+</style>
+<div class="portlet">
+    <form name="weeklyFulfillmentList" action="$history.ignore($link.clear().setNavigationId('weeklyFulfillmentList'))" method="post">
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelEmployee($locale):</label>
+                <input type="hidden" name="filterEmployeeId" value="$!filter.getEmployee().getId()"/>
+                <input type="text" name="displayedValuefilterEmployee" value="$!omObjectFormatter.format($filter.employee.getOMObject(), $locale)" size="30" readonly="readonly"/>
+                #if ( $pMUser.hasRole('projectOfficer') || $pMUser.hasRole('projectLeader') || $pMUser.hasRole('administrator'))
+                    #button('...' '#' "openEmployeePicker(); return false;")
+                    #button($labelMyself '#' "document.weeklyFulfillmentList.filterEmployeeId.value = '$pMUser.getEmployee().getId()'; document.weeklyFulfillmentList.displayedValuefilterEmployee.value = '$!omObjectFormatter.format($pMUser.getEmployee().getOMObject(), $locale)'; document.weeklyFulfillmentList.submit(); return false;")
+                #end
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelDate($locale):&nbsp;</label>
+                <input type="text" name="filterDateRangeBottom" value="$!filter.dateRangeBottomAsString" size="10" onchange="dateBottomPickerCallback(document.weeklyFulfillmentList.filterDateRangeBottom.value);"/>
+                <input type="hidden" name="filterDateRangeTop" value="$!filter.dateRangeTopAsString" />
+                <input type="hidden" name="filterDatePrevNext" value="" />
+                #button('...' '#' "openDateBottomPicker(); return false;")
+            &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelPrevWeek '' "document.weeklyFulfillmentList.filterDatePrevNext.value = '-1'; document.weeklyFulfillmentList.submit(); return false;")
+                #button($labelNextWeek '' "document.weeklyFulfillmentList.filterDatePrevNext.value = '1'; document.weeklyFulfillmentList.submit(); return false;")
+                #button($labelBack '#' "document.weeklyFulfillmentList.action = '$history.back()'; document.weeklyFulfillmentList.submit(); return false;")
+                </p>
+        </fieldset>
+        <fieldset>
+            <br>
+            #if($errorMessage.hasGeneral())
+            <p class="nowrap">
+                <span class="error">$errorMessage.getGeneral()</span>
+            </p>
+            #end
+            <p>
+                <table class="wlist" width="1280px" border="1px">
+                    #set($items = $filter.periodItems)
+                    <tr>
+                        <td width="160px" colspan="2"><font class="font1">$labelProject</font></td>
+                        #foreach($item in $items)
+                            <td width="160px" colspan="2" bgcolor="#$item.day.type.color">
+                                <font class="font1">$item.day.dayOfWeek</font><br><font class="font2">$item.day.dateAsString</font>
+                            </td>
+                        #end
+                    </tr>
+                    <tr>
+                        <td width="160px" colspan="2">&nbsp;</td>
+                        #foreach($item in $items)
+                            <td width="128px" bgcolor="#$item.day.type.color" style="text-align:left"><b>$labelSum:</b></td>
+                            <td width="32px" bgcolor="#$item.day.type.color"><b>$item.timeSpentAsString</b></td>
+                        #end
+                    </tr>
+                    #set($olditem = "")
+                    #foreach($item in $filter.periodSubItems)
+                    <tr>
+                        <td width="128px" style="text-align:left"><font class="font2">#if($item.task.project.name != $olditem) $item.task.project.name #end</font></td>
+                        <td width="32px"><b>#if($item.task.project.name != $olditem) $item.projectTimeSpentAsString #end</b></td>
+                        #foreach($subItem in $item.subItems)
+                            #if($subItem.timeSpentAsString != "")
+                                <td width="128px" bgcolor="#$subItem.color" style="text-align:left">$item.task.name</td>
+                                <td width="32px" bgcolor="#$subItem.color">$subItem.timeSpentAsString</td>
+                            #else
+                                <td colspan="2" bgcolor="#$subItem.color">&nbsp;</td>
+                            #end
+                        #end
+                    </tr>
+                    #set($olditem = $item.task.project.name)
+                    #end
+                </table>
+            </p>
+            <p>
+                $labelFulfillmentTotalTimeSpent:&nbsp;&nbsp;<b>$filter.totalTimeSpentAsString</b>&nbsp;$labelHourFull
+            </p>
+        </fieldset>
+    </form>
+</div>

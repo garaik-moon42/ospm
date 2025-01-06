@@ -1,0 +1,21 @@
+#*
+ * This control component turns the list page.
+ *
+ * Used:
+ *  $naming String formater tool in the VelocityContext.
+ *  $filter The filter compomonent of the listed beans.
+ *  #button Button macro in CodeBuilderMacros.vm
+ *
+ *#
+\#if ($filter.numberOfHits > 0)
+\#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.${naming.formatAttribute($classname)}List.filterPage.value = 1; document.${naming.formatAttribute($classname)}List.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.${naming.formatAttribute($classname)}List.filterPage.value = $filter.page - 1; document.${naming.formatAttribute($classname)}List.submit(); return false;")&nbsp;
+            $filter.numberOfHits $label${classname}ListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.${naming.formatAttribute($classname)}List.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.${naming.formatAttribute($classname)}List.filterPage.value = ($filter.page + 1); document.${naming.formatAttribute($classname)}List.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.${naming.formatAttribute($classname)}List.filterPage.value = $filter.lastPage; document.${naming.formatAttribute($classname)}List.submit(); return false;")
+\#end
+\#else
+                        $label${classname}ListEmpty
+\#end

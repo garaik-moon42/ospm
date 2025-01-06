@@ -1,0 +1,413 @@
+#if ($timermode)      
+
+<script type="text/javascript" xml:space="preserve" language="Javascript1.2" 
+	src="static/js/ajax/prototype.js">
+</script>
+
+<script type="text/javascript" language="JavaScript1.2">
+
+	function trackTime() {
+
+		if (gTimer == null) return;
+
+		gCurrentSeconds++;
+		gOverallTotal++;
+		gTaskSecs[gCurrentTask]++;
+
+        document.getElementById("totalTime").innerHTML = formatTime2(gOverallTotal);
+        document.getElementById("currentTime").innerHTML = formatTime2(gCurrentSeconds);
+        document.getElementById(gCurrentTask + "Total").innerHTML = formatTime2(gTaskSecs[gCurrentTask]);
+
+    }
+
+	function startTimer(element) {
+		
+		if (gCurrentTask == element.id) {
+		
+			stopTimer();
+			
+		} else {
+	
+			gCurrentSeconds	= 0;
+			
+			gPreviousTask = gCurrentTask;
+			gCurrentTask = element.id;
+			
+			if (gTimer) {
+				clearInterval(gTimer);
+			}
+			gTimer = setInterval('trackTime()', 1000);    
+			showStopButton(true);
+			setTimerProperties(true);
+			resetTaskColors();
+			document.getElementById(element.id).style.color = "green";
+	
+			sendData2Server();
+			
+		}
+	}
+
+	function stopTimer() {
+	
+		gCurrentSeconds	= 0;
+		if (gTimer) {
+			clearInterval(gTimer);
+		}
+		showStopButton(false);
+        document.getElementById("currentTime").innerHTML = "0:00";
+
+		setTimerProperties(false);
+		resetTaskColors();
+
+		gPreviousTask = gCurrentTask;
+		gCurrentTask = null;
+
+		sendData2Server();
+
+	}
+
+	function resetTaskColors() {
+		for (var i = 0; i < gTasks.length; i++) {
+	        document.getElementById(gTasks[i]).style.color = "#0068c3";
+	        document.getElementById(gTasks[i] + "Total").style.color = "#0068c3";
+		}
+	}
+
+	function showStopButton(on) {
+        document.getElementById("stopButton").style.backgroundColor = on ? "#0068c3" : "#f0f7fc";
+        document.getElementById("stopButton").style.cursor = on ? "pointer" : "auto";
+	}
+	
+	function sendData2Server() {
+	
+		var options = {
+		
+	    	// Use POST
+	    	method: 'get',
+	    	
+	    	// Send this lovely data
+	    	parameters: 'time=' + new Date().getTime() + '&stopid=' + gTaskResourceId[gPreviousTask] + '&startid=' + gTaskResourceId[gCurrentTask],
+	    	
+	    	// Handle successful response
+	    	onSuccess: function(t) {
+				if (t.responseText != "OK") {
+					alert(t.responseText);
+				}
+	    	},
+	    	
+	    	// Handle errors
+	    	onFailure: function(t) {
+	    		if (t.status == '12029') {
+		        	alert('*** Figyelmeztetés ***\nMegszakadt a kapcsolat a szerverrel!');
+	    		} else {
+		        	alert('Váratlan hiba lépett fel: ' + t.status + ' -- ' + t.statusText);
+		        }
+	    	}
+	    	
+		}
+	
+		new Ajax.Request('$link.baseURI$link.clear().setScreenId('ajaxTimeTracker')', options);		
+		
+	}
+
+	function setTimerProperties(on) {
+        document.getElementById("currentTime").style.color = on ? 'green' : 'red';
+	}
+
+	function setTaskColor(id, over) {
+		if (over) {
+			var newColor = gCurrentTask == id ? "red" : "green";
+        	document.getElementById(id).style.color = newColor;
+        	document.getElementById(id + "Total").style.color = newColor;
+		} else {
+			var newColor = gCurrentTask == id ? "green" : "#0068c3";
+        	document.getElementById(id).style.color = newColor;
+        	document.getElementById(id + "Total").style.color = newColor;
+		}
+	}
+
+	var gTimer = null;
+	var gCurrentSeconds = 0;
+	var gOverallTotal = 0;
+	
+	var gPreviousTask = null;
+	var gCurrentTask = null;
+
+	var gTaskSecs = new Array();
+	var gTasks = new Array();
+	var gTaskResourceId = new Array();
+	
+#foreach ($item in $currentTasks)
+#set ($k = $counter - 1)
+	var j = $k;
+	gTasks[j] = "task$counter";
+	gTaskResourceId["task$counter"] = "$item.taskResource.id";
+	gTaskSecs["task$counter"] = 0;
+#end
+
+</script>
+
+#end      
+
+<script type="text/javascript" language="JavaScript1.2">
+
+	function formatTime2(seconds) {
+	
+		var hours = intDiv(seconds, 3600);
+		var mins = intDiv((seconds - (hours * 3600)), 60);
+		var secs = intDiv((seconds - (hours * 3600) - (mins * 60)), 1);
+		var timeString = hours > 0 ? hours + ':' : '';
+		timeString += mins < 10 && hours > 0 ? '0' + mins + ':' : mins + ':';
+		timeString += secs < 10 ? '0' + secs : secs;
+		
+		return timeString;
+		
+	}
+
+	function intDiv(a, b) {
+		return a >= b ? (a - (a % b)) / b : 0;
+	}
+#if (!$timermode)
+    function openTimer() {
+    
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('personalTimer'))?callback=openTimerCallback",
+                            "personalTimer",
+                            "left=" + left + ", top=" + top + ", width=175, height=450, menubar=0, resizable=1, scrollbars=1, status=0, toolbar=0");
+        w.focus();
+
+    }
+
+    function openTimerCallback() {
+        document.taskResourceList.submit();
+    }
+#end
+	function gotoFulfillment(taskId, filterTimeSpent, fulfillmentDate, taskResourceId) {
+
+        document.taskResourceList.filterTaskId.value = taskId;
+	
+		document.taskResourceList.filterTimeSpent.value = filterTimeSpent / 3600;
+		var time = document.taskResourceList.filterTimeSpent.value;
+		re = RegExp('[.]', 'gi');
+		time = time.replace(re, ',');
+		document.taskResourceList.filterTimeSpent.value = time;
+	
+        document.taskResourceList.filterDate.value = getCurrentTime();
+        
+        document.taskResourceList.taskResourceId.value = taskResourceId;
+        
+		document.taskResourceList.action = "$link.clear().setNavigationId('fulfillmentProperties')"; 
+		document.taskResourceList.submit();
+	
+	}
+
+	function getCurrentTime() {
+		var today = new Date();
+		var timeString = today.getHours() < 10 ? '0' + today.getHours() : today.getHours();
+		timeString += today.getMinutes() < 10 ? ':0' + today.getMinutes() : ':' + today.getMinutes();
+		return timeString + ":00";
+	}
+
+#if ($timermode)
+    function closeTimer() {
+        stopTimer();
+#if ($callback)
+    window.opener.${callback}();
+#else
+    alert("Don't find callback method name in context.");
+#end
+    window.close();
+    }
+#end
+
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+
+</script>
+
+<div class="portlet">
+
+    <form name="taskResourceList" action="$link" method="post">
+
+	    <input type="hidden" name="filterTaskId" value=""/>
+	    <input type="hidden" name="filterTimeSpent" value=""/>
+	    <input type="hidden" name="filterDate" value=""/>
+	    <input type="hidden" name="taskResourceId" value=""/>
+
+###
+### Timer page
+###
+    
+#if ($timermode)      
+        <fieldset style="padding-top: 8px;">   <!-- background-color: #f0f7fc; -->
+	        <div id="currentTime" style="font-family: Lucida Console, Courier New, monospace; 
+	        						font-weight: bold; font-size: 22px; color: red; text-align: right;">
+				0:00
+	        </div>
+			<table width="100%">	
+				<tr>        
+					<td>        
+				        Összesen:<br/>
+				        <div id="totalTime" style="font-family: Lucida Console, Courier New, monospace; 
+				        						font-weight: bold; font-size: 12px; color: green;">
+							0:00
+				        </div>
+					</td>
+					<td align="right">        
+				        <div id="stopButton" style="background-color: #f0f7fc; height: 18px; width: 18px;
+				        							text-align: right;"
+				        					 onclick="stopTimer();">
+				        	&nbsp;
+				        </div>
+					</td>
+				</tr>
+			</table>
+        </fieldset>
+
+        <fieldset>
+	        <legend>$labelTask</legend>
+              <p/>
+#set ($oldProject = "")                    
+#foreach ($item in $currentTasks)
+#if ($oldProject != $item.taskResource.task.project.getOMObject() || $counter == 1)
+	#if ($counter > 1) 
+	                 </tbody>
+              </table>
+              <p/>
+	#end
+                <div style="font-weight: bold; color: #666666;">
+                	$!omObjectFormatter.format($item.taskResource.task.project.getOMObject(), $locale)
+                </div>
+                <table class="list" width="100%">
+                    <tbody>
+#end
+                        <tr>
+                            <td>
+                            	<a href="#" id="task$counter" onclick="startTimer(this); return false;" 
+                            				style="font-weight: bold;" 
+                            				onMouseOut="setTaskColor('task$counter', false);" 
+                            				onMouseOver="setTaskColor('task$counter', true)">
+                            		$!omObjectFormatter.format($item.taskResource.task.getOMObject(), $locale)
+                            	</a>
+                            </td>
+                            <td id="task${counter}Total" onMouseOut="setTaskColor('task$counter', false);" 
+                            		onMouseOver="setTaskColor('task$counter', true)"
+                            		style="color: #0068c3; text-align: right;">
+        						0:00
+				        	</td>
+                        </tr>
+#set ($oldProject = $item.taskResource.task.project.getOMObject())
+#end
+                    </tbody>
+              </table>
+              <p/>
+            <br /><br />
+            #button($labelEnd '' "closeTimer(); return false;")
+        </fieldset>	
+#end                       
+
+###
+### Base page
+###
+
+#if (!$timermode)      
+    
+#if (!$selectMode)
+#if ($currentTasks.size() > 0)      
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelTimer '#' "openTimer(); return false;")
+            </p>
+        </fieldset>
+#end                       
+#end                       
+        <fieldset>
+	        <legend>$labelPersonalTimeTracking</legend>
+            <p>
+
+                <table class="list">
+                    <caption>
+#if ($currentTasks.size() == 0)      
+                        $labelTaskResourceListEmpty
+#end                       
+                    </caption>
+#if ($currentTasks.size() > 0)      
+                    <thead>
+                        <tr>
+                            <th>$labelProject</th>
+                            <th>$labelTask</th>
+#if(!$selectMode)
+                            <th>$labelDate</th>
+                            <th>$labelDuration</th>
+#end
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+#if($selectMode)
+  #foreach ($item in $currentTasks)
+                        <tr>
+                            <td>$!omObjectFormatter.format($item.taskResource.task.project.getOMObject(), $locale)</td>
+                            <td>$!omObjectFormatter.format($item.taskResource.task.getOMObject(), $locale)</td>
+                            <td>
+                                <a href="#" onClick="selectObject('$item.taskResource.id','$omObjectFormatter.formatForJavascript($item.taskResource.task.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+                        </tr>
+  #end
+#else
+  #foreach ($item in $currentTasks)
+	#set ($oldDate = "")
+    #foreach ($key in $item.durationForDateMap.keySet()) 
+                      <tr>
+	  #if ($oldDate == $item.durationForDateMap.get($key) || $counter == 1)
+                            <td>$!omObjectFormatter.format($item.taskResource.task.project.getOMObject(), $locale)</td>
+                            <td>$!omObjectFormatter.format($item.taskResource.task.getOMObject(), $locale)</td>
+	  #else	  
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+	  #end
+                            <td>$item.getFormattedDate($key)</td>
+                            <td align="center">
+                            	<script type="text/javascript" language="JavaScript1.2">
+                            		document.write(formatTime2($item.durationForDateMap.get($key)));
+                            	</script>
+                            </td>
+                            <td>
+                                <a href="$link.clear().setNavigationId('taskResourceTimeList').setObjectId($position, $item.taskResource.id)">$labelEdit</a> | 
+								<a href="javascript:gotoFulfillment('$!item.taskResource.taskId', '$item.durationForDateMap.get($key)', '$item.getFormattedDate($key)', '$item.taskResource.id');">$labelEditFulfillment</a>
+                            </td>
+                      </tr>
+	  #set ($oldDate = $item.durationForDateMap.get($key))                    
+	  #if ($item.durationForDateMap.keySet().size() == $counter)
+                      <tr>
+                            <td align="right" colspan="4">
+                            	<i>
+                            		<script type="text/javascript" language="JavaScript1.2">
+                            			document.write(formatTime2($item.totalSecs));
+	                            	</script>
+                            	</i>
+                            </td>
+                            <td>&nbsp;</td>
+                      </tr>
+      #end 
+    #end 
+  #end
+#end
+                    </tbody>
+#end                       
+              </table>
+            </p>
+        </fieldset>
+#end                       
+    </form>
+</div>

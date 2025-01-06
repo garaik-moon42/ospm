@@ -1,0 +1,418 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.absenceAffectedProjectList.filterOrderBy.value) {
+            document.absenceAffectedProjectList.filterDirection.value = 0 - document.absenceAffectedProjectList.filterDirection.value;
+        }
+        document.absenceAffectedProjectList.filterOrderBy.value = orderBy;
+        document.absenceAffectedProjectList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.absenceAffectedProjectList.filterPage.value = displpage;
+            }
+        }
+        document.absenceAffectedProjectList.displayedPageHeader.value = document.absenceAffectedProjectList.filterPage.value;
+    }
+
+    function clearFilterFields() {
+        document.absenceAffectedProjectList.filterAbsenceId.value = "";
+        document.absenceAffectedProjectList.displayedValuefilterAbsence.value = "";
+        document.absenceAffectedProjectList.filterProjectId.value = "";
+        document.absenceAffectedProjectList.displayedValuefilterProject.value = "";
+        document.absenceAffectedProjectList.filterSubstituteId.value = "";
+        document.absenceAffectedProjectList.displayedValuefilterSubstitute.value = "";
+        document.absenceAffectedProjectList.filterNoticed.value = "";
+        document.absenceAffectedProjectList.filterNoticedById.value = "";
+        document.absenceAffectedProjectList.displayedValuefilterNoticedBy.value = "";
+        document.absenceAffectedProjectList.filterNoticeDateRangeBottom.value = ""
+        document.absenceAffectedProjectList.filterNoticeDateRangeTop.value = ""
+        document.absenceAffectedProjectList.filterCreationDateRangeBottom.value = ""
+        document.absenceAffectedProjectList.filterCreationDateRangeTop.value = ""
+        document.absenceAffectedProjectList.filterCreatedById.value = "";
+        document.absenceAffectedProjectList.displayedValuefilterCreatedBy.value = "";
+        document.absenceAffectedProjectList.filterModificationDateRangeBottom.value = ""
+        document.absenceAffectedProjectList.filterModificationDateRangeTop.value = ""
+        document.absenceAffectedProjectList.filterModifiedById.value = "";
+        document.absenceAffectedProjectList.displayedValuefilterModifiedBy.value = "";
+    }
+
+
+    function openAbsencePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('absenceSelect'))?callback=absencePickerCallback",
+                            "labelAbsenceSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function absencePickerCallback(id, label, data) {
+        document.absenceAffectedProjectList.filterAbsenceId.value = id;
+        document.absenceAffectedProjectList.displayedValuefilterAbsence.value = label;
+    }
+
+    function openProjectPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('projectSelect'))?callback=projectPickerCallback",
+                            "labelProjectSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function projectPickerCallback(id, label, data, businessUnitId, businessUnit) {
+        document.absenceAffectedProjectList.filterProjectId.value = id;
+        document.absenceAffectedProjectList.displayedValuefilterProject.value = label;
+    }
+
+    function openSubstitutePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=substitutePickerCallback",
+                            "labelSubstituteSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function substitutePickerCallback(id, label, data) {
+        document.absenceAffectedProjectList.filterSubstituteId.value = id;
+        document.absenceAffectedProjectList.displayedValuefilterSubstitute.value = label;
+    }
+
+    function openNoticedByPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('pMUserSelect'))?callback=noticedByPickerCallback",
+                            "labelNoticedBySelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function noticedByPickerCallback(id, label, data) {
+        document.absenceAffectedProjectList.filterNoticedById.value = id;
+        document.absenceAffectedProjectList.displayedValuefilterNoticedBy.value = label;
+    }
+
+    function openNoticeDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=noticeDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function noticeDateBottomPickerCallback(data) {
+        document.absenceAffectedProjectList.filterNoticeDateRangeBottom.value = data;
+    }
+
+    function openNoticeDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=noticeDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function noticeDateTopPickerCallback(data) {
+        document.absenceAffectedProjectList.filterNoticeDateRangeTop.value = data;
+    }
+   
+    function openCreationDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=creationDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function creationDateBottomPickerCallback(data) {
+        document.absenceAffectedProjectList.filterCreationDateRangeBottom.value = data;
+    }
+
+    function openCreationDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=creationDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function creationDateTopPickerCallback(data) {
+        document.absenceAffectedProjectList.filterCreationDateRangeTop.value = data;
+    }
+   
+    function openCreatedByPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('pMUserSelect'))?callback=createdByPickerCallback",
+                            "labelCreatedBySelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function createdByPickerCallback(id, label, data) {
+        document.absenceAffectedProjectList.filterCreatedById.value = id;
+        document.absenceAffectedProjectList.displayedValuefilterCreatedBy.value = label;
+    }
+
+    function openModificationDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=modificationDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function modificationDateBottomPickerCallback(data) {
+        document.absenceAffectedProjectList.filterModificationDateRangeBottom.value = data;
+    }
+
+    function openModificationDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=modificationDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function modificationDateTopPickerCallback(data) {
+        document.absenceAffectedProjectList.filterModificationDateRangeTop.value = data;
+    }
+   
+    function openModifiedByPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('pMUserSelect'))?callback=modifiedByPickerCallback",
+                            "labelModifiedBySelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function modifiedByPickerCallback(id, label, data) {
+        document.absenceAffectedProjectList.filterModifiedById.value = id;
+        document.absenceAffectedProjectList.displayedValuefilterModifiedBy.value = label;
+    }
+
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="absenceAffectedProjectList" action="$link" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelAbsence($locale):</label>
+                <input type="hidden" name="filterAbsenceId" value="$!filter.getAbsence().getId()"/>
+                <input type="text" name="displayedValuefilterAbsence" value="$!omObjectFormatter.format($filter.absence.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openAbsencePicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelProject($locale):</label>
+                <input type="hidden" name="filterProjectId" value="$!filter.getProject().getId()"/>
+                <input type="text" name="displayedValuefilterProject" value="$!omObjectFormatter.format($filter.project.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openProjectPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelSubstitute($locale):</label>
+                <input type="hidden" name="filterSubstituteId" value="$!filter.getSubstitute().getId()"/>
+                <input type="text" name="displayedValuefilterSubstitute" value="$!omObjectFormatter.format($filter.substitute.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openSubstitutePicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelNoticed($locale):</label>
+                <select name="filterNoticed" size="1">
+                    <option value=""></option>
+                    <option value="true" #if($filter.noticedAsString == "true")selected#end>$labelYes</option>
+                    <option value="false" #if($filter.noticedAsString == "false")selected#end>$labelNo</option>
+                </select>
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelNoticedBy($locale):</label>
+                <input type="hidden" name="filterNoticedById" value="$!filter.getNoticedBy().getId()"/>
+                <input type="text" name="displayedValuefilterNoticedBy" value="$!omObjectFormatter.format($filter.noticedBy.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openNoticedByPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelNoticeDate($locale):</label>
+                <label>$filter.labelNoticeDateRangeBottom($locale):</label>
+                <input type="text" name="filterNoticeDateRangeBottom" value="$!filter.noticeDateRangeBottomAsString" size="40"/>
+                #button('...' '#' "openNoticeDateBottomPicker(); return false;")
+                <label>$filter.labelNoticeDateRangeTop($locale):</label>
+                <input type="text" name="filterNoticeDateRangeTop" value="$!filter.noticeDateRangeTopAsString" size="18"/>
+                #button('...' '#' "openNoticeDateTopPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelCreationDate($locale):</label>
+                <label>$filter.labelCreationDateRangeBottom($locale):</label>
+                <input type="text" name="filterCreationDateRangeBottom" value="$!filter.creationDateRangeBottomAsString" size="40"/>
+                #button('...' '#' "openCreationDateBottomPicker(); return false;")
+                <label>$filter.labelCreationDateRangeTop($locale):</label>
+                <input type="text" name="filterCreationDateRangeTop" value="$!filter.creationDateRangeTopAsString" size="18"/>
+                #button('...' '#' "openCreationDateTopPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelCreatedBy($locale):</label>
+                <input type="hidden" name="filterCreatedById" value="$!filter.getCreatedBy().getId()"/>
+                <input type="text" name="displayedValuefilterCreatedBy" value="$!omObjectFormatter.format($filter.createdBy.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openCreatedByPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelModificationDate($locale):</label>
+                <label>$filter.labelModificationDateRangeBottom($locale):</label>
+                <input type="text" name="filterModificationDateRangeBottom" value="$!filter.modificationDateRangeBottomAsString" size="40"/>
+                #button('...' '#' "openModificationDateBottomPicker(); return false;")
+                <label>$filter.labelModificationDateRangeTop($locale):</label>
+                <input type="text" name="filterModificationDateRangeTop" value="$!filter.modificationDateRangeTopAsString" size="18"/>
+                #button('...' '#' "openModificationDateTopPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelModifiedBy($locale):</label>
+                <input type="hidden" name="filterModifiedById" value="$!filter.getModifiedBy().getId()"/>
+                <input type="text" name="displayedValuefilterModifiedBy" value="$!omObjectFormatter.format($filter.modifiedBy.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openModifiedByPicker(); return false;")
+            &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.absenceAffectedProjectList.filterPage.value = "1";document.absenceAffectedProjectList.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+                #button($labelBack '#' "document.absenceAffectedProjectList.action = '$history.back()'; document.absenceAffectedProjectList.submit(); return false;")
+                </p>
+        </fieldset>
+#if (!$selectMode)
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNewAbsenceAffectedProject '' "document.absenceAffectedProjectList.action = '$link.clear().setNavigationId('absenceAffectedProjectProperties') '; document.absenceAffectedProjectList.submit(); return false;")
+            </p>
+        </fieldset>
+#end
+        <fieldset>
+            <p>
+
+                <table class="list">
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.absenceAffectedProjectList.filterPage.value = 1; document.absenceAffectedProjectList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.absenceAffectedProjectList.filterPage.value = $filter.page - 1; document.absenceAffectedProjectList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelAbsenceAffectedProjectListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.absenceAffectedProjectList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.absenceAffectedProjectList.filterPage.value = ($filter.page + 1); document.absenceAffectedProjectList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.absenceAffectedProjectList.filterPage.value = $filter.lastPage; document.absenceAffectedProjectList.submit(); return false;")
+#end
+#else
+                        $labelAbsenceAffectedProjectListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th><a href="#" onClick="changeOrderBy('absence');return false;">$filter.labelAbsence($locale) #if ($filter.orderBy == "absence") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('project');return false;">$filter.labelProject($locale) #if ($filter.orderBy == "project") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('substitute');return false;">$filter.labelSubstitute($locale) #if ($filter.orderBy == "substitute") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('noticed');return false;">$filter.labelNoticed($locale) #if ($filter.orderBy == "noticed") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('noticedBy');return false;">$filter.labelNoticedBy($locale) #if ($filter.orderBy == "noticedBy") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('noticeDate');return false;">$filter.labelNoticeDate($locale) #if ($filter.orderBy == "noticeDate") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('creationDate');return false;">$filter.labelCreationDate($locale) #if ($filter.orderBy == "creationDate") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('createdBy');return false;">$filter.labelCreatedBy($locale) #if ($filter.orderBy == "createdBy") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('modificationDate');return false;">$filter.labelModificationDate($locale) #if ($filter.orderBy == "modificationDate") $directionFlag #end</a></th>
+                            <th><a href="#" onClick="changeOrderBy('modifiedBy');return false;">$filter.labelModifiedBy($locale) #if ($filter.orderBy == "modifiedBy") $directionFlag #end</a></th>
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+#foreach ($item in $items)
+                        <tr>
+#if($item.absence.getOMObject())
+                            <td>$!omObjectFormatter.format($item.absence.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+#if($item.project.getOMObject())
+                            <td>$!omObjectFormatter.format($item.project.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+#if($item.substitute.getOMObject())
+                            <td>$!omObjectFormatter.format($item.substitute.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+                            <td>$item.noticedAsString</td>
+#if($item.noticedBy.getOMObject())
+                            <td>$!omObjectFormatter.format($item.noticedBy.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+                            <td>$item.noticeDateAsString</td>
+                            <td>$item.creationDateAsString</td>
+#if($item.createdBy.getOMObject())
+                            <td>$!omObjectFormatter.format($item.createdBy.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+                            <td>$item.modificationDateAsString</td>
+#if($item.modifiedBy.getOMObject())
+                            <td>$!omObjectFormatter.format($item.modifiedBy.getOMObject(), $locale)</td>
+#else
+                            <td>&nbsp;</td>
+#end
+#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+#else
+                            <td>
+                                <a href="$link.clear().setNavigationId('absenceAffectedProjectProperties').setObjectId($position, $item.id)">$labelEdit</a>
+                            </td>
+#end
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+    </form>
+</div>

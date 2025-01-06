@@ -1,0 +1,64 @@
+#
+# Property file for class '$classname'.
+# This file has been generated on $date by SOFIA code generator.
+#
+
+#
+# Portlets...
+#
+portlets += $naming.formatAttribute($classname)List
+portlet.${naming.formatAttribute($classname)}List.class = com.p92.sofiamodule.pm3.portlet.${classname}ListPortlet
+portlet.${naming.formatAttribute($classname)}List.template = portlet/${naming.formatAttribute($classname)}List.vm
+
+portlets += $naming.formatAttribute($classname)Select
+portlet.${naming.formatAttribute($classname)}Select.class = com.p92.sofiamodule.pm3.portlet.${classname}ListPortlet
+portlet.${naming.formatAttribute($classname)}Select.template = portlet/${naming.formatAttribute($classname)}List.vm
+portlet.${naming.formatAttribute($classname)}Select.selectmode = true
+
+portlets += $naming.formatAttribute($classname)Properties
+portlet.${naming.formatAttribute($classname)}Properties.class = com.p92.sofiamodule.pm3.portlet.${classname}PropertiesPortlet
+portlet.${naming.formatAttribute($classname)}Properties.template = portlet/${naming.formatAttribute($classname)}Properties.vm
+
+#
+# NMX portlets...
+#
+usedNMX = baseNMX
+
+${usedNMX}.portlets += ${naming.formatAttribute($classname)}List
+${usedNMX}.portlet.${naming.formatAttribute($classname)}List.label = nmxPortlet${classname}ListLabel
+${usedNMX}.portlet.${naming.formatAttribute($classname)}List.description = nmxPortlet${classname}ListDescription
+${usedNMX}.portlet.${naming.formatAttribute($classname)}List.pickerId = -
+${usedNMX}.portlet.${naming.formatAttribute($classname)}List.representationAttribute = -
+${usedNMX}.portlet.${naming.formatAttribute($classname)}List.numberOfObjects = 0
+${usedNMX}.portlet.${naming.formatAttribute($classname)}List.pfwPortlet = ${naming.formatAttribute($classname)}List
+${usedNMX}.portlet.${naming.formatAttribute($classname)}List.forAdmin = true
+
+${usedNMX}.portlets += ${naming.formatAttribute($classname)}Select
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Select.label = nmxPortlet${classname}SelectLabel
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Select.description = nmxPortlet${classname}SelectDescription
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Select.pickerId = -
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Select.representationAttribute = -
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Select.numberOfObjects = 0
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Select.pfwPortlet = ${naming.formatAttribute($classname)}Select
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Select.forAdmin = true
+
+${usedNMX}.portlets += ${naming.formatAttribute($classname)}Properties
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Properties.label = nmxPortlet${classname}PropertiesLabel
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Properties.description = nmxPortlet${classname}PropertiesDescription
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Properties.pickerId = -
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Properties.representationAttribute = -
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Properties.numberOfObjects = 0
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Properties.pfwPortlet = ${naming.formatAttribute($classname)}Properties
+${usedNMX}.portlet.${naming.formatAttribute($classname)}Properties.forAdmin = true
+
+#
+# Operations...
+#
+operations += ${naming.formatAttribute($classname)}Save
+operation.${naming.formatAttribute($classname)}Save.class = com.p92.sofiamodule.pm3.operation.${classname}SaveOperation
+operations += ${naming.formatAttribute($classname)}Delete
+operation.${naming.formatAttribute($classname)}Delete.class = com.p92.sofiamodule.pm3.operation.${classname}DeleteOperation
+
+#
+# Actions...
+#

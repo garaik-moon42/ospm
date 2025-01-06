@@ -1,0 +1,38 @@
+#*
+ * Creates an link that behaves like a button control.
+ * @param label Label of the button.
+ * @param href Target link of the button.
+ * @param onclick onClick event handler code of the button.
+ *#
+#macro (button $label $href $onclick)
+<a href="$href" class="btn" onclick="$onclick">$label</a>
+#end
+
+#*
+ * Creates an link that behaves like a accept button control.
+ * @param label Label of the button.
+ * @param href Target link of the button.
+ * @param onclick onClick event handler code of the button.
+ *#
+#macro (buttonAccept $label $href $onclick)
+<a href="$href" class="btnAccept" onclick="$onclick">$label</a>
+#end
+
+#*
+ * Creates an link that behaves like a deny button control.
+ * @param label Label of the button.
+ * @param href Target link of the button.
+ * @param onclick onClick event handler code of the button.
+ *#
+#macro (buttonDeny $label $href $onclick)
+<a href="$href" class="btnDeny" onclick="$onclick">$label</a>
+#end
+
+#*
+ * Creates a button link which opens the given page in a new window.
+ * @param label Label of the button.
+ * @param href Link of the page in new window.
+ *#
+#macro (buttonOpen $label $href)
+<a href="$href" class="btnOpen" target="_blank">$label</a>
+#end

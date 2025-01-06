@@ -1,0 +1,217 @@
+/* - - - - - - - - - - - - - - - - - - - - -
+
+Title : 
+Author : 
+URL : 
+
+Description : 
+
+Created : 
+Modified : 
+
+- - - - - - - - - - - - - - - - - - - - - */
+
+/* ----- CSS ----- */
+
+*{
+}	
+html{
+}	
+body{
+}
+
+/* ----- IDS ----- */
+
+#container{
+}	
+#primaryContent{
+}	
+#secondaryContent{
+}	
+#navigation{
+}	
+#footer{
+}
+
+/* ----- CLASSES ----- */
+
+.hide{
+}
+.show{
+}
+
+/* ----- HEADINGS ----- */
+
+h1{
+}
+h2{
+}
+h3{
+}
+h4{
+}
+
+/* ----- PARAGRAPHS ----- */
+
+p{
+}
+#primaryContent p{
+}
+#secondaryContent p{
+}
+
+/* ----- QUOTES ----- */
+
+blockquote{
+}
+blockquote p{
+}
+cite{
+}
+blockquote cite{
+}
+
+/* ----- CODE ----- */
+
+pre{
+}
+code{
+}
+p code{
+}
+pre code{
+}
+
+/* ----- LISTS ----- */
+
+li{
+}
+li p{
+}
+ol{
+}
+ul{
+}
+ol li{
+}
+ul li{
+}
+
+#navigation li{
+}
+
+#navigation ul{
+}
+
+#navigation ul li{
+}
+
+#navigation ol{
+}
+
+#navigation ol li{
+}
+
+/* ----- IMAGES ----- */
+
+img{
+}
+img a{
+}
+img a:hover{
+}
+
+/* ----- BREAK ----- */
+
+hr{
+}
+
+/* ----- TEXT FORMATTING ----- */
+
+strong{
+}
+em{
+}
+b{
+}
+i{
+}
+
+/* ----- LINKS ----- */
+
+a{
+}
+a:hover{
+}
+a:visited, a:active, a:focus{
+}
+a:visited{
+}
+a:active{
+}
+a:focus{
+}
+
+p a{
+}
+cite a{
+}
+li a{
+}
+dt a{
+}
+dd a{
+}
+
+/* ----- TABLES ----- */
+
+table{
+}
+caption{
+}
+thead{
+}
+tbody{
+}
+tfoot{
+}
+tr{
+}
+tr .alt{
+}
+th{
+}
+td{
+}
+
+/* ----- FORMS ----- */
+
+form{
+}
+fieldset{
+}
+legend{
+}
+label{
+}
+input{
+}
+textarea{
+}
+input, textarea{
+}
+select{
+}
+optgroup{
+}
+option{
+}
+
+/* ----- DEFINITIONS ----- */
+
+dl{
+}
+dt{
+}
+dd{
+}

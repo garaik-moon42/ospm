@@ -1,0 +1,77 @@
+<script type="text/javascript" langauge="JavaScript1.2">
+    function changeOrderBy(formName, orderBy) {
+        var form = eval('document.'+formName);
+        if (orderBy == form.actionsOrderBy.value) {
+            form.actionsOrderDirection.value = 0 - form.actionsOrderDirection.value;
+        } else {
+            form.actionsOrderDirection.value = "1";
+        }
+        form.actionsOrderBy.value = orderBy;
+        form.submit();
+    }
+
+    function selectAction(id, label, data) {
+        window.opener.onSelectAction(id, label, data);
+        window.close();
+    }
+
+</script>
+<div id="content">
+<form name="actionsForm" method="post" >
+    <input type="hidden" name="attributeLocale" value="$!attributeLocale"/>
+    <input type="hidden" name="actionsOrderBy" value="$!orderBy"/>
+    <input type="hidden" name="actionsOrderDirection" value="$!direction"/>
+    <div id="pageTitle">$portletActionList</div>
+    <div id="attributeLanguages">
+#foreach ($al in $attributeLocales)
+        <a href="#" #if ($al == $attributeLocale) class="selected" #end onClick="document.actionsForm.attributeLocale.value = '$al.language'; document.actionsForm.submit(); return false; ">$al</a> #if ($counter != $attributeLocales.size()) | #end
+#end
+    </div>
+#if($actions.size() > 0)
+    <div id="list">
+        <table class="list" width="98%">
+  #if ($direction == 1)
+    #set ($directionFlag = "[+]")
+  #else
+    #set ($directionFlag = "[-]")
+  #end
+            <thead>
+                <tr>
+                    <th>
+                        <a href="#" onClick="changeOrderBy('actionsForm', 'name'); return false;">$labelActionName #if ($orderBy == "name") $directionFlag #end</a>
+                    </th>
+                    <th>
+                        <a href="#" onClick="changeOrderBy('actionsForm', 'label'); return false;">$labelActionLabel #if ($orderBy == "label") $directionFlag #end</a>
+                    </th>
+                    <th>
+                        $labelActions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+  #foreach ($action in $actions)
+    #if($select)
+                <tr>
+                    <td><a href="#" onclick="selectAction('$action.name', '$!action.label.getLabel($attributeLocale)', ''); return false;">$action.name</a></td>
+                    <td>$!action.label.getLabel($attributeLocale)</td>
+                    <td class="action"><a href="#" onclick="selectAction('$action.name', '$!action.label.getLabel($attributeLocale)', ''); return false;">$labelChoose</a></td>
+                </tr>
+    #else
+                <tr>
+                    <td>$action.name</td>
+                    <td>$action.label</td>
+                    <td class="action">&nbsp;</td>
+                </tr>
+
+    #end
+  #end
+            </tbody>
+        </table>
+    </div>
+#else
+    <div>
+        $labelNoActionList
+    </div>
+#end
+</form>
+</div>

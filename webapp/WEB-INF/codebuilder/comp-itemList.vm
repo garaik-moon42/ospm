@@ -1,0 +1,67 @@
+#*
+ * This component make a limited list from filter results with page turner.
+ *
+ * Used:
+ *  $naming     String formater tool in the VelocityContext.
+ *  $attributes The attributes of listed beans.
+ *  $classname  Class name of listed beans.
+ *#
+                <table class="list">
+                    <caption>
+#parse("comp-pageTurner.vm")
+                    </caption>
+\#if ($filter.direction == 1)
+\#set ($directionFlag = "[+]")
+\#else
+\#set ($directionFlag = "[-]")
+\#end
+\#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+#set($numberOfColumns = 1)
+#foreach ($attribute in $attributes)
+#if ($attribute.getParameter("listable") == "yes")
+#if ($attribute.type == "integer" || $attribute.type == "float" || $attribute.type == "boolean" || $attribute.type == "date" || $attribute.type == "datetime" || $attribute.type == "time" || $attribute.type == "shorttext" || $attribute.type == "text" || $attribute.type == "reference")
+#set($numberOfColumns = $numberOfColumns + 1)
+#set ($filterLabel = "$filter.label${naming.getAttributeMethod($attribute.name)}")
+#if ($attribute.getParameter("orderable") == "yes")
+                            <th><a href="#" onClick="changeOrderBy($apos$attribute.name$apos);return false;">${filterLabel}($locale) \#if ($filter.orderBy == "$attribute.name") $directionFlag \#end</a></th>
+#else
+                            <th>${filterLabel}($locale)</th>
+#end
+#end
+#end
+#end
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+\#foreach ($item in $items)
+                        <tr>
+#foreach ($attribute in $attributes)
+#if ($attribute.getParameter("listable") == "yes")
+#if ($attribute.type == "integer" || $attribute.type == "float" || $attribute.type == "boolean" || $attribute.type == "date" || $attribute.type == "datetime" || $attribute.type == "time" || $attribute.type == "shorttext" || $attribute.type == "text")
+                            <td>$item.${attribute.name}AsString</td>
+#elseif($attribute.type == "reference")
+\#if($item${dot}${attribute.name}${dot}getOMObject())
+                            <td>$\!omObjectFormatter${dot}format($item${dot}${attribute.name}${dot}getOMObject(), $locale)</td>
+\#else
+                            <td>&nbsp;</td>
+\#end
+#end
+#end
+#end
+\#if($selectMode)
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+\#else
+                            <td>
+                                <a href="#linkPropertyPage($classname '$item.id')">$labelEdit</a>
+                            </td>
+\#end
+                        </tr>
+\#end
+                    </tbody>
+\#end
+              </table>

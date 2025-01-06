@@ -1,0 +1,92 @@
+<script type="text/javascript" language="JavaScript1.2">
+    function saveUser() {
+        document.user.operation.value = "userSave";
+        lbUserRoles.selectAll();
+        document.user.submit();
+    }
+
+    function resetPassword() {
+        if (confirm("$messageResetPassword")) {
+            document.user.operation.value = "userResetPassword";
+            document.user.submit();
+        }
+    }
+
+    function onSelectRole(id, label, data) {
+        lbUserRoles.addDistinctItem(label,id);
+    }
+</script>
+<div id="content">
+    <div id="pageTitle">$portletUser</div>
+    <form name="user" method="post" action="$link.clear($position).setPortletId($link.portletId)">
+        <input type="hidden" name="operation" value="" />
+        <div id="properties">
+            <table class="dialog">
+                <tbody>
+                    <tr>
+                        <td class="property">$labelIdentifier:</td>
+                        <td class="value">
+#if ($user.id)
+                            $user.id
+                            <input type="hidden" name="userId" value="$user.id" />
+                            <input type="hidden" name="userModify" value="yes" />
+#else
+                            <input type="text" name="userId" size="16" value="" />
+#end
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="property">$userLastName:</td>
+                        <td class="value"><input type="text" name="userLastName" size="20" value="$!user.lastName" /></td>
+                    </tr>
+                    <tr>
+                        <td class="property">$userFirstName:</td>
+                        <td class="value"><input type="text" name="userFirstName" size="20" value="$!user.firstName" /></td>
+                    </tr>
+                    <tr>
+                        <td class="property">$userEmailAddress:</td>
+                        <td class="value"><input type="text" name="userEmailAddress" value="$!user.emailAddress" style="width: 400px;" /></td>
+                    </tr>
+                    <tr>
+                        <td class="property">$userRoles:</td>
+                        <td class="value">
+                            <select size="7" multiple="yes" name="userRoles" style="width: 400px;">
+#foreach ($role in $roles)
+#if ($role.id != "guest")
+                                <option value="$role.id">$role.label.getLabel($locale)</option>
+#end
+#end
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td class="value">
+                            <input type="button" class="button" value="$labelAdd" onClick="openPopup('roleSelect', 'onSelectRole',600,400);" />
+                            <input type="button" class="button" value="$labelDelete" onclick="lbUserRoles.deleteAllSelectedItems(lbUserRoles.getAllSelected());" />
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="operation">
+            <input type="button" class="button" value="$labelSave" onClick="saveUser();" />
+            <input type="submit" class="button" value="$labelCancel" onClick="user.action = '$link.clear($position)'" />
+#if ($user.id)
+            <input type="button" class="button" value="$labelResetPassword" onClick="user.action = '$link.clear($position)'; resetPassword();" />
+#end
+        </div>
+
+#if ($errorMessage)
+    #if ($errorMessage.hasGeneral())
+        <div id="error">
+            $errorMessage.general
+        </div>
+    #end
+#end
+        <script type="text/javascript" language="JavaScript1.2">
+            var lbUserRoles = new ListBoxHelper(document.user.userRoles);
+        </script>
+    </form>
+</div>

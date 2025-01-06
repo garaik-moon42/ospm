@@ -1,0 +1,141 @@
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrder(order) {
+        var iOrder = document.filter.filterOrder;
+        var iDirection = document.filter.filterDirection;
+        if (iOrder.value == order) {
+            iDirection.value = 0 - iDirection.value;
+        }
+        else {
+            iOrder.value = order;
+            iDirection.value = 1;
+        }
+        document.filter.submit();
+    }
+
+    function deleteRole(roleId) {
+        if (confirm("$roleDeleteAreYouSure")) {
+            document.filter.operation.value = "roleDelete";
+            document.filter.roleId.value = roleId;
+            document.filter.submit();
+        }
+    }
+
+    function newRole() {
+        document.filter.operation.value = "";
+        document.filter.roleId.value = "";
+        document.filter.action = "$link.clear($position).setPortletId($position, "role")";
+        document.filter.submit();
+    }
+
+    function filterReset() {
+        for (var i = 0; i < document.filter.elements.length; ++i) {
+            var element = document.filter.elements[i];
+            if (element.tagName == "INPUT") {
+                if (element.type == "text" || element.type == "textarea" || element.type == "password") {
+                    element.value = "";
+                }
+                if (element.type == "checkbox" || element.type == "radio") {
+                    element.checked = false;
+                }
+            }
+            if (element.tagName == "SELECT") {
+                if (element.multiple) {
+                    for (var j = 0; j < element.options.length; ++j) {
+                        element.options[j].selected = false;
+                    }
+                }
+                else {
+                    element.selectedIndex = 0;
+                }
+            }
+        }
+    }
+</script>
+
+<div class="portlet">
+
+  <div id="content">
+	    <form name="filter" method="post" action="$link">
+		    <fieldset>
+			    <legend>$labelFiltering</legend>
+		        <div id="filter">
+		            <input type="hidden" name="filterOrder" value="$!filter.order" />
+		            <input type="hidden" name="filterDirection" value="$filter.direction" />
+		            <input type="hidden" name="operation" value="" />
+		            <input type="hidden" name="roleId" value="" />
+		            <table class="dialog">
+		                <tbody>
+		                    <tr>
+		                        <td class="property">$labelKeyword:</td>
+		                        <td class="value"><input type="text" name="filterName" value="$!filter.name" size="20" /></td>
+		                    </tr>
+		                    <tr>
+		                        <td colspan="2" class="action">
+							        <p>
+			                            <!-- We use onClick property to avoid double clicking... -->
+							            #button($labelSearch '' "document.filter.submit(); document.filter.action = ''; return false;")
+							            #button($labelSearchReset '' "filterReset(); return false;")
+		        					</p>
+		                        </td>
+		                    </tr>
+		                </tbody>
+		            </table>
+		        </div>
+		    </fieldset>
+#if (!$select)
+		    <fieldset>
+		        <legend>$labelOperations</legend>
+		        <p>
+		        	#button($labelNew '' "newRole(); return false;")
+		        </p>
+		    </fieldset>
+#end
+	    </form>
+
+    <fieldset>
+#if ($filter.direction == 1) #set ($directionFlag = "[+]") #else #set ($directionFlag = "[-]") #end
+    <div id="list">
+        <form name="list" method="post" action="$link">
+            <table class="list">
+                <thead>
+                    <tr>
+                        <th><a href="#" onClick="changeOrder('id'); return false;">$labelIdentifier</a> #if ($filter.order == "id") $directionFlag #end</th>
+                        <th><a href="#" onClick="changeOrder('labels'); return false;">$roleLabels</a> #if ($filter.order == "labels") $directionFlag #end</th>
+                        <th>$labelActions</th>
+                    </tr>
+                </thead>
+                <tbody>
+#foreach ($role in $roles)
+                    <tr>
+                        <td>
+#if ($select)
+                            <a href="#" onClick="selectObject('$role.id', '$!role.label.getLabel($locale)', ''); return false;">$role.id</a>
+#else
+                            $role.id
+#end
+                        </td>
+                        <td>$role.label.getLabel($locale)</td>
+                        <td class="action">
+#if ($select)
+                            <a href="$link" onclick="selectObject('$role.id', '$!role.label.getLabel($locale)', ''); return false;">$labelChoose</a>
+#else
+                            <a href="$link.setNavigationId("role").setObjectId($position, $role.id)">$labelEdit</a>
+                            |
+                            <a href="$link" onClick="deleteRole('$role.id'); return false;">$labelDelete</a>
+                        </td>
+#end
+                    </tr>
+#end
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    </fieldset>
+
+  </div>
+
+</div>
+<script type="text/javascript" language="JavaScript1.2">
+    document.filter.filterName.focus();
+</script>

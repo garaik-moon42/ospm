@@ -1,0 +1,260 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+    function clearFilterFields() {
+        document.absenceGrid.filterEmployeeId.value = "";
+        document.absenceGrid.displayedValuefilterEmployee.value = "";
+        document.absenceGrid.filterBeginsRangeBottom.value = ""
+        document.absenceGrid.filterEndsRangeTop.value = ""
+        document.absenceGrid.filterApprovedById.value = "";
+        document.absenceGrid.displayedValuefilterApprovedBy.value = "";
+        document.absenceGrid.filterApproveDateRangeBottom.value = "";
+        document.absenceGrid.filterApproveDateRangeTop.value = "";
+        document.absenceGrid.filterProjectmanagerId.value = "";
+        document.absenceGrid.displayedValuefilterProjectmanager.value = "";
+    }
+
+
+    function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=employeePickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function employeePickerCallback(id, label, data) {
+        document.absenceGrid.filterEmployeeId.value = id;
+        document.absenceGrid.displayedValuefilterEmployee.value = label;
+    }
+
+    function openBeginsBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function beginsBottomPickerCallback(data) {
+        document.absenceGrid.filterBeginsRangeBottom.value = data;
+    }
+
+    function openEndsTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=endsTopPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function endsTopPickerCallback(data) {
+        document.absenceGrid.filterEndsRangeTop.value = data;
+    }
+
+    function openApprovedByPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('pMUserSelect'))?callback=approvedByPickerCallback",
+                            "labelApprovedBySelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function approvedByPickerCallback(id, label, data) {
+        document.absenceGrid.filterApprovedById.value = id;
+        document.absenceGrid.displayedValuefilterApprovedBy.value = label;
+    }
+
+    function openApproveDateBottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=approveDateBottomPickerCallback",
+                                "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function approveDateBottomPickerCallback(data) {
+        document.absenceGrid.filterApproveDateRangeBottom.value = data;
+    }
+
+    function openApproveDateTopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=approveDateTopPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function approveDateTopPickerCallback(data) {
+        document.absenceGrid.filterApproveDateRangeTop.value = data;
+    }
+
+    function openProjectmanagerPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #set($roles = "Role.projectLeader")
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect')).setObjectIds($position, $roles)?callback=projectmanagerPickerCallback",
+                            "labelEmployeeSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+    function projectmanagerPickerCallback(id, label, data) {
+        document.absenceGrid.filterProjectmanagerId.value = id;
+        document.absenceGrid.displayedValuefilterProjectmanager.value = label;
+    }
+
+#if($selectMode)
+    function selectObject(id, label, data) {
+#if($callback)
+        window.opener.${callback}(id, label, data);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="absenceGrid" action="$history.ignore($link)" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <input type="hidden" name="absenceId" value=""/>
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelEmployee($locale):</label>
+                <input type="hidden" name="filterEmployeeId" value="$!filter.getEmployee().getId()"/>
+                <input type="text" name="displayedValuefilterEmployee" value="$!omObjectFormatter.format($filter.employee.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openEmployeePicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelBegins($locale):</label>
+                <input type="text" name="filterBeginsRangeBottom" value="$!filter.beginsRangeBottomAsString" size="18"/>
+                #button('...' '#' "openBeginsBottomPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelEnds($locale):</label>
+                <input type="text" name="filterEndsRangeTop" value="$!filter.endsRangeTopAsString" size="18"/>
+                #button('...' '#' "openEndsTopPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelApprovedBy($locale):</label>
+                <input type="hidden" name="filterApprovedById" value="$!filter.getApprovedBy().getId()"/>
+                <input type="text" name="displayedValuefilterApprovedBy" value="$!omObjectFormatter.format($filter.approvedBy.getOMObject(), $locale)" size="40"/>
+                #button($labelChoose '#' "openApprovedByPicker(); return false;")
+            &nbsp;&nbsp;</span>
+            <span class="nowrap">
+                <label>$filter.labelApproveDate($locale):</label>
+                <label>$filter.labelApproveDateRangeBottom($locale):</label>
+                <input type="text" name="filterApproveDateRangeBottom" value="$!filter.approveDateRangeBottomAsString" size="18"/>
+                #button('...' '#' "openApproveDateBottomPicker(); return false;")
+                <label>$filter.labelApproveDateRangeTop($locale):</label>
+                <input type="text" name="filterApproveDateRangeTop" value="$!filter.approveDateRangeTopAsString" size="18"/>
+                #button('...' '#' "openApproveDateTopPicker(); return false;")
+            &nbsp;&nbsp;</span>
+                <span class="nowrap">
+                    <label>$labelProjectmanager:</label>
+                    <input type="hidden" name="filterProjectmanagerId" value="$!filter.projectmanagerId"/>
+                    <input type="text" name="displayedValuefilterProjectmanager" value="$!omObjectFormatter.format($filter.projectmanager.getOMObject(), $locale)" size="40"/>
+                    #button($labelChoose '#' "openProjectmanagerPicker(); return false;")
+                &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                #button($labelSearch '' 'document.absenceGrid.filterPage.value = "1";document.absenceGrid.submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+                #button($labelBack '#' "document.absenceGrid.action = '$history.back()'; document.absenceGrid.submit(); return false;")
+                </p>
+        </fieldset>
+        <fieldset>
+            <p>
+                #foreach($grid in $gridList)
+                #set($gridNo = $counter)
+                <table class="grid">
+                    #foreach($row in $grid.rows)
+                        #set($rowNo = $counter)
+                        #if($counter == 1 || $counter == 2)
+                            <tr>
+                            #foreach($cell in $row.cells)
+                                <td rowspan="$cell.rowspan" colspan="$cell.colspan" class="#if($cell.isWeekEnd()) weekend #end">$!cell.content</td>
+                            #end
+                            </tr>
+                        #else
+                            <tr>
+                            #foreach($cell in $row.cells)
+                                #set($cellNo = $counter)
+                                #if($counter == 1)
+                                <td colspan = "$cell.colspan" >$cell.content.employee.name</td>
+                                #else
+                                #if($cell.content)
+                                    #set($style = "unapproved")
+                                    #if($cell.isWeekEnd())
+                                    #set($style = "weekend")
+                                    #elseif($cell.content.isApproved())
+                                    #set($style = "approved")
+                                    #end
+                                <td class="$style" colspan = "$cell.colspan" onclick="return !showPopup('${gridNo}_${rowNo}_${cellNo}', event);">
+                                    <div onclick='event.cancelBubble = true;' class="popup" id="${gridNo}_${rowNo}_${cellNo}">
+                                        <table class="list">
+                                            <thead>
+                                            <tr>
+                                                <th>$labelProject</th>
+                                                <th>$labelSubstitute</th>
+                                                <th>$labelNoticed</th>
+                                            </tr>
+                                                </thead>
+                                            <tbody>
+                                            #foreach($absenceAffectedProject in $cell.content.absenceAffectedProjects)
+                                            <tr>
+                                                <td class="noborder">$absenceAffectedProject.project.name</td>
+                                                <td class="noborder">
+                                                    #if($absenceAffectedProject.substitute)
+                                                        $absenceAffectedProject.substitute.name
+                                                    #else
+                                                        <a href= "$link.clear().setNavigationId('absenceAffectedProjectProperties').setObjectId($position, $absenceAffectedProject.id)">$labelAdd</a>
+                                                    #end
+                                                </td>
+                                                <td class="noborder"><input type="checkbox" name="absenceAffectedProjectId" value="$absenceAffectedProject.id" #if($absenceAffectedProject.noticed) checked #end/></td>
+                                            </tr>
+                                            #end
+                                        </table>
+                                        <br/>
+                                        #if(!$cell.content.approved)
+                                            [<a href="#" onclick="document.absenceGrid.absenceId.value = '$cell.content.id'; document.absenceGrid.action = '$history.ignore($link.clear().setNavigationId('absenceGrid').setOperation($position, 'absenceApprove'))'; document.absenceGrid.submit(); return false;">$labelApproveAbsence</a>]&nbsp;
+                                        #else
+                                            [<a href="#" onclick="document.absenceGrid.absenceId.value = '$cell.content.id'; document.absenceGrid.action = '$history.ignore($link.clear().setNavigationId('absenceGrid').setOperation($position, 'absenceUnApprove'))'; document.absenceGrid.submit(); return false;">$labelUnapproveAbsence</a>]
+                                        #end
+                                        [<a href='#' onclick='hideCurrentPopup(); return false;'>X</a>]
+                                        [<a href="#" onclick="document.absenceGrid.action = '$history.ignore($link.clear().setNavigationId('absenceGrid').setOperation($position, 'absenceNotice'))'; document.absenceGrid.submit(); return false;">$labelNoticeAbsence</a>]
+                                        [<a href="#" onclick="document.absenceGrid.action = '$history.ignore($link.clear().setNavigationId('absenceGrid').setOperation($position, 'absenceUnNotice'))'; document.absenceGrid.submit(); return false;">$labelUnnoticeAbsence</a>]
+                                    </div>
+                                </td>
+                                #else
+                                <td class="#if($cell.isWeekEnd()) weekend #end" colspan = "$cell.colspan">&nbsp;</td>
+                                #end
+                            #end
+                            #end
+                            </tr>
+                        #end
+                    #end
+                </table><br />
+                #end
+            </p>
+    <!-- leave this blank div in here to make sure you can click anywhere on the document for MSIE 5 mac -->
+    <div id="blankDiv" style="position: absolute; left: 0; top: 0; visibility: hidden"></div>
+        </fieldset>
+    </form>
+</div>

@@ -1,0 +1,59 @@
+<script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/submit/checkEnter.js"></script>        
+
+<div id="content">
+#if ($user.id == $defaultUserId)
+	<form name="login" action="$link.setNavigationId($afterLoginNid)" method="post">
+#else
+	<form name="login" action="$link.clear()" method="post">
+#end
+	    <fieldset class="operation">
+	        <legend>
+#if ($user.id == $defaultUserId)
+    	    $labelLogin
+#else
+        	$labelLogout
+#end
+        	</legend>
+	    <div id="properties">
+#if ($user.id != $defaultUserId)
+    	    <input type="hidden" name="operation" value="userLogout" />
+#else
+	        <input type="hidden" name="operation" value="userLogin" />
+#end
+	        <table class="dialog">
+	            <tbody>
+#if ($user.id == $defaultUserId)
+	                <tr>
+	                    <td class="property">$labelUserId:</td>
+	                    <td class="value"><input type="text" name="loginUser" /></td>
+	                </tr>
+	                <tr>
+	                    <td class="property">$labelPassword:</td>
+	                    <td class="value"><input type="password" name="loginPassword" onKeyPress="checkEnter('login',event)"/></td>
+	                </tr>
+#else
+	                <tr>
+	                    <td class="property">$labelUserId:</td>
+	                    <td class="value">$user.id</td>
+	                </tr>
+#end
+	            </tbody>
+	        </table>
+	    </div>
+	    	<p>
+#if ($user.id != $defaultUserId)
+                #button($labelLogout '' "document.login.submit(); return false;")
+#else
+                #button($labelLogin '' "document.login.submit(); return false;")
+#end
+		    </p>
+	    </fieldset>
+	</form>
+</div>
+
+
+#if ($user.id == $defaultUserId)
+<script type="text/javascript">
+    document.login.loginUser.focus();
+</script>
+#end

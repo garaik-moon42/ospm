@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="debuglog" class="org.apache.log4j.RollingFileAppender">
+        <param name="file" value="/usr/local/tomcat/webapps/ROOT/WEB-INF/log/pm3-debug.log" />
+        <param name="MaxFileSize" value="8MB" />
+        <param name="MaxBackupIndex" value="10" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{[yyyy-MM-dd HH:mm:ss]} %t %5p: %m (%F:%L)%n"/>
+        </layout>
+    </appender>
+
+    <appender name="errorlog" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="8MB"/>
+        <param name="maxBackupIndex" value="4"/>
+        <param name="file" value="/usr/local/tomcat/webapps/ROOT/WEB-INF/log/pm3-error.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{[yyyy-MM-dd HH:mm:ss]} %t %5p: %m (%F:%L)%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="error"/>
+        </filter>
+    </appender>
+
+    <category name="com.arvato">
+        <priority value="DEBUG" />
+    </category>
+    <category name="com.p92">
+        <priority value="DEBUG" />
+    </category>
+    <root>
+        <priority value="ERROR" />
+        <appender-ref ref="debuglog" />
+        <appender-ref ref="errorlog" />
+    </root>
+</log4j:configuration>

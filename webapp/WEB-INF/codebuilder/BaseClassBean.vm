@@ -1,0 +1,657 @@
+/*
+ * Base${naming.formatClass($classname)}.java
+ *
+ * This is a generated file.
+ */
+
+// The package name
+#if ($package)
+package ${package};
+#end
+
+// Import statements that required by the skeleton
+#import("com.p92.sofia.oms.OMAttribute" $imports)
+#import("com.p92.sofia.oms.OMClass" $imports)
+#import("com.p92.sofia.oms.OMObject" $imports)
+#import("com.p92.sofia.oms.OMSException" $imports)
+
+#import("com.p92.sofia.pfw.SofiaWebApplication" $imports)
+#import("com.p92.sofia.pfw.exception.FormattedException" $imports)
+
+#import("java.util.*" $imports)
+#import("java.text.DecimalFormat" $imports)
+
+// Generated import statements
+#foreach ($import in $imports)
+import ${import};
+#end
+
+/**
+ * <p>This class is a Java bean that can store the data of an OMObject.</p>
+ * OMClass: $classname
+ *
+ * <p>Created by Bean Builder Utility of SOFIA application 
+ * (Written by: <a href="mailto:gabor.szathmary@arvato-systems.hu">Gabor Szathmary</a>).
+ * <br/>Date: $date</p>
+ */
+public abstract class Base${naming.formatClass($classname)} extends OMBean
+{
+## static OMClass
+    /** OMClass instance. */
+    public static OMClass omClass = null;
+## Attribute name constants
+    /** OMClass name constant. */
+    public static final String OM_CLASS_NAME = "${classname}";
+    // OMAttribute name constants
+#foreach ($attribute in $attributes)
+    public static final String OM_ATTRIBUTE_NAME_${naming.getAttributeConstant($attribute.name)} = "${attribute.name}";
+#end
+
+## OMAttribute instances
+#foreach ($attribute in $attributes)
+    /** ${naming.getAttributeMethod($attribute.name)} OMAttribute instance. */
+    public static OMAttribute attr${naming.getAttributeMethod($attribute.name)} = null;
+#end
+
+##
+## STATIC FORMATERS OF FLOAT TYPE ATTRIBUTES
+##
+#foreach ($attribute in $attributes)
+#if ($attribute.type == "float")
+    /** Decimal formater of ${apos}${attribute.name}${apos} attribute. */
+    protected static DecimalFormat ${attribute.name}Format = null;
+
+#end
+#end
+## Attributes
+    // Bean properties. Each property matches an OMAttribute of the OMClass
+#foreach ($attribute in $attributes)
+#if ($attribute.type == "reference")
+    /** Id of the referenced ${attribute.name} OMObject. */
+    protected String ${attribute.name}Id;
+#if ($attribute.getParameter("omClass"))
+    /** Instance of referenced ${attribute.name}. */
+    protected $attribute.getParameter("omClass") ${attribute.name};
+#else
+    /** ${attribute.name} OMObject instance. */
+    protected OMObject ${attribute.name};
+#end
+#else
+    /** ${naming.getAttributeMethod($attribute.name)} property. */
+#if (${attribute.primitive})
+    protected ${attribute.javaClass} ${attribute.name};
+#else
+#if ($attribute.isMultilingual())
+#if ($attribute.type == "reference")
+    protected Map ${attribute.name}Ids; // Map of ${attribute.javaClass}
+#else
+    protected Map ${attribute.name}; // Map of ${attribute.javaClass}
+#end
+#else
+    protected ${attribute.javaClass} ${attribute.name};
+#end
+#end
+#end
+#end
+##
+## HELPER FIELDS OF PRELOADING FEATURE
+##
+#foreach ($attribute in $attributes)
+#if ($attribute.type == "integer" || $attribute.type == "float" || $attribute.type == "boolean" || $attribute.type == "date" || $attribute.type == "datetime" || $attribute.type == "time")
+    /** String value of <code>${attribute.name}</code> attribute. */
+    protected String ${attribute.name}AsString;
+#end
+#end
+
+## Constructors
+    /**
+     * Creates a new empty instance of Base${classname}Bean.
+     */
+    protected Base${naming.formatClass($classname)}() {
+        super();
+    }
+
+    /**
+     * Creates a new empty instance of Base${classname}Bean.
+     * @param createOMObject If <code>true</code> then creates OMObject.
+     * @throws OMSException If OMObject cannot be created.
+     */
+    protected Base${naming.formatClass($classname)}(boolean createOMObject) throws OMSException {
+        super(createOMObject);
+    }
+
+    /**
+     * Constructor that copies the data from the OMObject to the Bean.
+     * @param om${classname} OMObject from this bean will be initialized.
+     * @throws IllegalArgumentException If the given OMObject is null.
+     */
+    protected Base${naming.formatClass($classname)}(OMObject om${classname}) {
+        super(om${classname});
+    }
+
+    /**
+     * Constructor that creates the bean from an OMObject id.
+     * @param omObjectId Id of the OMObject to create the bean from.
+     * @throws IllegalArgumentException If the given id is invalid or null.
+     */
+    protected Base${naming.formatClass($classname)}(String omObjectId) {
+        super(omObjectId);
+    }
+
+    /**
+     * Copy contructor.
+     * @param other Other instance of Base${naming.formatClass($classname)} to copy data from.
+     */
+    protected Base${naming.formatClass($classname)}(Base${naming.formatClass($classname)} other) {
+        reset();
+#foreach ($attribute in $attributes)
+#if ($attribute.type == "reference")
+        ${attribute.name}Id = other.${attribute.name}Id;
+#else
+#if (${attribute.primitive})
+        ${attribute.name} = other.${attribute.name};
+#else
+#if ($attribute.isMultilingual())
+#if ($attribute.type == "reference")
+        ${attribute.name}Ids = new HashMap(other.${attribute.name}Ids);
+#else
+        ${attribute.name} = new HashMap(other.${attribute.name});
+#end
+#else
+        ${attribute.name} = other.${attribute.name};
+#end
+#end
+#end
+#end
+    }
+
+    /**
+     * Resets the state of bean by cleaning all attributes.
+     */
+    protected void reset() {
+        locale = application.getOMS().getContext().getDefaultLocale();
+        this.locales = application.getOMS().getContext().getLocales();
+        int size = this.locales.size();
+#foreach ($attribute in $attributes)
+#if (!$attribute.isPrimitive())
+#if ($attribute.isMultilingual())
+#if ($attribute.type == "reference")
+        this.${attribute.name}Ids = new HashMap(size);
+#else
+        this.${attribute.name} = new HashMap(size);
+#end
+#else
+#if ($attribute.type == "reference")
+        this.${attribute.name}Id = null;
+#if ($attribute.getParameter("omClass"))
+        this.${attribute.name} = null;
+#end
+#else
+        this.${attribute.name} = null;
+#end
+#end
+#end
+#end
+    }
+
+    /**
+     * Loads the bean state with the values of attributes of the given OMObject instance.
+     */
+    protected void readOMObject(OMObject om${classname}) {
+        reset();
+        this.omObject = om${classname};
+        if (om${classname} != null) {
+            this.id = om${classname}.getId();
+            // Copy the  values
+
+#foreach ($attribute in $attributes)
+#if (!$attribute.isPrimitive())
+#if ($attribute.isMultilingual())
+            for (Iterator i = this.locales.iterator(); i.hasNext(); ) {
+                Locale attrLocale = (Locale) i.next();
+#if ($attribute.type == "reference")
+                this.${attribute.name}Ids.put(attrLocale, (${attribute.javaClass}) om${classname}.getNativeValue(attr${naming.getAttributeVariable($attribute.name)}, attrLocale));
+#else
+                this.${attribute.name}.put(attrLocale, (${attribute.javaClass}) om${classname}.getValue(attr${naming.getAttributeVariable($attribute.name)}, attrLocale));
+#end
+            }
+#else
+#if ($attribute.type == "reference")
+            this.${attribute.name}Id = (String) om${classname}.getNativeValue(attr${naming.getAttributeVariable($attribute.name)});
+#else
+            this.${attribute.name} = (${attribute.javaClass}) om${classname}.getValue(attr${naming.getAttributeVariable($attribute.name)});
+#end
+#end
+#end
+#end
+        }
+    }
+
+## Initalizer method
+    /**
+     * Initalizes the bean.
+     * @param application Web application instance.
+     */
+    public static void init(SofiaWebApplication application) {
+        if (OMBean.application == null) {
+            OMBean.application = application;
+        }
+        if (${naming.getClassName($classname)}.omClass == null) {
+            ${naming.getClassName($classname)}.omClass = application.getOMS().getOMClassByName(${naming.getClassName($classname)}.OM_CLASS_NAME);
+#foreach ($attribute in $attributes)
+            ${naming.getClassName($classname)}.attr${naming.getAttributeVariable($attribute.name)} = omClass.getOMAttributeByName(${naming.getClassName($classname)}.OM_ATTRIBUTE_NAME_${naming.getAttributeConstant($attribute.name)});
+#end
+            // initalizing related beans...
+#foreach ($attribute in $attributes)
+#if ($attribute.type == "reference" && $attribute.getParameter("omClass"))
+#if ($attribute.getParameter("javaClass"))
+            ${attribute.getParameter("javaClass")}.init(application);
+#else
+            ${naming.getClassName($attribute.getParameter("omClass"))}.init(application);
+#end
+#end
+#end
+#foreach ($attribute in $attributes)
+#if ($attribute.type == "float")
+#if ($attribute.getParameter("inputPattern"))
+            ${attribute.name}Format = new DecimalFormat("$attribute.getParameter("inputPattern")");
+#else
+            ${attribute.name}Format = new DecimalFormat();
+#end
+#end
+#end
+        }
+    }
+
+## Get methods
+
+#foreach ($attribute in $attributes)
+#if ($attribute.type == "reference")
+    /**
+     * Returns the id of the referenced ${attribute.name}.
+     * @return Id of the referenced {$attribute.name}.
+     */
+    public String get${naming.getAttributeMethod($attribute.name)}Id() {
+#if ($attribute.isMultilingual())
+        return (String) ${attribute.name}Ids.get(locale);
+#else
+        return ${attribute.name}Id;
+#end
+    }
+
+#if ($attribute.getParameter("omClass"))
+    /**
+     * Gives back the referenced ${attribute.name}.
+     * @return $attribute.getParameter("omClass") instance or <code>null</code> if the referenced $attribute.name does not exist.
+     */
+    public $attribute.getParameter("omClass") get${naming.getAttributeMethod($attribute.name)}() {
+        if (${attribute.name}Id != null && $attribute.name == null) {
+            OMObject om${naming.getAttributeMethod($attribute.name)} = application.getOMS().getOMObjectById(${attribute.name}Id);
+            if (om${naming.getAttributeMethod($attribute.name)} != null) {
+                $attribute.name = new $attribute.getParameter("omClass")(om${naming.getAttributeMethod($attribute.name)});
+            }
+        }
+        return $attribute.name;
+    }
+#else
+    /**
+     * Gives back the referenced ${attribute.name} OMObject.
+     * @return Referenced OMObject or <code>null</code> if the referenced $attribute.name OMObject does not exist.
+     */
+    public OMObject get${naming.getAttributeMethod($attribute.name)}() {
+        if (${attribute.name}Id != null && $attribute.name == null) {
+            $attribute.name = application.getOMS().getOMObjectById(${attribute.name}Id);
+        }
+        return $attribute.name;
+    }
+#end
+#else
+    /**
+     * Gives back ${attribute.name}.
+     * @return Value of ${attribute.name}.
+     */
+#if ($attribute.isBoolean())
+    public ${attribute.javaClass} is${naming.getAttributeMethod($attribute.name)}() {
+#else
+    public ${attribute.javaClass} get${naming.getAttributeMethod($attribute.name)}() {
+#end
+#if ($attribute.isMultilingual())
+        return (${attribute.javaClass}) ${attribute.name}.get(locale);
+#else
+        return ${attribute.name};
+#end
+    }
+
+#end
+#end
+
+## Multilingual getter methods...
+#foreach ($attribute in $attributes)
+#if ($attribute.isMultilingual())
+#if ($attribute.type == "reference")
+    /**
+     * Gives back the id of the referenced ${attribute.name} in the given locale.
+     * @param locale Locale in which ${attribute.name} is asked.
+     * @return Id of the referenced ${attribute.name}.
+     */
+    public String get${naming.getAttributeMethod($attribute.name)}Id(Locale locale) {
+        return (String) ${attribute.name}Ids.get(locale);
+    }
+
+#else
+    /**
+     * Getter for attribute: ${attribute.name}.
+     * @param locale Locale in which the attribute is being got.
+     * @return Value of attribute: ${attribute.name}.
+     */
+#if ($attribute.isBoolean())
+    public ${attribute.javaClass} is${naming.getAttributeMethod($attribute.name)}(Locale locale) {
+#else
+    public ${attribute.javaClass} get${naming.getAttributeMethod($attribute.name)}(Locale locale) {
+#end
+        return (${attribute.javaClass}) ${attribute.name}.get(locale);
+    }
+
+#end
+#end
+#end
+
+##
+## AS STRING GETTER METHODS
+##
+#foreach ($attribute in $attributes)
+#set($multiToken = "")
+#if ($attribute.isMultilingual())
+#set($multiToken = ".get(locale)")
+#end
+#if ($attribute.type == "boolean" ||$attribute.type == "integer" || $attribute.type == "float" || $attribute.type == "date" || $attribute.type == "datetime" || $attribute.type == "time")
+    /**
+     * Getter for attribute: ${attribute.name}. If any error has occured during setting then gives back the bad value
+     * else gives back the good value according to bean locale.
+     * @return String value of attribute: ${attribute.name}.
+     */
+    public String get${naming.getAttributeMethod($attribute.name)}AsString() {
+        if (${attribute.name}AsString != null) return ${attribute.name}AsString;
+        if (${attribute.name}${multiToken} == null) return "";
+#if ($attribute.type == "integer")
+        return ${attribute.name}${multiToken}.toString();
+#elseif ($attribute.type == "float")
+        return ${attribute.name}Format.format(${attribute.name}${multiToken});
+#elseif ($attribute.type == "boolean")
+        return ${attribute.name}${multiToken}.toString();
+#elseif ($attribute.type == "date")
+        return application.getDateFormat(locale).format(${attribute.name}${multiToken});
+#elseif ($attribute.type == "time")
+        return application.getTimeFormat(locale).format(${attribute.name}${multiToken});
+#elseif ($attribute.type == "datetime")
+        return application.getDateTimeFormat(locale).format(${attribute.name}${multiToken});
+#end
+    }
+#elseif ($attribute.type == "text" || $attribute.type == "shorttext")
+
+    /**
+     * Getter for attribute: ${attribute.name}. If any error has occured during setting then gives back the bad value
+     * else geises back the good value according to bean locale.
+     * @return String value of attribute: ${attribute.name}.
+     */
+    public String get${naming.getAttributeMethod($attribute.name)}AsString() {
+        return ${attribute.name}${multiToken} == null? "": (String)${attribute.name}${multiToken};
+    }
+#else
+
+    // The get${naming.getAttributeMethod($attribute.name)}AsString() method is not generated of ${attribute.name} attribute (type: $attribute.type).
+
+#end
+#end
+##
+## SET METHODS
+##
+#foreach ($attribute in $attributes)
+#if ($attribute.type == "reference")
+
+    /**
+     * Sets the referenced ${attribute.name} by its id.
+     * @param ${attribute.name}Id Id of the referenced ${attribute.name}.
+     */
+    public void set${naming.getAttributeMethod($attribute.name)}Id(String ${attribute.name}Id) {
+        this.${attribute.name}Id = ${attribute.name}Id;
+        this.${attribute.name} = null;
+    }
+
+#if ($attribute.getParameter("omClass"))
+    /**
+     * Sets the referenced ${attribute.name}.
+     * @param ${attribute.name} New referenced {$attribute.name}.
+     */
+    public void set${naming.getAttributeMethod($attribute.name)}($attribute.getParameter("omClass") $attribute.name) {
+        if ($attribute.name == null) {
+            this.${attribute.name}Id = null;
+            this.${attribute.name} = null;
+        }
+        else {
+            this.${attribute.name}Id = ${attribute.name}.getId();
+            this.${attribute.name} = $attribute.name;
+        }
+    }
+#else
+    /**
+     * Sets the referenced ${attribute.name} as OMObject.
+     * @param ${attribute.name} New referenced {$attribute.name} OMObject.
+     */
+    public void set${naming.getAttributeMethod($attribute.name)}(OMObject $attribute.name) {
+        if ($attribute.name == null) {
+            this.${attribute.name}Id = null;
+            this.${attribute.name} = null;
+        }
+        else {
+            this.${attribute.name}Id = ${attribute.name}.getId();
+            this.${attribute.name} = $attribute.name;
+        }
+    }
+#end
+#else
+
+    /**
+     * Sets the value of ${attribute.name}.
+     * @param ${attribute.name} New value of ${attribute.name}.
+     */
+    public void set${naming.getAttributeMethod($attribute.name)}(${attribute.javaClass} ${attribute.name}) {
+#if ($attribute.isMultilingual())
+        this.${attribute.name}.put(locale, ${attribute.name});
+#else
+        this.${attribute.name} = ${attribute.name};
+#end
+    }
+#if ($attribute.isMultilingual())
+
+    /**
+     * Sets the value of ${attribute.name}.
+     * @param ${attribute.name} New value of ${attribute.name}.
+     * @param locale the Locale of new value.
+     */
+    public void set${naming.getAttributeMethod($attribute.name)}(${attribute.javaClass} ${attribute.name}, Locale locale) {
+       this.${attribute.name}.put(locale, ${attribute.name});
+    }
+#end
+
+#end
+#end
+##
+## AS STRING SETTER METHODS
+##
+#foreach ($attribute in $attributes)
+#set ($multiToken = "")
+#if ($attribute.isMultilingual())
+#set ($multiToken = ", locale")
+#end
+#if ($attribute.type == "integer" || $attribute.type == "float" || $attribute.type == "date" || $attribute.type == "datetime" || $attribute.type == "time")
+
+    /**
+     * Sets the value of ${attribute.name}. Parses the String value. If any problem has occcured throws a FormattedException.
+     * @param ${attribute.name}AsString String value of ${attribute.name}
+     * @throws FormattedException if ${attribute.name}AsString is not parsable.
+     */
+    public void set${naming.getAttributeMethod($attribute.name)}(String ${attribute.name}AsString) {
+        if (${attribute.name}AsString == null || "".equals(${attribute.name}AsString)) {
+            this.${attribute.name}AsString = "";
+            set${naming.getAttributeMethod($attribute.name)}(($attribute.javaClass) null${multiToken});
+            return;
+        }
+        try {
+#if ($attribute.type == "integer")
+            Integer value = new Integer(Integer.parseInt(${attribute.name}AsString));
+#elseif ($attribute.type == "float")
+            Float value = new Float(${attribute.name}Format.parse(${attribute.name}AsString).floatValue());
+#elseif ($attribute.type == "date")
+            Date value = application.getDateFormat(locale).parse(${attribute.name}AsString);
+#elseif ($attribute.type == "time")
+            Date value = application.getTimeFormat(locale).parse(${attribute.name}AsString);
+#elseif ($attribute.type == "datetime")
+            Date value = application.getDateTimeFormat(locale).parse(${attribute.name}AsString);
+#end
+            set${naming.getAttributeMethod($attribute.name)}(($attribute.javaClass) value${multiToken});
+        } catch (Exception e) {
+            set${naming.getAttributeMethod($attribute.name)}(($attribute.javaClass) null${multiToken});
+            throw new FormattedException("The '" + ${attribute.name}AsString + "' value is not well formed." , e);
+        }
+        this.${attribute.name}AsString = null;
+    }
+#elseif ($attribute.type == "boolean")
+
+    /**
+     * Sets the value of ${attribute.name}. Parses the String value. If any problem has occcured throws a FormattedException.
+     * @param ${attribute.name}AsString String value of ${attribute.name}
+     * @throws FormattedException if ${attribute.name}AsString is not parsable.
+     */
+    public void set${naming.getAttributeMethod($attribute.name)}(String ${attribute.name}AsString) {
+        if (${attribute.name}AsString == null && "".equals(${attribute.name}AsString)) {
+            this.${attribute.name}AsString = "";
+            set${naming.getAttributeMethod($attribute.name)}(($attribute.javaClass) null${multiToken});
+            return;
+        }
+        if ("true".equalsIgnoreCase(${attribute.name}AsString))
+            set${naming.getAttributeMethod($attribute.name)}(new Boolean(true));
+        else if ("false".equalsIgnoreCase(${attribute.name}AsString))
+            set${naming.getAttributeMethod($attribute.name)}(new Boolean(false));
+        else {
+            set${naming.getAttributeMethod($attribute.name)}((Boolean) null);
+            throw new FormattedException("The '" + ${attribute.name}AsString + "' value is not well formed.");
+        }
+        this.${attribute.name}AsString = null;
+    }
+#end
+#end
+
+## Label get methods
+#foreach ($attribute in $attributes)
+
+    /**
+     * Gives back the label of the '$attribute.name' om attribute in the current locale.
+     * @return Label of the attribute in the current locale.
+     */
+    public static String label${naming.getAttributeMethod($attribute.name)}(Locale locale) {
+        return attr${naming.getAttributeMethod($attribute.name)}.getLabel().getLabel(locale);
+    }
+#end
+
+## OMObject populating method
+    /**
+     * Sets the values of the given OMObject according to the
+     * internal state of the bean.
+     * @param om${naming.formatClass($classname)} OMObject instance to populate.
+     */
+    protected void setAttributesOfOMObject(OMObject om${naming.formatClass($classname)}) {
+#foreach ($attribute in $attributes)
+#if ($attribute.type == "reference")
+#if ($attribute.getParameter("omClass"))
+        OMObject om${naming.getAttributeMethod($attribute.name)} = null;
+        if (get${naming.getAttributeMethod($attribute.name)}() != null) {
+            om${naming.getAttributeMethod($attribute.name)} = get${naming.getAttributeMethod($attribute.name)}().getOMObject();
+        }
+        om${naming.formatClass($classname)}.setValue(attr${naming.getAttributeMethod($attribute.name)}, om${naming.getAttributeMethod($attribute.name)});
+#else
+        if (${attribute.name}Id != null) {
+            om${naming.formatClass($classname)}.setValue(attr${naming.getAttributeMethod($attribute.name)}, get${naming.getAttributeMethod($attribute.name)}());
+        }
+#end
+#else
+#if ($attribute.isMultilingual())
+        for (Iterator i = this.locales.iterator(); i.hasNext(); ) {
+            Locale attrLocale = (Locale) i.next();
+            om${naming.formatClass($classname)}.setValue(attr${naming.getAttributeMethod($attribute.name)}, attrLocale, ${attribute.name}.get(attrLocale));
+        }
+#else
+        om${naming.formatClass($classname)}.setValue(attr${naming.getAttributeMethod($attribute.name)}, ${attribute.name});
+#end
+#end
+#end
+    }
+
+## silent save
+    /**
+     * Saves the object without generating any event.
+     * @throws OMSException if any exception occures.
+     */
+    protected void silentSave() throws OMSException {
+        if (omObject == null) {
+            omObject = omClass.createObject();
+        }
+        setAttributesOfOMObject(omObject);
+        omObject.save();
+        readOMObject(omObject);
+    }
+
+## these two functions are to be used from OMBean base class
+    /**
+     * Gets the OM class name of the instance
+     * @return the static OM_CLASS_NAME variable
+     */
+    public String getOMClassName()
+    {
+        return ${naming.getClassName($classname)}.OM_CLASS_NAME;
+    }
+
+    /**
+     * Gives back OMClass instance.
+     * @return OMClass instance.
+     */
+    public OMClass getOMClass() {
+        return ${naming.getClassName($classname)}.omClass;
+    }
+
+## equals() and hashcode() methods
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     * @param   o The reference object with which to compare.
+     * @return  <code>true</code> if this object is the same as the obj
+     *          argument; <code>false</code> otherwise.
+     */
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Base${naming.formatClass($classname)})) {
+            return false;
+        }
+
+        final Base${naming.formatClass($classname)} base${naming.formatClass($classname)} = (Base${naming.formatClass($classname)}) o;
+
+        if (id != null ? !id.equals(base${naming.formatClass($classname)}.id) : base${naming.formatClass($classname)}.id != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns a hash code value for the object. This method is
+     * supported for the benefit of hashtables such as those provided by
+     * <code>java.util.Hashtable</code>.
+     * @return  a hash code value for this object.
+     */
+    public int hashCode() {
+        return (id != null ? id.hashCode() : 0);
+    }
+}
+
+

@@ -1,0 +1,94 @@
+/*
+ * ${naming.getClassName($classname)}.java
+ *
+ * This is a generated file.
+ */
+
+// The package name
+#if ($package)
+package ${package};
+#end
+
+import com.p92.sofia.oms.OMObject;
+import com.p92.sofia.oms.OMClass;
+import com.p92.sofia.oms.OMSException;
+import com.p92.sofia.pfw.SofiaWebApplication;
+
+
+/**
+ * <p>This class is a subclass of the Java bean that stores the data of an OMObject.</p>
+ * <p>You may add your code in this file. If this file exists it wont be
+ * overwritten by the generator.</p>
+ * OMClass: $classname
+ *
+ * <p>Created by Bean Builder Utility of SOFIA application. 
+ * (Written by: <a href="mailto:gabor.szathmary@arvato-systems.hu">Gabor Szathmary</a>).
+ * <br/>Date: $date</p>
+ */
+public class ${naming.getClassName($classname)} extends Base${naming.getClassName($classname)}
+{
+
+## Constructors
+    /**
+     * Creates a new empty instance of ${classname}Bean with application's locales.
+     */
+    public ${naming.getClassName($classname)}() {
+        super();
+    }
+
+    /**
+     * Creates a new empty instance of ${classname}Bean with application's locales.
+     * @param createOMObject If <code>true</code> then creates OMObject.
+     * @throws OMSException If the corresponding OMObject cannot be created.
+     */
+    public ${naming.getClassName($classname)}(boolean createOMObject) throws OMSException {
+        super(createOMObject);
+    }
+
+    /**
+     * Constructor that creates the bean from an OMObject id.
+     * @param omObjectId Id of the OMObject to create the bean from.
+     * @throws IllegalArgumentException If the given id is invalid or null.
+     */
+    public ${naming.formatClass($classname)}(String omObjectId) {
+        super(omObjectId);
+    }
+
+    /**
+     * Constructor that copies the data from the OMObject to the Bean with application's locales.
+     * @param omObject OMObject from this bean will be initialized.
+     */
+    public ${naming.getClassName($classname)}(OMObject omObject) {
+        super(omObject);
+    }
+
+## Initalizer method
+    /**
+     * Initalizes the bean.
+     * @param application Web application instance.
+     */
+    public static void init(SofiaWebApplication application) {
+        Base${naming.getClassName($classname)}.init(application);
+    }
+
+    /**
+     * Saves this object
+     */
+    public void save() throws OMSException {
+        super.save();
+    }
+
+    /**
+     * Saves the object without generating any event.
+     * @throws OMSException if any exception occures.
+     */
+    public void silentSave() throws OMSException {
+        super.silentSave();
+    }
+    /**
+     * Deletes this object.
+     */
+    public void delete() throws OMSException {
+        super.delete();
+    }
+}

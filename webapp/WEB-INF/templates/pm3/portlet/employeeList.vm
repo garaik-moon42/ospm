@@ -1,0 +1,188 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.employeeList.filterOrderBy.value) {
+            document.employeeList.filterDirection.value = 0 - document.employeeList.filterDirection.value;
+        }
+        document.employeeList.filterOrderBy.value = orderBy;
+        document.employeeList.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.employeeList.filterPage.value = displpage;
+            }
+        }
+        document.employeeList.displayedPageHeader.value = document.employeeList.filterPage.value;
+    }
+
+
+#if($multiSelectModeForTask || $multiSelectModeForProject)
+    function choosedResourceHandler(){
+        countChecked = 0;
+        var nameArray = new Array();
+        var idArray = new Array();
+        for (i=0; i<document.employeeList.chooseResource.length; i++){
+            if(document.employeeList.chooseResource[i].checked){
+                nameArray[countChecked]= document.getElementById("chooseTable").rows[i+1].cells[0].innerHTML;
+                idArray[countChecked] = document.employeeList.chooseResource[i].id;
+                countChecked++;
+
+            }
+        }
+        selectObject(countChecked, nameArray, idArray);
+    }
+
+    function filterByName(){
+        var name = document.employeeList.filterName.value;
+        var temp;
+        for (var i = 0; i<document.employeeList.chooseResource.length; i++){
+            temp = document.getElementById("chooseTable").rows[i+1].cells[0].innerHTML;
+            if(temp.indexOf(name)<0){
+                document.getElementById("chooseTable").rows[i+1].cells[0].style.display = 'none';
+                document.getElementById("chooseTable").rows[i+1].cells[1].style.display = 'none';
+            } else {
+                document.getElementById("chooseTable").rows[i+1].cells[0].style.display = '';
+                document.getElementById("chooseTable").rows[i+1].cells[1].style.display = '';
+            }
+
+        }
+    }
+#end
+
+#if($selectMode)
+    function selectObject(idOrcountChecked, labelOrnameArray, dataOridArray) {
+#if($callback)
+        window.opener.${callback}(idOrcountChecked, labelOrnameArray, dataOridArray);
+#else
+        alert("Don't find callback method name in context.");
+#end
+        window.close();
+    }
+#end
+</script>
+<div class="portlet">
+    <form name="employeeList" action="$link" method="post">
+        <input type="hidden" name="filterOrderBy" value="$!filter.orderBy" />
+        <input type="hidden" name="filterDirection" value="$!filter.direction" />
+        <input type="hidden" name="filterPage" value="$filter.page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+            <span class="nowrap">
+                <label>$filter.labelName($locale):</label>
+#if($multiSelectModeForTask || $multiSelectModeForProject)
+                <input type="text" name="filterName" value="" size="30"/>
+#else
+                <input type="text" name="filterName" value="$!filter.nameAsString" size="30"/>
+#end
+            &nbsp;&nbsp;</span>
+                </p>
+                <p>
+#if($multiSelectModeForTask || $multiSelectModeForProject)
+                <a class="btn" onclick='filterByName()'>$labelSearch</a>
+#else
+                #button($labelSearch '' 'document.employeeList.filterPage.value = "1";document.employeeList.submit(); return false;')
+#end
+#if (!$selectMode)
+                #button($labelBack '#' "document.employeeList.action = '$history.back()'; document.employeeList.submit(); return false;")
+#end                    
+                </p>
+        </fieldset>
+#if (!$selectMode)
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNewEmployee '' "document.employeeList.action = '$link.clear().setNavigationId('employeeProperties') '; document.employeeList.submit(); return false;")
+            </p>
+        </fieldset>
+#end
+#if($multiSelectModeForTask || $multiSelectModeForProject)
+    <br />&nbsp
+    #button($labelSelectEmployees '#' "choosedResourceHandler()")
+    &nbsp&nbsp#button($labelCancel '#' "window.close();")
+    <br />
+#end
+        <fieldset>
+            <p>
+
+                <table class="list" id="chooseTable" id>
+                    <caption>
+
+#if ($filter.numberOfHits > 0)
+#if ($filter.isMorePage())
+            #button($labelFirstPage '' "document.employeeList.filterPage.value = 1; document.employeeList.submit(); return false;")&nbsp;
+            #button($labelPrevPage '' "document.employeeList.filterPage.value = $filter.page - 1; document.employeeList.submit(); return false;")&nbsp;
+            $filter.numberOfHits $labelEmployeeListCount &nbsp;<input type="text" size="3" name="displayedPageHeader" value="$filter.page" onkeyup="changeDisplayedPage(this);"/>&nbsp;/&nbsp;$filter.lastPage&nbsp;
+            #button ($labelGoPage '' "document.employeeList.submit(); return false;")&nbsp;
+            #button ($labelNextPage '' "document.employeeList.filterPage.value = ($filter.page + 1); document.employeeList.submit(); return false;")&nbsp;
+            #button ($labelLastPage '' "document.employeeList.filterPage.value = $filter.lastPage; document.employeeList.submit(); return false;")
+#end
+#else
+                        $labelEmployeeListEmpty
+#end
+                    </caption>
+#if ($filter.direction == 1)
+#set ($directionFlag = "[+]")
+#else
+#set ($directionFlag = "[-]")
+#end
+#if ($filter.numberOfHits > 0)
+                    <thead>
+                        <tr>
+                            <th><a href="#" onClick="changeOrderBy('name');return false;">$filter.labelName($locale) #if ($filter.orderBy == "name") $directionFlag #end</a></th>
+                            <th>$labelActions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+#foreach ($item in $items)
+                        <tr>
+                            <td>$item.nameAsString</td>
+#if($selectMode)
+    #if($multiSelectModeForTask)
+                            <td>
+                                #if ($task.getTaskResourceIds().contains($item.id))
+                                    <input type="checkbox" id='$item.id' name="chooseResource" visibility="visible" checked />$labelChoose
+                                #else
+                                    <input type="checkbox" id='$item.id' name="chooseResource" visibility="visible" />$labelChoose
+                                #end
+                            </td>
+    #else
+        #if ($multiSelectModeForProject)
+                            <td>
+                                #if ($project.getProjectResourceIds().contains($item.id))
+                                    <input type="checkbox" id='$item.id' name="chooseResource" visibility="visible" checked />$labelChoose
+                                #else
+                                    <input type="checkbox" id='$item.id' name="chooseResource" visibility="visible" />$labelChoose
+                                #end
+                            </td>
+        #else
+                            <td>
+                                <a href="#" onClick="selectObject('$item.id','$omObjectFormatter.formatForJavascript($item.getOMObject(), $locale)', ''); return false;">$labelChoose</a>
+                            </td>
+        #end
+    #end
+#else
+                            <td>
+                                <a href="$link.clear().setNavigationId('employeeProperties').setObjectId($position, $item.id)">$labelEdit</a> |
+                                <a href="$link.clear().setNavigationId('employeePMRoleList').setObjectId($position, $item.id)">$labelPMRoles</a> |
+                                <a href="$link.clear().setNavigationId('todoList').setObjectId($position, $item.id)">$labelTodos</a>
+                            </td>
+#end
+                        </tr>
+#end
+                    </tbody>
+#end
+              </table>
+            </p>
+        </fieldset>
+        #if($multiSelectModeForTask || $multiSelectModeForProject)
+            <br />&nbsp
+            #button($labelSelectEmployees '#' "choosedResourceHandler()")
+            &nbsp&nbsp#button($labelCancel '#' "window.close();")
+        #end
+    </form>
+</div>

@@ -1,0 +1,37 @@
+<script type="text/javascript" language="Javascript1.2">
+</script>
+<div class="portlet">
+    <form name="properties" action="$history.ignore($link)" method="post">
+        <input type="hidden" name="updateForm" value="update"/>
+        <fieldset class="dialog">
+            <legend>$labelPMRoleProperties</legend>
+            <p class="nowrap">
+                <label>$pmRole.labelName($locale)*:</label>
+                <input type="text" name="pmRoleName" value="$!pmRole.nameAsString" size="40"/>
+            </p>
+#if ($errorMessage.hasAttibute("pmRoleName"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("pmRoleName")</span>
+</p>
+#end
+            <p class="nowrap">
+                <label>$pmRole.labelCost($locale)*:</label>
+                <input type="text" name="pmRoleCost" value="$!pmRole.costAsString" size="16"/>&nbsp;&nbsp;Ft/óra
+            </p>
+#if ($errorMessage.hasAttibute("pmRoleCost"))
+            <p class="nowrap">
+                <span class="error">$errorMessage.forAttribute("pmRoleCost")</span>
+</p>
+#end
+        </fieldset>        <fieldset class="operation">
+            <legend>$labelActions</legend>
+                <p>
+                 #if($ams.may("actionProjectEditResourceDetails"))
+                    #buttonAccept($labelSave '#' "document.properties.action = '$history.ignore($link.setOperation($position,'pmRoleSave'))'; document.properties.submit(); return false;")
+                    #buttonDeny($labelDelete '#' "if(confirm('$confirmDeletePMRole')) {document.properties.action = '$history.ignore($link.setOperation($position,'pmRoleDelete'))'; document.properties.submit();} return false;")
+                 #end                    
+                    #button($labelCancel '#' "document.properties.action = '$history.back()'; document.properties.submit(); return false;")
+                </p>
+        </fieldset>
+    </form>
+</div>

@@ -1,0 +1,15 @@
+##
+## Terminology server SETUP file.
+## You can configure your Terminology Server instance by editing this file.
+## Please do not edit other file unless you are very sure what you are doing.
+##
+db.host = 
+db.port = 
+db.name = 
+db.user = 
+db.password =
+
+smtp.host =
+smtp.port =
+
+mail.admin = admin@pm.p92.hu

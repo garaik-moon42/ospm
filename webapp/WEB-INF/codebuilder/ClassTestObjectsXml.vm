@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE objects SYSTEM "omsobjects.dtd">
+<objects>
+#foreach($counter in [1..160])
+    <object class="${classname}" id="${counter}">
+#foreach($attribute in $attributes)
+        <attribute name="${attribute.name}">
+#if($attribute.type == "shorttext" || $attribute.type == "text")
+#if($attribute.isMultilingual())
+#foreach($al in $attributeLocales)
+            <value language="${al.language}">#if ($attribute.type == "text")${randomizer.forText()}#else${randomizer.forShorttext('5','10')}#end</value>
+#end
+#else
+            <value>#if ($attribute.type == "text")${randomizer.forText()}#else${randomizer.forShorttext('5','10')}#end</value>
+#end
+#end
+#if($attribute.type == "date")
+            <value>$randomizer.forDate('2000-01-01','2001-01-01')</value>
+#end
+#if($attribute.type == "boolean")
+            <value>$randomizer.forBoolean()</value>
+#end
+#if($attribute.type == "integer")
+            <value>$randomizer.forInteger('100','110')</value>
+#end
+#if($attribute.type == "float")
+            <value>$randomizer.forFloat('100.5','200')</value>
+#end
+#if($attribute.type == "reference")
+            <!-- ToDo: handle reference attribute type. -->
+#end
+        </attribute>
+#end
+    </object>
+#end
+</objects>

@@ -1,0 +1,476 @@
+/* - - - - - - - - - - - - - - - - - - - - -
+
+Title : 
+Author : 
+URL : 
+
+Description : 
+
+Created : 
+Modified : 
+
+- - - - - - - - - - - - - - - - - - - - - */
+
+/* ----- CSS ----- */
+
+*{
+}
+html{
+    font: normal 11px tahoma;
+}
+body{
+    margin: 0px;
+    padding: 0px;
+    background: transparent url("images/app-logo2.gif") no-repeat 50% 60%;
+    background-color: #ffffff;
+}
+
+/* ----- IDS ----- */
+
+#container{
+}	
+#header{
+    padding: 5px 9px 4px 9px;
+    background-color: #0068c3;
+    color: #fff;
+}
+#parkolas-logo {
+    position: absolute;
+    z-index: 2;
+    right: 0%;
+    margin-right: 21px;
+    top: 28px;
+    width: 156px;
+    height: 56px;
+    background: #fff url("images/app-logo1.gif") no-repeat;
+}
+#primaryContent{
+}
+#secondaryContent{
+}	
+#navigation{
+    background-color: #f0f7fc;
+    color: #333;
+    margin-bottom: 12px;
+    padding: 6px 6px 5px 6px;
+}
+#navigation2{
+    color: #333;
+    margin-top: -12px;
+    margin-bottom: 12px;
+    padding: 6px 6px 5px 6px;
+}
+#footer{
+    padding-top: 6px;
+    text-align: center;
+    color: #ccc;
+}
+
+/* ----- CLASSES ----- */
+
+.hide{
+}
+.show{
+}
+.portlet{
+}
+.list{
+}
+.nowrap{
+    white-space: nowrap;
+}
+.error{
+    color: red; font-weight: bold;
+}
+.info{
+    color: blue; font-weight: bold;
+}
+.selected{
+}
+/* ----- HEADINGS ----- */
+
+h1{
+    font-size: 13px;
+    margin: 4px;
+    padding: 0px;
+}
+h2{
+    font-size: 12px;
+    margin: 4px;
+    padding: 0px;
+}
+h3{
+    font-size: 11px;
+    margin: 4px;
+    padding: 0px;
+}
+h4{
+    font-size: 11px;
+    margin: 4px;
+    padding: 0px;
+}
+
+/* ----- PARAGRAPHS ----- */
+
+p{
+}
+#primaryContent p{
+}
+#secondaryContent p{
+}
+form fieldset p{
+    padding: 4px 0px 4px 0px;
+    margin: 0px;
+    font-size: 11px;
+}
+
+/* ----- QUOTES ----- */
+
+blockquote{
+}
+blockquote p{
+}
+cite{
+}
+blockquote cite{
+}
+
+/* ----- CODE ----- */
+
+pre{
+}
+code{
+}
+p code{
+}
+pre code{
+}
+
+/* ----- LISTS ----- */
+
+li{
+}
+li p{
+}
+ol{
+}
+ul{
+}
+ol li{
+}
+ul li{
+}
+
+#navigation li{
+}
+
+#navigation ul{
+}
+
+#navigation ul li{
+}
+
+#navigation ol{
+}
+
+#navigation ol li{
+}
+
+/* ----- IMAGES ----- */
+
+img{
+    vertical-align: middle;
+    border: 0px;
+}
+img a{
+}
+img a:hover{
+}
+
+/* ----- BREAK ----- */
+
+hr{
+}
+
+/* ----- TEXT FORMATTING ----- */
+
+strong{
+}
+em{
+}
+b{
+}
+i{
+}
+
+/* ----- LINKS ----- */
+
+a{
+    color: #0068c3;
+    text-decoration: none;
+}
+a:hover{
+    color: #048a34;
+    text-decoration: underline;
+}
+a:visited, a:active, a:focus{
+}
+a:visited{
+}
+a:active{
+}
+a:focus{
+}
+
+p a{
+}
+cite a{
+}
+li a{
+}
+dt a{
+}
+dd a{
+}
+#footer a{
+    color: #aaa;
+}
+a.btn {
+    color: white;
+    background: #888888;
+    border-top: 1px solid #aaaaaa;
+    border-left: 1px solid #aaaaaa;
+    border-right: 1px solid #444444;
+    border-bottom: 1px solid #444444;
+    padding: 2px 4px;
+    cursor: default;
+}
+a.btn:hover {
+    color: white;
+    text-decoration: none;
+}
+a.btn:active {
+    border-top: 1px solid #444444;
+    border-left: 1px solid #444444;
+    border-right: 1px solid #aaaaaa;
+    border-bottom: 1px solid #aaaaaa;
+}
+a.btnAccept {
+    color: white;
+    background: #048a34;
+    border-top: 1px solid #3fad54;
+    border-left: 1px solid #3fad54;
+    border-right: 1px solid #146f00;
+    border-bottom: 1px solid #146f00;
+    padding: 2px 4px;
+    cursor: default;
+}
+a.btnAccept:hover {
+    color: white;
+    text-decoration: none;
+}
+a.btnAccept:active {
+    border-top: 1px solid #146f00;
+    border-left: 1px solid #146f00;
+    border-right: 1px solid #3fad54;
+    border-bottom: 1px solid #3fad54;
+}
+a.btnDeny {
+    color: white;
+    background: #ff3d3d;
+    border-top: 1px solid #ff8b8b;
+    border-left: 1px solid #ff8b8b;
+    border-right: 1px solid #aa0000;
+    border-bottom: 1px solid #aa0000;
+    padding: 2px 4px;
+    cursor: default;
+}
+a.btnDeny:hover {
+    color: white;
+    text-decoration: none;
+}
+a.btnDeny:active {
+    border-top: 1px solid #aa0000;
+    border-left: 1px solid #aa0000;
+    border-right: 1px solid #ff8b8b;
+    border-bottom: 1px solid #ff8b8b;
+}
+a.btnOpen {
+    color: white;
+    background: #0068c3;
+    border-top: 1px solid #609dff;
+    border-left: 1px solid #609dff;
+    border-right: 1px solid #004197;
+    border-bottom: 1px solid #004197;
+    padding: 2px 4px;
+    cursor: default;
+}
+a.btnOpen:hover {
+    color: white;
+    text-decoration: none;
+}
+a.btnOpen:active {
+    border-top: 1px solid #004197;
+    border-left: 1px solid #004197;
+    border-right: 1px solid #609dff;
+    border-bottom: 1px solid #609dff;
+}
+#navigation a {
+    font-weight: bold;
+    color: #0068c3;
+    border: 1px solid #f0f7fc;
+    padding: 2px;
+}
+#navigation a:hover {
+    color: #048a34;
+    border: 1px solid #f0f7fc;
+    text-decoration: none;
+}
+#navigation a.selected {
+    background: #0068c3;
+    color: #f0f7fc;
+}
+#navigation a.selected:hover {
+    color: #f0f7fc;
+}
+#navigation2 a {
+    font-weight: bold;
+    color: #888888;
+    border: 1px solid white;
+    padding: 2px;
+}
+#navigation2 a:hover {
+    color: #048a34;
+    border: 1px solid white;
+    text-decoration: none;
+}
+#navigation2 a.selected {
+    background: #888888;
+    color: white;
+}
+#navigation2 a.selected:hover {
+    color: white;
+}
+
+/* ----- TABLES ----- */
+
+table{
+    border-collapse: collapse;
+}
+caption{
+    white-space: nowrap;
+}
+thead{
+}
+tbody{
+}
+tfoot{
+}
+tr{
+}
+table.list tr {
+}
+table.list tr.selected {
+    background-color: #f0f7fc;
+}
+tr .alt{
+}
+th{
+    padding: 2px 4px;
+}
+table.list td{
+    border-top: 1px solid #ccc;
+    padding: 2px 4px;
+}
+table.list td.noborder{
+    border: 0px;
+}
+
+/* ----- FORMS ----- */
+
+form{
+    padding: 0px;
+    margin: 0px;
+}
+fieldset{
+    border: 1px solid #ccc;
+    margin: 4px 6px;
+    padding: 0px 12px 4px 8px;
+}
+legend{
+    color: #444;
+    font-weight: bold;
+    padding: 2px 4px;
+}
+label{
+}
+input{
+}
+textarea{
+}
+input, textarea{
+    font: bold 11px tahoma;
+    color: #222;
+}
+select{
+    font: bold 11px tahoma;
+    color: #222;
+}
+optgroup{
+}
+option{
+    font: bold 11px tahoma;
+    color: #222;
+}
+table.list tbody td.calendar a {
+    text-decoration: none;
+    font-weight: bold;
+}
+table.list tbody td.calendar a:hover {
+    color: #fff;
+    background-color: #bbb;
+}
+table.list tbody td.selectedCalendar a {
+    text-decoration: none;
+    font-weight: bold;
+    color: white;
+    background-color: #6F6D83; 
+}
+
+/* ----- DEFINITIONS ----- */
+
+dl{
+}
+dt{
+}
+dd{
+}
+table.grid td {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    padding: 2px 4px;
+    
+    text-align:center;
+}
+table.grid td.unapproved {
+    background-color: red; 
+}
+table.grid td.approved {
+    background-color: green;
+}
+
+table.grid td.weekend {
+    background-color: #ccc;
+}
+div.popup {
+    position: absolute;
+    visibility: hidden;
+    background-color: #f0f7fc;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    border-bottom: 3px solid black;
+    border-right: 3px solid black;
+    padding: 3px; z-index: 10
+}

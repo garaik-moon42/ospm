@@ -1,0 +1,329 @@
+<script type="text/javascript" language="Javascript1.2">
+
+        function openEmployeePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #set($param="")
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeMultiSelectForProject').setObjectId($position, $param))?callback=projectResourcePickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function projectResourcePickerCallback(countChecked, nameArray, idArray) {
+            document.properties.projectResourceActionProjectResourceAdd.value+= " "; //To avoid projectResourceList.clear() on save
+            for (i=0; i<countChecked; i++){
+                document.properties.projectResourceActionProjectResourceAdd.value+=idArray[i] + ":";
+            }
+            document.properties.submit();
+            return false;
+    }
+
+    function openBeginsPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function beginsPickerCallback(data) {
+        document.properties.projectBegins.value = data;
+    }
+
+    function openDeadlinePicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=deadlinePickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function deadlinePickerCallback(data) {
+        document.properties.projectDeadline.value = data;
+    }
+
+    function openAcceptFulfillmentFromPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=acceptFulfillmentFromPickerCallback",
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+    }
+
+    function acceptFulfillmentFromPickerCallback(data) {
+        document.properties.projectAcceptFulfillmentFrom.value = data;
+    }
+
+    function openBusinessUnitPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #if($pm_roles.size() > 0)
+        #set($param="")
+        #foreach($role in $pm_roles)
+            #if($counter==1)
+                #set($param= "Role.$role.id")
+            #else
+                #set($param= "${param},Role.${role.id}")
+            #end
+        #end
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('businessUnitSelect').setObjectId($position, $param))?callback=businessUnitPickerCallback",
+                            "labelBusinessUnitSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('businessUnitSelect'))?callback=businessUnitPickerCallback",
+                            "labelBusinessUnitSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #end
+        w.focus();
+    }
+
+    function businessUnitPickerCallback(id, label, data) {
+        document.properties.projectBusinessUnitId.value = id;
+        document.properties.displayedValueprojectBusinessUnit.value = label;
+    }
+
+    function openProjectmanagerPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #if($pm_roles.size() > 0)
+        #set($param="")
+        #foreach($role in $pm_roles)
+            #if($counter==1)
+                #set($param= "Role.$role.id")
+            #else
+                #set($param= "${param},Role.${role.id}")
+            #end
+        #end
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position, $param))?callback=projectmanagerPickerCallback",
+                            "labelProjectmanagerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=projectmanagerPickerCallback",
+                "labelProjectmanagerSelect",
+                "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #end
+        w.focus();
+    }
+
+    function projectmanagerPickerCallback(id, label, data) {
+        document.properties.projectProjectmanagerId.value = id;
+        document.properties.displayedValueprojectProjectmanager.value = label;
+    }
+    
+    function openProjectofficerPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        #if($po_roles.size() > 0)
+        #set($param="")
+        #foreach($role in $po_roles)
+            #if($counter==1)
+                #set($param= "Role.$role.id")
+            #else
+                #set($param= "${param},Role.${role.id}")
+            #end
+        #end
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect').setObjectId($position, $param))?callback=projectofficerPickerCallback",
+                            "labelProjectofficerSelect",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #else
+        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('employeeSelect'))?callback=projectofficerPickerCallback",
+                "labelProjectofficerSelect",
+                "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        #end
+        w.focus();
+    }
+
+    function projectofficerPickerCallback(id, label, data) {
+        document.properties.projectProjectofficerId.value = id;
+        document.properties.displayedValueprojectProjectofficer.value = label;
+    }
+
+</script>
+<div class="portlet">
+    <form name="properties" action="$link" method="post">
+        <input type="hidden" name="updateForm" value="update"/>
+        <input type="hidden" name="exportType"/>
+        <fieldset class="dialog">
+            <legend>$labelProjectProperties</legend>
+            <table>
+                    <tr>
+                        <td style="padding-right: 1cm; vertical-align:top">
+                            <p class="nowrap">
+                                <label>$project.labelName($locale)*:</label>
+                                <input type="text" name="projectName" value="$!project.nameAsString" size="40"/>
+                            </p>
+                #if ($errorMessage.hasAttibute("projectName"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectName")</span>
+                </p>
+                #end
+                            <p class="nowrap">
+                                <label>$project.labelWorkingHours($locale):</label>
+                                <b>$!project.workingHoursAsString</b>
+                            </p>
+                #if ($errorMessage.hasAttibute("projectWorkingHours"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectWorkingHours")</span>
+                </p>
+                #end
+                            <p class="nowrap">
+                                <label>$project.labelDescription($locale):</label>
+                                <textarea name="projectDescription" cols="80" rows="6">$!project.descriptionAsString</textarea>
+                            </p>
+                #if ($errorMessage.hasAttibute("projectDescription"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectDescription")</span>
+                </p>
+                #end
+                #if($project.isNew())
+                            <p class="nowrap">
+                                <label>$project.labelBegins($locale)*:</label>
+                                <input type="text" name="projectBegins" value="$!project.dateAsString" size="18"/>
+                                #button('...' '#' "openBeginsPicker(); return false;")
+                            </p>
+                #else
+                            <p class="nowrap">
+                                <label>$project.labelBegins($locale)*:</label>
+                                <input type="text" name="projectBegins" value="$!project.beginsAsString" size="18"/>
+                                #button('...' '#' "openBeginsPicker(); return false;")
+                            </p>
+                #end
+                #if ($errorMessage.hasAttibute("projectBegins"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectBegins")</span>
+                </p>
+                #end
+                            <p class="nowrap">
+                                <label>$project.labelDeadline($locale)*:</label>
+                                <input type="text" name="projectDeadline" value="$!project.deadlineAsString" size="18"/>
+                                #button('...' '#' "openDeadlinePicker(); return false;")
+                            </p>
+                #if ($errorMessage.hasAttibute("projectDeadline"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectDeadline")</span>
+                </p>
+                #end
+                            <p class="nowrap">
+                                <label>$project.labelActive($locale)*:</label>
+                                <select name="projectActive" size="1">
+                                    <option value="true" #if($project.activeAsString == "true")selected#end>$labelYes</option>
+                                    <option value="false" #if($project.activeAsString == "false")selected#end>$labelNo</option>
+                                </select>
+                            </p>
+                #if ($errorMessage.hasAttibute("projectActive"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectActive")</span>
+                            </p>
+                #end
+                            <p class="nowrap">
+                                <label>$project.labelBusinessUnit($locale)*:</label>
+                                <input type="hidden" name="projectBusinessUnitId" value="$!project.getBusinessUnit().getId()"/>
+                                <input type="text" name="displayedValueprojectBusinessUnit" value="$!omObjectFormatter.format($project.businessUnit.getOMObject(), $locale)" size="40" readonly="readonly"/>
+                                #button($labelChoose '#' "openBusinessUnitPicker(); return false;")
+                            </p>
+                #if ($errorMessage.hasAttibute("projectBusinessUnit"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectBusinessUnit")</span>
+                            </p>
+                #end
+                            <p class="nowrap">
+                                <label>$project.labelProjectmanager($locale)*:</label>
+                                <input type="hidden" name="projectProjectmanagerId" value="$!project.getProjectmanager().getId()"/>
+                                <input type="text" name="displayedValueprojectProjectmanager" value="$!omObjectFormatter.format($project.projectmanager.getOMObject(), $locale)" size="40" readonly="readonly"/>
+                                #button($labelChoose '#' "openProjectmanagerPicker(); return false;")
+                            </p>
+                #if ($errorMessage.hasAttibute("projectProjectmanager"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectProjectmanager")</span>
+                            </p>
+                #end
+                            <p class="nowrap">
+                                <label>$project.labelProjectofficer($locale)*:</label>
+                                <input type="hidden" name="projectProjectofficerId" value="$!project.getProjectofficer().getId()"/>
+                                <input type="text" name="displayedValueprojectProjectofficer" value="$!omObjectFormatter.format($project.projectofficer.getOMObject(), $locale)" size="40" readonly="readonly"/>
+                                #button($labelChoose '#' "openProjectofficerPicker(); return false;")
+                            </p>
+                #if ($errorMessage.hasAttibute("projectProjectofficer"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectProjectofficer")</span>
+                            </p>
+                #end
+                            <p class="nowrap">
+                                <label>$project.labelAcceptFulfillmentFrom($locale):</label>
+                                #if($project.projectmanager.id==$pMUser.employee.id || $project.projectofficer.id==$pMUser.employee.id || $pMUser.hasRole("administrator"))
+                                    <input type="text" name="projectAcceptFulfillmentFrom" value="$!project.acceptFulfillmentFromAsString" size="18"/>
+                                    #button('...' '#' "openAcceptFulfillmentFromPicker(); return false;")
+                                #else
+                                    <b>$project.acceptFulfillmentFromAsString</b>
+                                #end
+                            </p>
+                #if ($errorMessage.hasAttibute("projectAcceptFulfillmentFrom"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectAcceptFulfillmentFrom")</span>
+                </p>
+                #end
+                            <p class="nowrap">
+                                <label>$project.labelArchive($locale):</label>
+                                <select name="projectArchive" size="1">
+                                    <option value="true" #if($project.archiveAsString == "true")selected#end>$labelYes</option>
+                                    <option value="false" #if($project.archiveAsString == "false")selected#end>$labelNo</option>
+                                </select>
+                            </p>
+                #if ($errorMessage.hasAttibute("projectArchive"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectArchive")</span>
+                </p>
+                #end
+                #if($project.systemLockAsString != "")
+                            <p class="nowrap">
+                                <label>$project.labelSystemLock($locale):</label>
+                                <b>$project.systemLockAsString</b>
+                            </p>
+                #end
+                        </td>
+                        <td style="border-left:0.2cm solid #0068C3; padding-left: 0.5cm; padding-top:0.1cm; vertical-align:top">
+                            <fieldset>
+                                <legend>$labelProjectResource</legend>
+                                    <ul>
+                #foreach ($projectResource in $project.projectResourceList)
+                                        <li>
+                                            <div name="diplayedValueProjectResource">$!omObjectFormatter.format($projectResource.resource, $locale)</div><br />
+                                        </li>
+                #end
+                                    </ul>
+                                #button("$labelAddProjectResources" '#' "openEmployeePicker(); return false;")
+                            </fieldset>
+                #if ($errorMessage.hasAttibute("projectResourceList"))
+                            <p class="nowrap">
+                                <span class="error">$errorMessage.forAttribute("projectResourceList")</span>
+                </p>
+                #end
+                        </td>
+                    </tr>
+            </table>
+            <input type="hidden" name="projectResourceActionProjectResourceAdd" value="" />
+        </fieldset>
+        <fieldset class="operation">
+            <legend>$labelActions</legend>
+                <p>
+#if ($project.ExistInOMS)
+    ## update
+    #if(($ams.may("actionProjectEditOwnProject") && ($pMUser.employee.id==$project.projectmanager.id || $pMUser.employee.id==$project.projectofficer.id)) || $ams.may("actionProjectEditOthersProject"))
+                    #buttonAccept($labelSave '#' "document.properties.action = '$history.ignore($link.setOperation($position,'projectSave'))'; document.properties.submit(); return false;")
+                    #buttonDeny($labelDelete '#' "if(confirm('$confirmDeleteProject')) {document.properties.action = '$history.ignore($link.setOperation($position,'projectDelete'))'; document.properties.submit();} return false;")
+    #end
+#else
+    ## create
+    #if($ams.may("actionProjectCreateProject"))
+                    #buttonAccept($labelSave '#' "document.properties.action = '$history.ignore($link.setOperation($position,'projectCreate'))'; document.properties.submit(); return false;")
+    #end
+#end
+                    #button($labelCancel '#' "document.properties.action = '$history.back()'; document.properties.submit(); return false;")
+                </p>
+        </fieldset>
+    </form>
+</div>

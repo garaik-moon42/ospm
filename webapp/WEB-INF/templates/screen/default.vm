@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#set ($baseHref = "https://pm.moon42.com/")
+<head>
+    <title>$applicationTitle - $navigationNode.getLabel($locale)</title>
+    <link rel="shortcut icon" href="/favicon.ico" mce_href="/favicon.ico" />
+    <base href="$baseHref" />
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="STRABAG Intranet Application" />
+    <meta name="keywords" content="" />
+    <meta name="author" content="P92 IT Solutions Kft." />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="static/css/style.css" media="screen,projection" type="text/css" />
+    <link rel="stylesheet" href="static/css/print.css" media="print" type="text/css" />
+    <!-- RSS -->
+    <!-- <link rel="alternate" href="" title="RSS Feed" type="application/rss+xml" /> -->
+    <!-- JavaScript : Include and embedded version -->
+    <!-- <script src="" type="text/javascript"></script> -->
+    <script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/listbox/ListBox.js"></script>
+    <script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/iterator/Iterator.js"></script>
+    <script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/list/ListHighlight.js"></script>
+    <script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/div/utility.js"></script>
+    <script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/div/popup.js"></script>
+    <script type="text/javascript" xml:space="preserve" language="Javascript1.2">
+        /*
+         * Opens a popup window.
+         * @param portletId Id of the selector portlet.
+         * @param callback Name of the callback function which is called when an item has been selected in the popup window.
+         * @param width Width of the popup window, default value is 640.
+         * @param height Height of the popup window, default value is 480.
+         * @param windowName Name of the popup window.
+         */
+        function openPopup(nodeId, callback, width, height, windowName) {
+            var w = width != null ? width : 640;
+            var h = height != null ? height : 480;
+            var wName = windowName != null ? windowName : "popup";
+            var url = "${baseHref}${link.servletPath}/sid/default/nid/" + nodeId + "?callback=" + callback;
+            window.open(url, wName, "width=" + w + ", height=" + h + ", menubar=0, resizable=1, scrollbars=1, status=1, toolbar=0");
+        }
+    </script>    
+</head>
+<body onload="activateHighlight();focusFormField();">
+$!insert.layout
+</body>
+</html>

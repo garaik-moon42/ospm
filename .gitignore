@@ -1,0 +1,21 @@
+# Generic stuff
+
+*.swp
+*.log
+
+# Operational files / folders
+
+webapp/WEB-INF/uploadtemp
+webapp/WEB-INF/log/*
+!webapp/WEB-INF/log/placeholder.do-not-delete.txt
+mysql_data*
+
+# Dumps, backups
+
+dump
+bakcup
+
+# Secrets and configuration
+
+setup.properties
+sofia.properties

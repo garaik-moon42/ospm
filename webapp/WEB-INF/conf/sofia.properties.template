@@ -1,0 +1,176 @@
+## SOFIA properties
+
+include = text:file://setup.properties
+include = text:classpath://com/p92/sofiamodule/pm3/pm3-version.properties
+
+
+## SOFIA Web Application settings
+# Name of the web application
+application.name = pm3
+# Default encoding of the application
+application.encoding = UTF-8
+# Temporary directory for the uploaded files, it is relative to the application root
+application.uploadTempPath = WEB-INF/uploadtemp/
+
+# Maximum size of the postable content in a request.
+# 'M' or 'K' postfix can be used for megabytes and kilobytes, for example: 2M, 512K
+application.maxPostSize = 16M
+
+## Log4J settings
+# This property should locate the path to the Log4J configuration XML file (path is relative to the application root).
+log4j.configuration = WEB-INF/conf/log4j.properties.xml
+
+## SOFIA locales
+# sofia.locales is used to define the user interface languages
+sofia.locales = hu;default
+
+# sofia.attribute.locales is used to define the object model languages
+sofia.attribute.locales = hu;default
+sofia.attribute.locales += en
+sofia.attribute.locales += de
+
+# sofia.admin.locales is used to define languages for admin pages
+sofia.admin.locales = hu;default
+
+## SOFIA link settings
+# Shall it allow the screen id definition in the URL?
+sofia.link.allowSid = yes
+# Shall it allow the layout id definition in the URL?
+sofia.link.allowLid = yes
+# Shall it allow the portlet id definition in the URL?
+sofia.link.allowPid = yes
+# Shall it allow the object id definition in the URL?
+sofia.link.allowOid = yes
+
+## Database connection pool settings
+# name of the connection pool (should be 'sofia')
+# connectionPool.name = sofia
+# name of the JDBC driver class
+# connectionPool.driver = org.gjt.mm.mysql.Driver
+# JDBC database URL
+# connectionPool.url = jdbc:mysql://${db.host}:${db.port}/${db.name}
+# DB user name
+# connectionPool.user = ${db.user}
+# DB user password
+# connectionPool.password = ${db.password}
+# Size of the connection pool
+# (should be greater then the maximum number of the HTTP connector threads in tomcat, check server.xml).
+# connectionPool.maxConnections = 100
+
+## Database connection pool settings for importer, uncomment it for importer use
+
+connectionPool.names = source
+connectionPool.names += sofia
+
+connectionPool.source.driver = org.gjt.mm.mysql.Driver
+connectionPool.source.url = 
+connectionPool.source.user = 
+connectionPool.source.password =
+connectionPool.source.maxConnections = 100
+
+connectionPool.sofia.driver = org.gjt.mm.mysql.Driver
+
+# JDBC database URL
+connectionPool.sofia.url = jdbc:mysql://${db.host}:${db.port}/${db.name}
+
+# DB user name
+connectionPool.sofia.user = ${db.user}
+
+# DB user password
+connectionPool.sofia.password = ${db.password}
+connectionPool.sofia.maxConnections = 100
+
+oms.sourceOMS = com.p92.sofia.oms.mtoms.MTOMS
+sourceOMS.include = text:file://mtoms.properties
+sourceOMS.connectionPool.name = source
+
+oms.sofiaOMS = com.p92.sofia.oms.mtoms.MTOMS
+sofiaOMS.include = text:file://mtoms.properties
+sofiaOMS.connectionPool.name = sofia
+
+
+### Velocity settings
+velocity.include = text:file://velocity.properties
+
+## Id of default navigation node
+sofia.default.navigationId = login
+
+## Id of the default user
+user.default = anon
+
+## Gateway registry
+gateways = history
+gateway.history.class = com.p92.sofia.pfw.gateway.HistoryGateway
+gateway.history.historySize = 20
+
+
+gateways += pathInfoGateway
+# PathInfoGateway properties
+gateway.pathInfoGateway.class = com.p92.sofia.pfw.gateway.PathInfoGateway
+gateway.pathInfoGateway.useNMXAccess = yes
+
+## Screen Registry
+include = text:file://screens.properties
+## Layout Registry
+include = text:file://layouts.properties
+## Portlet Registry
+include = text:file://portlets.properties
+
+## LMS
+lms.defaultLMS = com.p92.sofia.lms.impl.LMSImpl
+defaultLMS.include = text:file://lms.properties
+
+## AMS
+#ams.defaultAMS = com.p92.sofia.ams.impl.AMSImpl
+#defaultAMS.include = text:file://ams.properties
+ams.defaultAMS = com.p92.sofia.ams.amsonoms.AMSOnOMS
+defaultAMS.include = text:file://amsonoms.properties
+
+## OMS
+oms.defaultOMS = com.p92.sofia.oms.mtoms.MTOMS
+defaultOMS.include = text:file://mtoms.properties
+
+## UMS
+ums.defaultUMS = com.p92.sofia.ums.umsforoms.UMSForOMS
+defaultUMS.include = text:file://umsforoms.properties
+
+## NMX
+nmx.baseNMX = com.p92.sofia.nmx.impl.NMXImpl
+baseNMX.include = text:file://nmx.properties
+# NMX cache settings, NMX cache is registered as default NMX service
+nmx.defaultNMX = com.p92.sofia.nmx.cache.NMXCache
+defaultNMX.include = text:file://nmxcache.properties
+
+## Regional settings
+# Date format
+regional.dateformat.hu = yyyy.MM.dd.
+regional.dateformat.en = MM/dd/yyyy
+# Time format
+regional.timeformat.hu = HH:mm:ss
+regional.timeformat.en = HH:mm:ss
+# Decimal format
+regional.decimalformat.hu = #\,###.00
+regional.decimalformat.en = #\,###.00
+
+# Sample module properties
+# include = text:file://module-sample.properties
+
+# Navigation module properties
+include = text:file://module-navigation.properties
+
+# User module
+include = text:file://module-user.properties
+
+include = text:file://module-user-updated.properties
+
+## PM module
+include = text:file://module-pm3.properties
+
+## Generator settings
+generator.include = text:file://generator.properties
+
+# Event module
+include = text:file://module-event.properties
+
+# Quartz scheduler module
+include = text:file://scheduler.properties

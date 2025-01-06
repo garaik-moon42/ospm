@@ -1,0 +1,215 @@
+#*
+ * BeanList portlet template.
+ *#
+#set($dot = ".")
+#set($apos = "'")
+#set($hashmark = "#")
+#set($openingBracket ="(")
+#set($closingBracket =")")
+<script type="text/javascript" language="JavaScript1.2">
+    function changeOrderBy(orderBy) {
+        if (orderBy == document.${naming.formatAttribute($classname)}List.filterOrderBy.value) {
+            document.${naming.formatAttribute($classname)}List.filterDirection.value = 0 - document.${naming.formatAttribute($classname)}List.filterDirection.value;
+        }
+        document.${naming.formatAttribute($classname)}List.filterOrderBy.value = orderBy;
+        document.${naming.formatAttribute($classname)}List.submit();
+    }
+
+    function changeDisplayedPage(field){
+        if (field.value == "") return;
+        var displpage = parseInt(field.value);
+        if (!isNaN(displpage)) {
+            if (displpage > 0 && displpage <= $filter.lastPage) {
+                document.${naming.formatAttribute($classname)}List.filterPage.value = displpage;
+            }
+        }
+        document.${naming.formatAttribute($classname)}List.displayedPageHeader.value = document.${naming.formatAttribute($classname)}List.filterPage.value;
+    }
+
+    function clearFilterFields() {
+#foreach ($attribute in $attributes)
+#if ($attribute.getParameter("filterable") == "yes")
+#if($attribute.type == "integer" || $attribute.type == "float" || $attribute.type == "date" || $attribute.type == "datetime" || $attribute.type == "time")
+#if($attribute.getParameter("filterLook") == "textrange" || $attribute.getParameter("filterLook") == "pickrange")
+        document.$naming.formatAttribute($classname)List${dot}filter${naming.getAttributeMethod($attribute.name)}RangeBottom.value = ""
+        document.$naming.formatAttribute($classname)List${dot}filter${naming.getAttributeMethod($attribute.name)}RangeTop.value = ""
+#else
+        document.$naming.formatAttribute($classname)List${dot}filter${naming.getAttributeMethod($attribute.name)}.value = "";
+#end
+#elseif($attribute.type == "reference")
+#if($attribute.getParameter("filterLook") == "pick")
+        document.$naming.formatAttribute($classname)List${dot}filter${naming.getAttributeMethod($attribute.name)}Id.value = "";
+        document.$naming.formatAttribute($classname)List${dot}displayedValuefilter${naming.getAttributeMethod($attribute.name)}.value = "";
+#elseif($attribute.getParameter("filterLook") == "multipick")
+        // todo: Reference multipick is not implemented yet.
+#else
+        // todo: Reference not supported ${dot}$attribute.getParameter("filterLook")${dot} filter look. (ClassListVm.vm [])
+#end
+#elseif($attribute.type == "boolean" || $attribute.type == "text" || $attribute.type == "shorttext")
+#if($attribute.getParameter("filterLook") != "")
+        document.$naming.formatAttribute($classname)List${dot}filter${naming.getAttributeMethod($attribute.name)}.value = "";
+#end
+#else
+        // todo: Unsupported input type. (ClassListVm.vm [])
+#end
+#end
+#end
+    }
+
+#foreach($attribute in $attributes)
+#if($attribute.getParameter("filterable") == "yes")
+#if($attribute.getParameter("filterLook") == "pick")
+#if($attribute.type == "reference")
+## Select portlet|navigationNode name of attribute
+#set($name = "${naming.formatAttribute($attribute.getParameter('omClass'))}Select")
+
+    function open${naming.getAttributeMethod($attribute.name)}Picker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink($name)$closingBracket?callback=${attribute.name}PickerCallback",
+                            "label${naming.getAttributeMethod($attribute.name)}Select",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function ${attribute.name}PickerCallback(id, label, data) {
+        document.${naming.formatAttribute($classname)}List.filter${naming.getAttributeMethod($attribute.name)}Id.value = id;
+        document.${naming.formatAttribute($classname)}List.displayedValuefilter${naming.getAttributeMethod($attribute.name)}.value = label;
+    }
+#elseif($attribute.type == "date" || $attribute.type == "datetime")
+
+    function open${naming.getAttributeMethod($attribute.name)}Picker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+#if($attribute.type == "date")
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink("calendar")$closingBracket?disableTime=true&disableSecs=true&callback=${attribute.name}PickerCallback",
+#elseif($attribute.type == "datetime")
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink("calendar")$closingBracket?disableTime=false&disableSecs=true&callback=${attribute.name}PickerCallback",
+#end
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function ${attribute.name}PickerCallback(data) {
+        document.${naming.formatAttribute($classname)}List.filter${naming.getAttributeMethod($attribute.name)}.value = data;
+    }
+#else
+
+    // The $attribute.type type not support 'pick' input look. [attribute: $attribute.name]
+
+#end
+#elseif($attribute.getParameter("filterLook") == "pickrange")
+#if($attribute.type == "date" || $attribute.type == "datetime")
+
+    function open${naming.getAttributeMethod($attribute.name)}BottomPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+    #if($attribute.type == "date")
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink("calendar")$closingBracket?disableTime=true&disableSecs=true&callback=${attribute.name}BottomPickerCallback",
+    #elseif($attribute.type == "datetime")
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink("calendar")$closingBracket?disableTime=false&disableSecs=true&callback=${attribute.name}BottomPickerCallback",
+    #end
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function ${attribute.name}BottomPickerCallback(data) {
+        document.${naming.formatAttribute($classname)}List.filter${naming.getAttributeMethod($attribute.name)}RangeBottom.value = data;
+    }
+
+    function open${naming.getAttributeMethod($attribute.name)}TopPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+#if($attribute.type == "date")
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink("calendar")$closingBracket?disableTime=true&disableSecs=true&callback=${attribute.name}TopPickerCallback",
+#elseif($attribute.type == "datetime")
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink("calendar")$closingBracket?disableTime=false&disableSecs=true&callback=${attribute.name}TopPickerCallback",
+#end
+                            "calendar",
+                            "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function ${attribute.name}TopPickerCallback(data) {
+        document.${naming.formatAttribute($classname)}List.filter${naming.getAttributeMethod($attribute.name)}RangeTop.value = data;
+    }
+   #else
+
+    // The $attribute.type type not support 'pickrange' input look. [attribute: $attribute.name]
+
+#end
+#elseif($attribute.getParameter("filterLook") == "multipick")
+#if($attribute.type == "reference")
+## Select portlet|navigationNode name of attribute
+#set($name = "${naming.formatAttribute($attribute.getParameter('omClass'))}Select")
+
+    function open${naming.getAttributeMethod($attribute.name)}MultiPicker() {
+        var top = (window.event) ? window.event.screenY : 0;
+        var left = (window.event) ? window.event.screenX : 0;
+        var w = window.open("$history.ignore($link)${dot}baseURI$history.ignore$openingBracket#makeLink($name)$closingBracket?callback=${attribute.name}MultiPickerCallback",
+                            "label${naming.getAttributeMethod($attribute.name)}Select",
+                            "left=" + left + ", top=" + top + ", width=640, height=480, menubar=no, resizable=yes, scrollbars=yes, status=no, toolbar=no");
+        w.focus();
+
+    }
+
+    function ${attribute.name}MultiPickerCallback(id, label, data) {
+        document.${naming.formatAttribute($classname)}List.filter${naming.getAttributeMethod($attribute.name)}Ids.value = id;
+    }
+#else
+
+    // The $attribute.type type not support 'pick' input look. [attribute: $attribute.name]
+
+#end
+#end
+#end
+#end
+
+\#if($selectMode)
+    function selectObject(id, label, data) {
+\#if($callback)
+        window.opener.${callback}(id, label, data);
+\#else
+        alert("Don't find callback method name in context.");
+\#end
+        window.close();
+    }
+\#end
+</script>
+<div class="portlet">
+    <form name="$naming.formatAttribute($classname)List" action="$link" method="post">
+        <input type="hidden" name="filterOrderBy" value="$\!filter${dot}orderBy" />
+        <input type="hidden" name="filterDirection" value="$\!filter${dot}direction" />
+        <input type="hidden" name="filterPage" value="$filter${dot}page" />
+        <fieldset>
+            <legend>$labelFiltering</legend>
+                <p>
+#parse("comp-filterFields.vm")
+                </p>
+                <p>
+                #button($labelSearch '' 'document.$naming.formatAttribute($classname)List${dot}filterPage${dot}value = "1";document.$naming.formatAttribute($classname)List${dot}submit(); return false;')
+                #button($labelSearchReset '' 'clearFilterFields(); return false;')
+                #button($labelBack '#' "document.$naming.formatAttribute($classname)List${dot}action = '$history.back()'; document.$naming.formatAttribute($classname)List${dot}submit(); return false;")
+                </p>
+        </fieldset>
+\#if (!$selectMode)
+        <fieldset>
+            <legend>$labelOperations</legend>
+            <p>
+                #button($labelNew${classname} '' "document.${naming.formatAttribute($classname)}List.action = ${apos}#linkPropertyPage($classname '')${apos}; document.${naming.formatAttribute($classname)}List.submit(); return false;")
+            </p>
+        </fieldset>
+\#end
+        <fieldset>
+            <p>
+#parse("comp-itemList.vm")
+            </p>
+        </fieldset>
+    </form>
+</div>

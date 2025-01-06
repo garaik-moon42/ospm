@@ -1,0 +1,75 @@
+<script type="text/javascript" language="JavaScript1.2">
+    function saveRole() {
+        document.role.operation.value = "roleSave";
+        lbRoleActions.selectAll();
+        document.role.submit();
+    }
+
+    function onSelectAction(id, label, data) {
+        lbRoleActions.addDistinctItem(label,id);
+    }
+</script>
+<div id="content">
+    <form name="role" method="post" action="$link.clear($position)">
+        <input type="hidden" name="operation" value="" />
+	        <fieldset class="dialog">
+	            <legend>$portletRole</legend>
+
+	           <div id="properties">
+	            <table class="dialog">
+	                <tbody>
+	                    <tr>
+	                        <td class="property">$roleId*:</td>
+	                        <td class="value">
+#if ($role.id)
+                            $role.id
+	                            <input type="hidden" name="roleId" value="$role.id" />
+#else
+    	                        <input type="text" style="width:400px" name="roleId" value="" />
+#end
+	                        </td>
+	                    </tr>
+#foreach ($attrLocale in $attributeLocales)
+#if ($attrLocale == $locale) #set ($style = "") #else #set ($style = "display: none;") #end
+	                    <tr class="locale_${attrLocale.language}" style="$!style">
+	                        <td class="property" valign="bottom">$roleLabels:</td>
+	                        <td class="value"><textarea style="height:100px;width:400px" name="${attrLocale.language}_roleLabels">$!role.label.getLabel($attrLocale)</textarea></td>
+	                    </tr>
+#end
+		                <tr>
+		                    <td class="property" valign="bottom">$labelRoleActions:</td>
+		                    <td class="value">
+		                    <select size="5" name="roleActions" style="width: 300px;" multiple="yes">
+#foreach ($action in $roleActions)
+	                        <option value="$action.name">$action.label.getLabel($locale)</option>
+#end
+	                        </select>
+	                        </td>
+	                    </tr>
+	                    <tr>
+	                        <td>&nbsp;</td>
+	                        <td class="value">
+								<p>
+						            #buttonAccept($labelAdd '' "openPopup('actionSelect', 'onSelectAction',600,400); return false;")
+						            #buttonDeny($labelDelete '' "lbRoleActions.deleteAllSelectedItems(lbRoleActions.getAllSelected()); return false;")
+								</p>
+	                        </td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	        </div>
+        </fieldset>
+
+        <fieldset class="operation">
+            <legend>$labelRoleActions</legend>
+                <p>
+                    #buttonAccept($labelSave '#' "saveRole(); document.role.action = '$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('roles'))'; document.role.submit(); return false;")
+                    #button($labelCancel '#' "document.role.action = '$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('roles'))'; document.role.submit(); return false;")
+                </p>
+        </fieldset>
+
+        <script type="text/javascript" language="JavaScript1.2">
+            var lbRoleActions = new ListBoxHelper(document.role.roleActions);
+        </script>
+    </form>
+</div>

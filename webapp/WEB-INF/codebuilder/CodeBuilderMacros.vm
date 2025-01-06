@@ -1,0 +1,327 @@
+##
+## Velocity macro collection of the code generator
+##
+## Required objects in context:
+##      $imports    java.util.Set of imports
+##      $naming     com.p92.sofia.util.ant.beanbuilder.BeanNaming object.
+##
+
+#***********************************************************************************************************************
+ * The 'import' macro makes distinct import list.
+ * (used in '*Java.vm')
+ *
+ * @param $qualifiedClassName sipmle text value of class
+ * @param $imports (java.util.Set) Set of full qualified names of imported classes
+ * @required $naming (see also in required objects)
+ *#
+#macro (import $qualifiedClassName $imports)
+#if (!$imports.contains($qualifiedClassName))import $qualifiedClassName;
+#end
+#end
+
+#***********************************************************************************************************************
+ * The 'linkPropertyPage' macro makes a link template an object property portlet.
+ * (inline macro, used in 'ClasssListVm.vm')
+ *
+ * @param $classname the name of class
+ * @param $id id of object. If it is empty ('') then do not set the object id.
+ * @required $naming (see also in required objects)
+ *#
+#macro(linkPropertyPage $classname $id)#if ($id != "")#makeLink("${naming.formatAttribute($classname)}Properties")${dot}setObjectId($position, $id)#else#makeLink("${naming.formatAttribute($classname)}Properties") #end#end
+
+#macro (makeLink $ destName)#makeNodeLink($destName)#end
+
+#macro(makeNormalLink $destName)$link${dot}clear()${dot}setScreenId(${apos}default${apos})${dot}setLayoutId(${apos}popup${apos})${dot}setPortletId($position, ${apos}${destName}${apos})#end
+
+#macro(makeNodeLink $destName)$link${dot}clear()${dot}setNavigationId(${apos}${destName}${apos})#end
+
+##############################################
+## Teplates of 'input in paragraph' desing. ##
+##############################################
+#***********************************************************************************************************************
+ * This template makes a simple label for input property.
+ * (used in 'ClassPropertiesVm.vm')
+ *
+ * @param $prefix (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @required $naming (see also in required objects)
+ *#
+#macro(normalLabel $beanName $attribute)
+                <label>$${beanName}${dot}label${naming.getAttributeMethod($attribute.name)}($locale)#if($attribute.isRequired())${requiredFlag}#end:</label>
+#end
+#***********************************************************************************************************************
+ * This template makes a bottom label for range input.
+ * (used in 'ClassPropertiesVm.vm')
+ *
+ * @param $prefix (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @required $naming (see also in required objects)
+ *#
+#macro(bottomLabel $beanName $attribute)
+                <label>$${beanName}${dot}label${naming.getAttributeMethod($attribute.name)}RangeBottom($locale):</label>
+#end
+#***********************************************************************************************************************
+ * This template makes a top label for range property.
+ * (used in 'ClassPropertiesVm.vm')
+ *
+ * @param $prefix (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @required $naming (see also in required objects)
+ *#
+#macro(topLabel $beanName $attribute)
+                <label>$${beanName}${dot}label${naming.getAttributeMethod($attribute.name)}RangeTop($locale):</label>
+#end
+#***********************************************************************************************************************
+ * Makes an error message template.
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @required $naming (see also in required objects)
+ *#
+#macro(normalErrorMessage $beanName $attribute)
+#set ($ifErrMessage = '#if ($errorMessage.hasAttibute("')
+${ifErrMessage}${beanName}${naming.getAttributeMethod($attribute.name)}"))
+            $htmlPrefix
+                <span class="error">$errorMessage${dot}forAttribute("${beanName}${naming.getAttributeMethod($attribute.name)}")</span>
+$htmlSuffix
+${hashmark}end
+#end
+#***********************************************************************************************************************
+ * Makes read only template for 'readonly look' for reference attributes.
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @required $naming (see also in required objects)
+ *#
+#macro(propertyReadOnlyReference $beanName $attribute)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                $!${beanName}.${attribute.name}AsString
+$htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Makes read only template for 'readonly look' other attributes.
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @required $naming (see also in required objects)
+ *#
+#macro(propertyReadOnly $beanName $attribute)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                $\!omObjectFormatter${dot}format($item${dot}${attribute.name}${dot}getOMObject(), $locale)
+$htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Makes a simple text input template.
+ * (used in 'ClassPropertiesVm.vm')
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $width (String) Width value of input field.
+ * @required $naming (see also in required objects)
+ *#
+#macro(normalTextInput $beanName $attribute $width)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                <input type="text" name="${beanName}${naming.getAttributeMethod($attribute.name)}" value="$!${beanName}.${attribute.name}AsString"#if($width) size="$width"#else size="40"#end/>
+            $htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Makes textarea input template.
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $width (String) Width value of textarea.
+ * @param $height (String) Height value of textarea.
+ * @required $naming (see also in required objects)
+ *#
+#macro(textareaInput $beanName $attribute $width $height)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                <textarea name="${beanName}${naming.getAttributeMethod($attribute.name)}"#if($width) cols="$width"#else cols="40"#end#if($height) rows="$height"#else rows="4"#end>$!${beanName}.${attribute.name}AsString</textarea>
+            $htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Makes a select input property template.
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $optionValues (List) List of option values.
+ * @param $optionLabels (List) Label id list of options.
+ * @param $addEmpty (String) If addEmpty equals 'true' adds an empty option to the select, else does not add.
+ * @param $size (String) Number of select rows.
+ * @required $naming (see also in required objects)
+ *#
+#macro(selectInputStatic $beanName $attribute $optionValues $optionLabels $addEmpty $size)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                <select name="${beanName}${naming.getAttributeMethod($attribute.name)}"#if(${attribute.getParameter('inputHeight')}) size="$size"#else size="1"#end>
+#if($addEmpty == "true")
+                    <option value=""></option>
+#end
+#set ($i = 0)
+#foreach ($value in $optionValues)
+                    <option value="$value" ${hashmark}if($${beanName}${dot}${attribute.name}AsString == "$value")selected${hashmark}end>
+#if($optionLabels.get($i))
+                        $$optionLabels.get($i)
+#else
+                        $value
+#end
+                    </option>
+#set ($i = $i + 1)
+#end
+                </select>
+            $htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Makes dinamical select input property template.
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $addEmpty (String) If addEmpty equals 'true' adds an empty option to the select, else does not add.
+ * @param $size (String) Number of select rows.
+ * @required $naming (see also in required objects)
+ *#
+#macro(selectInputDinamic $beanName $attribute $addEmpty $size)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                <select name="${beanName}${naming.getAttributeMethod($attribute.name)}"#if(${attribute.getParameter('inputHeight')}) size="$size"#else size="1"#end>
+#if($addEmpty == "true")
+                    <option value=""></option>
+#end
+${hashmark}set($index = 0)
+${hashmark}foreach ($optionValue in $select${naming.getAttributeMethod($attribute.name)}OptionValues)
+                    <option value="$optionValue" ${hashmark}if($${beanName}${dot}${attribute.name}AsString == "$optionValue")selected${hashmark}end>
+${hashmark}if($select${naming.getAttributeMethod($attribute.name)}OptionTexts.get($index))
+                        $select${naming.getAttributeMethod($attribute.name)}OptionTexts.get($index)
+${hashmark}else
+                        $optionValue
+${hashmark}end
+                    </option>
+${hashmark}set($index = $index + 1)
+${hashmark}end
+                </select>
+            $htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Makes reference select input property template.
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $addEmpty (String) If addEmpty equals 'true' adds an empty option to the select, else does not add.
+ * @param $size (String) Number of select rows.
+ * @required $naming (see also in required objects)
+ *#
+#macro(selectReferenceInput $beanName $attribute $addEmpty $size)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                <select name="${beanName}${naming.getAttributeMethod($attribute.name)}Id"#if($size) size="$size"#else size="1"#end>
+#if($addEmpty == "true")
+                    <option value=""></option>
+#end
+${hashmark}set($index = 0)
+${hashmark}foreach ($optionValue in $select${naming.getAttributeMethod($attribute.name)}OptionValues)
+                    <option value="$optionValue" ${hashmark}if($${beanName}${dot}${attribute.name}${dot}id == "$optionValue")selected${hashmark}end>
+${hashmark}if($select${naming.getAttributeMethod($attribute.name)}OptionTexts.get($index))
+                        $select${naming.getAttributeMethod($attribute.name)}OptionTexts.get($index)
+${hashmark}else
+                        $optionValue
+${hashmark}end
+                    </option>
+${hashmark}set($index = $index + 1)
+${hashmark}end
+                </select>
+            $htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Makes boolean select input (true or false values and labels).
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $addEmpty (String) If addEmpty equals 'true' adds an empty option to the select, otherwise does not add.
+ * @required $naming (see also in required objects)
+ *#
+#macro(selectBooleanInput $beanName $attribute $addEmpty)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                <select name="${beanName}${naming.getAttributeMethod($attribute.name)}"#if(${attribute.getParameter('inputHeight')}) size="${attribute.getParameter('inputHeight')}"#else size="1"#end>
+#if($addEmpty == "true")
+                    <option value=""></option>
+#end
+                    <option value="true" ${hashmark}if($${beanName}${dot}${attribute.name}AsString == "true")selected${hashmark}end>$labelYes</option>
+                    <option value="false" ${hashmark}if($${beanName}${dot}${attribute.name}AsString == "false")selected${hashmark}end>$labelNo</option>
+                </select>
+            $htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Picker input of 'date' or 'time' or 'datetime' attributes.
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $size (Attribute) Input width in caracter number.
+ * @required $naming (see also in required objects)
+ *#
+#macro(pickDate $beanName $attribute $size)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                <input type="text" name="${beanName}${naming.getAttributeMethod($attribute.name)}" value="$!${beanName}.${attribute.name}AsString"#if($size) size="$size"#else size="40"#end/>
+                #button('...' '#' "open${naming.getAttributeMethod($attribute.name)}Picker(); return false;")
+            $htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Picker input property of 'reference' attributes.
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $size (Attribute) Input width in caracter number.
+ * @required $naming (see also in required objects)
+ *#
+#macro(pickRefference $beanName $attribute $size)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+                <input type="hidden" name="${beanName}${naming.getAttributeMethod($attribute.name)}Id" value="$!${beanName}.get${naming.getAttributeMethod($attribute.name)}().getId()"/>
+                <input type="text" name="displayedValue${beanName}${naming.getAttributeMethod($attribute.name)}" value="$\!omObjectFormatter${dot}format($${beanName}${dot}${attribute.name}${dot}getOMObject(), $locale)"#if($size) size="$size"#else size="40"#end/>
+                #button($labelChoose '#' "open${naming.getAttributeMethod($attribute.name)}Picker(); return false;")
+            $htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Makes a range text input template.
+ * (used in 'ClassPropertiesVm.vm')
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $width (String) Width value of input field.
+ * @required $naming (see also in required objects)
+ *#
+#macro(rangeTextInput $beanName $attribute $width)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+#bottomLabel($beanName $attribute)
+                <input type="text" name="${beanName}${naming.getAttributeMethod($attribute.name)}RangeBottom" value="$!${beanName}.${attribute.name}RangeBottomAsString"#if(${attribute.getParameter('filterWidth')}) size="${attribute.getParameter('filterWidth')}"#else size="18"#end/>
+#topLabel($beanName $attribute)
+                <input type="text" name="${beanName}${naming.getAttributeMethod($attribute.name)}RangeTop" value="$!${beanName}.${attribute.name}RangeTopAsString"#if(${attribute.getParameter('filterWidth')}) size="${attribute.getParameter('filterWidth')}"#else size="18"#end/>
+            $htmlSuffix
+#end
+#***********************************************************************************************************************
+ * Makes a range date, datetime input template.
+ * (used in 'ClassPropertiesVm.vm')
+ *
+ * @param $beanName (String) The name of bean in the context.
+ * @param $attribute (Attribute) An attribute object of class.
+ * @param $width (String) Width value of input field.
+ * @required $naming (see also in required objects)
+ *#
+#macro(rangePickDate $beanName $attribute $width)
+            $htmlPrefix
+#normalLabel($beanName $attribute)
+#bottomLabel($beanName $attribute)
+                <input type="text" name="${beanName}${naming.getAttributeMethod($attribute.name)}RangeBottom" value="$!${beanName}.${attribute.name}RangeBottomAsString"#if(${attribute.getParameter('filterWidth')}) size="${attribute.getParameter('filterWidth')}"#else size="40"#end/>
+                #button('...' '#' "open${naming.getAttributeMethod($attribute.name)}BottomPicker(); return false;")
+#topLabel($beanName $attribute)
+                <input type="text" name="${beanName}${naming.getAttributeMethod($attribute.name)}RangeTop" value="$!${beanName}.${attribute.name}RangeTopAsString"#if(${attribute.getParameter('filterWidth')}) size="${attribute.getParameter('filterWidth')}"#else size="18"#end/>
+                #button('...' '#' "open${naming.getAttributeMethod($attribute.name)}TopPicker(); return false;")
+            $htmlSuffix
+#end
+
+

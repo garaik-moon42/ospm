@@ -1,0 +1,71 @@
+
+<script type="text/javascript" language="JavaScript1.2">
+    function saveRole() {
+        document.role.operation.value = "roleSave";
+        lbRoleActions.selectAll();
+        document.role.submit();
+    }
+
+    function onSelectAction(id, label, data) {
+        lbRoleActions.addDistinctItem(label,id);
+    }
+</script>
+<div id="content">
+    <div id="pageTitle">$portletRole</div>
+    <form name="role" method="post" action="$link.clear($position)">
+        <input type="hidden" name="operation" value="" />
+        <div id="attributeLanguages">
+#foreach ($al in $attributeLocales)
+                <a href="#" #if ($al == $locale) class="selected" #end onclick="selectLocale('$al.language', this); return false;">$al</a> #if ($counter != $attributeLocales.size()) | #end
+#end
+        </div>
+           <div id="properties">
+            <table class="dialog">
+                <tbody>
+                    <tr>
+                        <td class="property">$roleId:</td>
+                        <td class="value">
+#if ($role.id)
+                            $role.id
+                            <input type="hidden" name="roleId" value="$role.id" />
+#else
+                            <input type="text" style="width:400px" name="roleId" value="" />
+#end
+                        </td>
+                    </tr>
+#foreach ($attrLocale in $attributeLocales)
+#if ($attrLocale == $locale) #set ($style = "") #else #set ($style = "display: none;") #end
+                    <tr class="locale_${attrLocale.language}" style="$!style">
+                        <td class="property">$roleLabels:</td>
+                        <td class="value"><textarea style="height:100px;width:400px" name="${attrLocale.language}_roleLabels">$!role.label.getLabel($attrLocale)</textarea></td>
+                    </tr>
+#end
+                    <tr>
+                        <td class="property">$labelRoleActions:</td>
+                        <td class="value">
+                        <select size="5" name="roleActions" style="width: 300px;" multiple="yes">
+#foreach ($action in $roleActions)
+                        <option value="$action.name">$action.label.getLabel($locale)</option>
+#end
+                        </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td class="value">
+                            <input type="button" class="button" value="$labelAdd" onClick="openPopup('actionSelect', 'onSelectAction',600,400);" />
+                            <input type="button" class="button" value="$labelDelete" onclick="lbRoleActions.deleteAllSelectedItems(lbRoleActions.getAllSelected());" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="operation">
+            <input type="button" class="button" value="$labelSave" onClick="saveRole(); document.role.action = '';" />
+            <input type="button" class="button" value="$labelCancel" onClick="document.role.submit(); document.role.action = '';" />
+        </div>
+        <script type="text/javascript" language="JavaScript1.2">
+            var lbRoleActions = new ListBoxHelper(document.role.roleActions);
+        </script>
+    </form>
+</div>
