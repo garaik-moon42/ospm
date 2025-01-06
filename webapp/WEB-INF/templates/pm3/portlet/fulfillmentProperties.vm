@@ -178,3 +178,7 @@
         </fieldset>
     </form>
 </div>
+
+<script>
+    enableNativeDatePicker(document.properties.fulfillmentDate)
+</script>

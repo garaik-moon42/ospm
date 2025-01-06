@@ -443,7 +443,7 @@
     #end
         <fieldset>
             <p>
-                <table class="list">
+                <table class="list fulfillment-list">
                     <caption>
 
 #if ($filter.numberOfHits > 0)
@@ -522,11 +522,11 @@
                             <td>$!item.task.project.businessUnit.name</td>
                             <td>$!item.task.project.name</td>
                             <td>$!item.task.name</td>
-                            <td>$!item.description</td>
+                            <td class="fulfillment-description">$!item.description</td>
                             <td>$!item.task.purchaseOrderNumber</td>
                             <td>$!item.task.workPackageNumber</td>
                             <td style='font-size:9px'>$item.generateDateAsString <br /> $item.modificationDateAsString</td>
-                         <td  align = "center" valign="middle">
+                         <td align="center" valign="middle">
                             #set ($acceptedEditable = $isEditable && $item.approvedAsString.equals("false") && (($ams.may("actionProjectAcceptOwnProjectFulfillment") && ($pMUser.employee.id==$item.task.project.projectmanager.id || $pMUser.employee.id==$item.task.project.projectofficer.id || $item.task.isSuperVicePM($pMUser.employee.id))) || $ams.may("actionProjectAcceptOthersProjectFulfillment")))
                             #set($accepted = "")
                             #set($notaccepted = $item.id)
@@ -638,3 +638,8 @@
         </fieldset>
     </form>
 </div>
+
+<script>
+    enableNativeDatePicker(document.fulfillmentList.filterDateRangeBottom)
+    enableNativeDatePicker(document.fulfillmentList.filterDateRangeTop)
+</script>

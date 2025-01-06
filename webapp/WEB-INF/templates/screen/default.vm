@@ -25,6 +25,7 @@
     <script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/list/ListHighlight.js"></script>
     <script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/div/utility.js"></script>
     <script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/div/popup.js"></script>
+    <script type="text/javascript" xml:space="preserve" language="Javascript1.2" src="static/js/native-date-picker.js"></script>
     <script type="text/javascript" xml:space="preserve" language="Javascript1.2">
         /*
          * Opens a popup window.
