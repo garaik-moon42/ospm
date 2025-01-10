@@ -8,15 +8,17 @@ The application comes with a docker-compose project defining a database and appl
 
 # Preparations
 
-Go to `webapp/WEB-INF/conf`, and look for `.template` files. These are templates for property files containing secrets, and thus are not included in the repo. Make a copy (without the .template extension) and fill the missing information (eg.: database credentials).
+Go to `webapp/WEB-INF/conf`, and look for `.template` files. These are samples for configuration files not included in the repo, due to containing secrets.
+Make a copy of these files, lose the ".template" extension, and fill out the missing details.
 
-You must also edit `webapp/WEB-INF/web.xml` and change the line `#set ($baseHref = "https://pm.moon42.com/")`, to match the URL where your local server will be accessed. This is probably going to be `http://localhost:8080`.
+Do the same with `envconfig.vm.template` in `webapp/WEB-INF/templates`. This file contains the base URL of the application, which will be different if you want to test locally.
 
 #### Running the full stack
 
 For the first time:
 
-- Run `docker-compose up mysql`. This will give you a DB server. Fill the database with some initial/test data from a backup.
+- Run `docker-compose up mysql`. This will give you a DB server.
+- Fill the databse with some initial data.
 - Then run `docker-compose up` to run everything else.
 
 #### Connecting to the live database
