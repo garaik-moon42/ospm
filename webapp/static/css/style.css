@@ -319,6 +319,7 @@ a.btnOpen:active {
   border-bottom: 1px solid #609dff;
 }
 #navigation a {
+  display: inline-block;
   font-weight: bold;
   color: #0068c3;
   border: 1px solid #f0f7fc;
@@ -337,6 +338,7 @@ a.btnOpen:active {
   color: #f0f7fc;
 }
 #navigation2 a {
+  display: inline-block;
   font-weight: bold;
   color: #888888;
   border: 1px solid white;
