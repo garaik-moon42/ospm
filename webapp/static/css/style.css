@@ -52,12 +52,12 @@ body {
 #navigation {
   background-color: #f0f7fc;
   color: #333;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem calc(1rem - 0.25rem);
 }
 #navigation2 {
   color: #333;
   margin-bottom: 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem calc(1rem - 0.25rem);
 }
 #footer {
   padding: 0.5rem 1rem;
@@ -322,12 +322,11 @@ a.btnOpen:active {
   display: inline-block;
   font-weight: bold;
   color: #0068c3;
-  border: 1px solid #f0f7fc;
-  padding: 2px;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.3rem;
 }
 #navigation a:hover {
   color: #048a34;
-  border: 1px solid #f0f7fc;
   text-decoration: none;
 }
 #navigation a.selected {
@@ -341,12 +340,11 @@ a.btnOpen:active {
   display: inline-block;
   font-weight: bold;
   color: #888888;
-  border: 1px solid white;
-  padding: 2px;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.3rem;
 }
 #navigation2 a:hover {
   color: #048a34;
-  border: 1px solid white;
   text-decoration: none;
 }
 #navigation2 a.selected {
