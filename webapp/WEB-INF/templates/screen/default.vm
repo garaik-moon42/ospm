@@ -3,14 +3,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 #parse("envconfig.vm")
 <head>
-    <title>$applicationTitle - $navigationNode.getLabel($locale)</title>
+    <title>$navigationNode.getLabel($locale) - $applicationTitle</title>
     <link rel="shortcut icon" href="/favicon.ico" mce_href="/favicon.ico" />
     <base href="$baseHref" />
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="description" content="STRABAG Intranet Application" />
+    <meta name="description" content="$applicationTitle - MOON42 RDI Kft." />
     <meta name="keywords" content="" />
-    <meta name="author" content="P92 IT Solutions Kft." />
+    <meta name="author" content="MOON42 RDI Kft." />
     <!-- Favicon -->
     <link rel="shortcut icon" href="" />
     <!-- CSS -->
