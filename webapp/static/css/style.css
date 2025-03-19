@@ -480,3 +480,53 @@ div.popup {
   padding: 0.25rem;
   z-index: 10;
 }
+
+.fulfillment-description {
+  /* preserve newlines */
+  white-space: pre-line;
+  text-align: left;
+}
+
+.fulfillment-list .date-even {
+  border-left: 10px solid hsla(15, 100%, 38%, 1);
+}
+
+.fulfillment-list .date-odd {
+  border-left: 10px solid hsla(208, 100%, 38%, 1);
+}
+
+.fulfillment-list tr.date-change-top {
+  border-top: 2px solid #BBB;
+}
+
+.fulfillment-list tr.type-meeting {
+  background-color: hsla(41, 100%, 50%, 0.1);
+}
+
+.fulfillment-list tr.date-rainbow-0 {
+  border-left-color: hsla(0, 100%, 50%, 1);
+}
+
+.fulfillment-list tr.date-rainbow-1 {
+  border-left-color: green;
+}
+
+.fulfillment-list tr.date-rainbow-2 {
+  border-left-color: blue;
+}
+
+.fulfillment-list tr.date-rainbow-3 {
+  border-left-color: orange;
+}
+
+.fulfillment-list tr.date-rainbow-4 {
+  border-left-color: cyan;
+}
+
+.fulfillment-list tr.date-rainbow-5 {
+  border-left-color: magenta;
+}
+
+.fulfillment-list tr.date-rainbow-6 {
+  border-left-color: black;
+}

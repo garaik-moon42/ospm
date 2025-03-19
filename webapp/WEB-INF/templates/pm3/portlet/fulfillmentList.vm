@@ -630,6 +630,7 @@
                             </td>
         #end
                         </tr>
+        #set($previousDate = $item.dateAsString)
     #end
                     </tbody>
 #end
@@ -642,4 +643,43 @@
 <script>
     enableNativeDatePicker(document.fulfillmentList.filterDateRangeBottom)
     enableNativeDatePicker(document.fulfillmentList.filterDateRangeTop)
+
+    function highlight(isAChief) {
+        const nodes = document.querySelectorAll('.fulfillment-list tbody tr')
+        let previousDate = null
+        let dateToggle = false
+        let dateRainbow = -1
+        nodes.forEach((node, index) => {
+            const dateNode = isAChief ? node.children[1] : node.children[0]
+            const date = dateNode.innerText
+            
+            if (previousDate !== date) {
+                node.classList.add('date-change-top')
+                previousDate = date
+                dateToggle = !dateToggle
+                dateRainbow = (dateRainbow + 1) % 7                
+            }
+            node.classList.add(dateToggle ? 'date-even' : 'date-odd')
+            node.classList.add(index % 2 === 0 ? 'row-even' : 'row-odd')       
+            node.classList.add(`date-rainbow-${dateRainbow}`)
+
+            const messageNode = isAChief ? node.children[6] : node.children[5]
+
+            /** @type {string} */
+            const message = messageNode.innerText
+
+            if (message.toLowerCase().startsWith('meeting:')) {
+                node.classList.add('type-meeting')
+            }
+
+            // If starts with a jira ticket number, it's a jira task
+            if (message.match(/^[A-Z]+-\d+:/)) {
+                node.classList.add('type-jira')
+            }
+        })
+    }
+
+    const isAChief = $isAChief;
+    highlight(isAChief);
+
 </script>
