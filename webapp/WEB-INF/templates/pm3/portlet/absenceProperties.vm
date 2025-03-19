@@ -18,7 +18,7 @@
     function openBeginsPicker() {
     var top = (window.event) ? window.event.screenY : 0;
     var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsPickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsPickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();
@@ -31,7 +31,7 @@
     function openEndsPicker() {
     var top = (window.event) ? window.event.screenY : 0;
     var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=endsPickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=endsPickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();

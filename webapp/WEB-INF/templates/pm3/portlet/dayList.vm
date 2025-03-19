@@ -44,7 +44,7 @@
     function openDateBottomPicker() {
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
-            var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateBottomPickerCallback",
+            var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateBottomPickerCallback",
                                 "calendar",
                             "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();
@@ -57,7 +57,7 @@
     function openDateTopPicker() {
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateTopPickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateTopPickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();

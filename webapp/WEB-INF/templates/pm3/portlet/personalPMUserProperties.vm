@@ -7,7 +7,7 @@
     function openCreationDatePicker() {
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=creationDatePickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=creationDatePickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();
@@ -21,7 +21,7 @@
     function openModificationDatePicker() {
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=modificationDatePickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=modificationDatePickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();
@@ -34,7 +34,7 @@
     function openDeletionDatePicker() {
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=deletionDatePickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&amp;disableSecs=true&amp;callback=deletionDatePickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();

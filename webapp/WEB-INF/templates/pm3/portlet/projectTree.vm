@@ -3,7 +3,7 @@
     function openBeginsBottomPicker() {
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsBottomPickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsBottomPickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();
@@ -30,7 +30,7 @@
     function openBeginsTopPicker() {
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsTopPickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=beginsTopPickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();
@@ -44,7 +44,7 @@
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
 
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=deadlineBottomPickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=deadlineBottomPickerCallback",
                                 "calendar",
                             "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();
@@ -57,7 +57,7 @@
     function openDeadlineTopPicker() {
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=deadlineTopPickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=deadlineTopPickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=215, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();

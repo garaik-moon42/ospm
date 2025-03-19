@@ -3,7 +3,7 @@
     function openDateBottomPicker() {
         var top = (window.event) ? window.event.screenY : 0;
         var left = (window.event) ? window.event.screenX : 0;
-        var w = window.open("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateBottomPickerCallback",
+        var w = windowOpen("$history.ignore($link).baseURI$history.ignore($link.clear().setNavigationId('calendar'))?disableTime=true&disableSecs=true&callback=dateBottomPickerCallback",
                             "calendar",
                             "left=" + left + ", top=" + top + ", width=230, height=200, menubar=no, resizable=yes, scrollbars=no, status=no, toolbar=no");
         w.focus();
@@ -52,13 +52,15 @@
         return year + "." + month + "." + day + ".";
     }
 
-    function dateBottomPickerCallback(data) {
+    function dateBottomPickerCallback(data, shouldSubmit) {
         dateBottom = getFirstDayOfWeek(data);
         dateTop = new Date(dateBottom);
         dateTop.setDate(dateTop.getDate() + 6);
         document.weeklyFulfillmentList.filterDateRangeBottom.value = getLocaleDate(dateBottom);
         document.weeklyFulfillmentList.filterDateRangeTop.value = getLocaleDate(dateTop);
-        document.weeklyFulfillmentList.submit();
+        if (shouldSubmit) {
+            document.weeklyFulfillmentList.submit();
+        }
         return false;
     }
 
@@ -93,9 +95,9 @@ table.wlist td {
             <span class="nowrap">
                 <label>$filter.labelDate($locale):&nbsp;</label>
                 <input type="text" name="filterDateRangeBottom" value="$!filter.dateRangeBottomAsString" size="10" onchange="dateBottomPickerCallback(document.weeklyFulfillmentList.filterDateRangeBottom.value);"/>
-                <input type="hidden" name="filterDateRangeTop" value="$!filter.dateRangeTopAsString" />
-                <input type="hidden" name="filterDatePrevNext" value="" />
                 #button('...' '#' "openDateBottomPicker(); return false;")
+                <input type="hidden" name="filterDatePrevNext" value="" />
+                <input type="hidden" name="filterDateRangeTop" value="$!filter.dateRangeTopAsString" />
             &nbsp;&nbsp;</span>
                 </p>
                 <p>
@@ -153,3 +155,32 @@ table.wlist td {
         </fieldset>
     </form>
 </div>
+
+<script>
+    const input = enableNativeDatePicker(document.weeklyFulfillmentList.filterDateRangeBottom)
+    
+    // Workaround for having autosubmit while preventing autosubmit during typing
+    let isTyping = false
+    let typingTimer = null
+    
+    input.addEventListener('keypress', (evt) => {
+        if (evt.key === 'Enter') {
+            dateBottomPickerCallback(input.value, true)
+            return
+        }
+        if (typingTimer !== null) {
+            clearTimeout(typingTimer)
+            typingTimer = null
+        }
+        isTyping = true
+        typingTimer = setTimeout(() => {
+            typingTimer = null
+            isTyping = false
+        }, 1000)
+    })
+
+    input.addEventListener('input', () => {
+        if (isTyping) return
+        dateBottomPickerCallback(input.value, true)
+    })
+</script>

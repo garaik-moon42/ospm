@@ -34,7 +34,7 @@ function enableNativeDatePicker(input) {
     };
   }
 
-  // Overrides
+  return dateInput;
 }
 
 /**
