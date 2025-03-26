@@ -487,6 +487,11 @@ div.popup {
   text-align: left;
 }
 
+.fulfillment-list .date-cell {
+  text-align: left;
+  white-space: nowrap;
+}
+
 .fulfillment-list .date-even {
   border-left: 10px solid hsla(15, 100%, 38%, 1);
 }

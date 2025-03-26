@@ -517,7 +517,7 @@
                             #if ( $isAChief )
                             <td>$!item.employee.getDisplayName()</td>
                             #end
-                            <td>$item.dateAsString</td>
+                            <td class="date-cell">$item.dateAsString</td>
                             <td>$item.timeSpentAsString</td>
                             <td>$!item.task.project.businessUnit.name</td>
                             <td>$!item.task.project.name</td>
@@ -679,7 +679,22 @@
         })
     }
 
+    function addDateDays(isAChief) {
+        // TODO: Get language / locale from somewhere?
+        const formatter = new Intl.DateTimeFormat('hu-HU', { weekday: 'short' });
+        const nodes = document.querySelectorAll('.fulfillment-list tbody tr')
+        nodes.forEach((node, index) => {
+            const dateNode = isAChief ? node.children[1] : node.children[0]
+            const dateStr = dateNode.innerText
+            const [year, month, day] = dateStr.split('.').map(Number);
+            const date = new Date(year, month - 1, day);
+            const dayStr = formatter.format(date);
+            dateNode.innerText = dateStr + " " + dayStr
+        })
+    }
+
     const isAChief = $isAChief;
     highlight(isAChief);
+    addDateDays(isAChief);
 
 </script>
