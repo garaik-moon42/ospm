@@ -26,7 +26,7 @@ function enableNativeDatePicker(input) {
     next.style.display = "none";
   }
 
-  if (nextNext.textContent === " - ") {
+  if (nextNext && nextNext.textContent === " - ") {
     nextNext.onclick = () => {
       dateInput.value = "";
       input.value = "";
